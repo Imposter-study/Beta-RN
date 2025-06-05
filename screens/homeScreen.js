@@ -100,6 +100,31 @@ function HomeScreen() {
         contentContainerStyle={styles.flatListContent}
         columnWrapperStyle={styles.columnWrapper}
       />
+      <View
+        style={{
+          width: "100%",
+          flexDirection: "row",
+          justifyContent: "space-around",
+          paddingVertical: 7,
+        }}
+      >
+        <TouchableOpacity style={{ alignItems: "center", gap: 5 }}>
+          <Feather name="home" size={24} color="white" />
+          <Text style={{ color: "white" }}>홈</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ alignItems: "center", gap: 5 }}>
+          <Feather name="message-circle" size={24} color="#ffffff80" />
+          <Text style={{ color: "#ffffff80" }}>대화</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ alignItems: "center", gap: 5 }}>
+          <Feather name="plus" size={24} color="#ffffff80" />
+          <Text style={{ color: "#ffffff80" }}>제작</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ alignItems: "center", gap: 5 }}>
+          <Feather name="user" size={24} color="#ffffff80" />
+          <Text style={{ color: "#ffffff80" }}>마이페이지</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
