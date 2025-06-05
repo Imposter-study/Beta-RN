@@ -8,6 +8,7 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
 
 const data = Array(20).fill(null);
 const screenWidth = Dimensions.get("window").width;
@@ -34,7 +35,63 @@ function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
+      {/* <Text style={styles.title}>Home</Text> */}
+      <View
+        style={{
+          width: "100%",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          //   backgroundColor: "tomato",
+          borderBottomColor: "#ffffff20",
+          borderBottomWidth: 0.3,
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 10,
+            padding: 16,
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity>
+            <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>
+              홈
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text
+              style={{ color: "#ffffff80", fontWeight: "bold", fontSize: 20 }}
+            >
+              추천
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text
+              style={{ color: "#ffffff80", fontWeight: "bold", fontSize: 20 }}
+            >
+              랭킹
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            padding: 16,
+            alignItems: "center",
+            gap: 24,
+          }}
+        >
+          <TouchableOpacity>
+            <Feather name="search" size={24} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ backgroundColor: "#5220cc", borderRadius: 6, padding: 10 }}
+          >
+            <Text style={{ color: "white", fontSize: 16 }}>로그인</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
       <FlatList
         data={data}
         keyExtractor={(_, index) => index.toString()}
@@ -64,6 +121,7 @@ const styles = StyleSheet.create({
   flatListContent: {
     paddingHorizontal: 12,
     paddingBottom: 24,
+    marginTop: 20,
   },
   columnWrapper: {
     justifyContent: "space-between",
