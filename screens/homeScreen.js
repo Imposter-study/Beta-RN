@@ -35,63 +35,30 @@ function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.title}>Home</Text> */}
-      <View
-        style={{
-          width: "100%",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          //   backgroundColor: "tomato",
-          borderBottomColor: "#ffffff20",
-          borderBottomWidth: 0.3,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 10,
-            padding: 16,
-            alignItems: "center",
-          }}
-        >
+      {/* 상단 메뉴 */}
+      <View style={styles.topBar}>
+        <View style={styles.navLeft}>
           <TouchableOpacity>
-            <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>
-              홈
-            </Text>
+            <Text style={styles.navActive}>홈</Text>
           </TouchableOpacity>
           <TouchableOpacity>
-            <Text
-              style={{ color: "#ffffff80", fontWeight: "bold", fontSize: 20 }}
-            >
-              추천
-            </Text>
+            <Text style={styles.navInactive}>추천</Text>
           </TouchableOpacity>
           <TouchableOpacity>
-            <Text
-              style={{ color: "#ffffff80", fontWeight: "bold", fontSize: 20 }}
-            >
-              랭킹
-            </Text>
+            <Text style={styles.navInactive}>랭킹</Text>
           </TouchableOpacity>
         </View>
-        <View
-          style={{
-            flexDirection: "row",
-            padding: 16,
-            alignItems: "center",
-            gap: 24,
-          }}
-        >
+        <View style={styles.navRight}>
           <TouchableOpacity>
             <Feather name="search" size={24} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={{ backgroundColor: "#5220cc", borderRadius: 6, padding: 10 }}
-          >
-            <Text style={{ color: "white", fontSize: 16 }}>로그인</Text>
+          <TouchableOpacity style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>로그인</Text>
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* 캐릭터 리스트 */}
       <FlatList
         data={data}
         keyExtractor={(_, index) => index.toString()}
@@ -100,29 +67,24 @@ function HomeScreen() {
         contentContainerStyle={styles.flatListContent}
         columnWrapperStyle={styles.columnWrapper}
       />
-      <View
-        style={{
-          width: "100%",
-          flexDirection: "row",
-          justifyContent: "space-around",
-          paddingVertical: 7,
-        }}
-      >
-        <TouchableOpacity style={{ alignItems: "center", gap: 5 }}>
+
+      {/* 하단 메뉴 */}
+      <View style={styles.bottomTab}>
+        <TouchableOpacity style={styles.bottomTabItem}>
           <Feather name="home" size={24} color="white" />
-          <Text style={{ color: "white" }}>홈</Text>
+          <Text style={styles.bottomTabTextActive}>홈</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{ alignItems: "center", gap: 5 }}>
+        <TouchableOpacity style={styles.bottomTabItem}>
           <Feather name="message-circle" size={24} color="#ffffff80" />
-          <Text style={{ color: "#ffffff80" }}>대화</Text>
+          <Text style={styles.bottomTabText}>대화</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{ alignItems: "center", gap: 5 }}>
+        <TouchableOpacity style={styles.bottomTabItem}>
           <Feather name="plus" size={24} color="#ffffff80" />
-          <Text style={{ color: "#ffffff80" }}>제작</Text>
+          <Text style={styles.bottomTabText}>제작</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{ alignItems: "center", gap: 5 }}>
+        <TouchableOpacity style={styles.bottomTabItem}>
           <Feather name="user" size={24} color="#ffffff80" />
-          <Text style={{ color: "#ffffff80" }}>마이페이지</Text>
+          <Text style={styles.bottomTabText}>마이페이지</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -137,11 +99,43 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#1a1b1b",
   },
-  title: {
-    color: "white",
-    fontSize: 24,
-    fontWeight: "bold",
+  topBar: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderBottomColor: "#ffffff20",
+    borderBottomWidth: 0.3,
+  },
+  navLeft: {
+    flexDirection: "row",
+    gap: 10,
     padding: 16,
+    alignItems: "center",
+  },
+  navRight: {
+    flexDirection: "row",
+    padding: 16,
+    alignItems: "center",
+    gap: 24,
+  },
+  navActive: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  navInactive: {
+    color: "#ffffff80",
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  loginButton: {
+    backgroundColor: "#5220cc",
+    borderRadius: 6,
+    padding: 10,
+  },
+  loginButtonText: {
+    color: "white",
+    fontSize: 16,
   },
   flatListContent: {
     paddingHorizontal: 12,
@@ -171,5 +165,21 @@ const styles = StyleSheet.create({
   },
   tag: {
     color: "#ffffffb3",
+  },
+  bottomTab: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingVertical: 7,
+  },
+  bottomTabItem: {
+    alignItems: "center",
+    gap: 5,
+  },
+  bottomTabTextActive: {
+    color: "white",
+  },
+  bottomTabText: {
+    color: "#ffffff80",
   },
 });
