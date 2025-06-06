@@ -1,8 +1,8 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import BottomTab from "../components/bottomTab";
 
 function ChatListScreen() {
   const navigation = useNavigation();
@@ -82,27 +82,10 @@ function ChatListScreen() {
         </View>
 
         {/* 하단메뉴 */}
-        <View style={styles.bottomTab}>
-          <TouchableOpacity
-            style={styles.bottomTabItem}
-            onPress={() => navigation.navigate("Home")}
-          >
-            <Feather name="home" size={24} color="#ffffff80" />
-            <Text style={styles.bottomTabText}>홈</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomTabItem}>
-            <Feather name="message-circle" size={24} color="white" />
-            <Text style={styles.bottomTabTextActive}>대화</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomTabItem}>
-            <Feather name="plus" size={24} color="#ffffff80" />
-            <Text style={styles.bottomTabText}>제작</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomTabItem}>
-            <Feather name="user" size={24} color="#ffffff80" />
-            <Text style={styles.bottomTabText}>마이페이지</Text>
-          </TouchableOpacity>
-        </View>
+        <BottomTab
+          activeTab="ChatList"
+          onTabPress={(tabName) => navigation.navigate(tabName)}
+        />
       </View>
     </SafeAreaView>
   );
@@ -115,21 +98,5 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     backgroundColor: "#1a1b1b",
-  },
-  bottomTab: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingTop: 7,
-  },
-  bottomTabItem: {
-    alignItems: "center",
-    gap: 5,
-  },
-  bottomTabTextActive: {
-    color: "white",
-  },
-  bottomTabText: {
-    color: "#ffffff80",
-  },
+  }
 });

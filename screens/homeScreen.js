@@ -11,6 +11,7 @@ import {
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import BottomTab from "../components/bottomTab";
 
 const data = Array(20).fill(null);
 const screenWidth = Dimensions.get("window").width;
@@ -74,27 +75,10 @@ function HomeScreen() {
         />
 
         {/* 하단 메뉴 */}
-        <View style={styles.bottomTab}>
-          <TouchableOpacity style={styles.bottomTabItem}>
-            <Feather name="home" size={24} color="white" />
-            <Text style={styles.bottomTabTextActive}>홈</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.bottomTabItem}
-            onPress={() => navigation.navigate("ChatList")}
-          >
-            <Feather name="message-circle" size={24} color="#ffffff80" />
-            <Text style={styles.bottomTabText}>대화</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomTabItem}>
-            <Feather name="plus" size={24} color="#ffffff80" />
-            <Text style={styles.bottomTabText}>제작</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomTabItem}>
-            <Feather name="user" size={24} color="#ffffff80" />
-            <Text style={styles.bottomTabText}>마이페이지</Text>
-          </TouchableOpacity>
-        </View>
+        <BottomTab
+          activeTab="Home"
+          onTabPress={(tabName) => navigation.navigate(tabName)}
+        />
       </View>
     </SafeAreaView>
   );
@@ -174,21 +158,5 @@ const styles = StyleSheet.create({
   },
   tag: {
     color: "#ffffffb3",
-  },
-  bottomTab: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingTop: 7,
-  },
-  bottomTabItem: {
-    alignItems: "center",
-    gap: 5,
-  },
-  bottomTabTextActive: {
-    color: "white",
-  },
-  bottomTabText: {
-    color: "#ffffff80",
   },
 });
