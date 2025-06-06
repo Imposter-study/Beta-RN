@@ -1,33 +1,26 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import HomeScreen from "./screens/homeScreen";
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import ChatListScreen from "./screens/chatListScreen";
 
-function Root() {
-  const insets = useSafeAreaInsets();
+const Stack = createNativeStackNavigator();
 
-  return (
-    <View style={{ ...styles.container, paddingTop: insets.top }}>
-      <HomeScreen />
-      <StatusBar style="light" backgroundColor="#1a1b1b" translucent={false} />
-    </View>
-  );
-}
 export default function App() {
   return (
     <SafeAreaProvider>
-      <Root />
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{ headerShown: false }}
+          initialRouteName="Home"
+        >
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="ChatList" component={ChatListScreen} />
+        </Stack.Navigator>
+        <StatusBar style="light" backgroundColor="#1a1b1b" />
+      </NavigationContainer>
     </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1a1b1b",
-    alignItems: "center",
-  },
-});
