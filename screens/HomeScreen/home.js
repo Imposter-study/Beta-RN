@@ -8,15 +8,12 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const data = Array(20).fill(null);
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.45;
 
 function Home() {
-
   const renderItem = ({ index }) => {
     return (
       <TouchableOpacity style={styles.card}>
@@ -36,21 +33,17 @@ function Home() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-      <View style={styles.container}>
-
-        {/* 캐릭터 리스트 */}
-        <FlatList
-          data={data}
-          keyExtractor={(_, index) => index.toString()}
-          renderItem={renderItem}
-          numColumns={2}
-          contentContainerStyle={styles.flatListContent}
-          columnWrapperStyle={styles.columnWrapper}
-        />
-
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      {/* 캐릭터 리스트 */}
+      <FlatList
+        data={data}
+        keyExtractor={(_, index) => index.toString()}
+        renderItem={renderItem}
+        numColumns={2}
+        contentContainerStyle={styles.flatListContent}
+        columnWrapperStyle={styles.columnWrapper}
+      />
+    </View>
   );
 }
 

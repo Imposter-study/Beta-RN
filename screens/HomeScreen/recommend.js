@@ -5,22 +5,15 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  FlatList,
   Dimensions,
   Button,
   ScrollView,
 } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
-import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import BottomTab from "../../components/bottomTab";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.3;
 
 function Recommend() {
-  // const navigation = useNavigation();
-
   const topCharacters = Array(10).fill({
     id: 1,
     imageUri:
@@ -32,218 +25,91 @@ function Recommend() {
   });
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-      <View style={styles.container}>
-        <ScrollView>
-          {/* 실시간 TOP 10 캐릭터 */}
-          <View style={{ padding: 20 }}>
-            <View
-              style={{
-                flexDirection: "row",
-
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text
-                style={{ color: "white", fontSize: 24, fontWeight: "bold" }}
-              >
-                실시간 TOP 10 캐릭터
-              </Text>
-              <Button title="더보기" color={"#7C67FF"} />
-            </View>
-            <View>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingVertical: 10 }}
-              >
-                {topCharacters.map((char, index) => (
-                  <TouchableOpacity key={index} style={styles.card}>
-                    {/* 이미지와 순위 (겹치기) */}
-                    <View style={{ position: "relative", marginBottom: 8 }}>
-                      <Image
-                        source={{ uri: char.imageUri }}
-                        style={styles.image}
-                      />
-                      <View
-                        style={{
-                          position: "absolute",
-                          bottom: 0, // 이미지 하단에 살짝 걸치게
-                          left: -16,
-                          // backgroundColor: "#7C67FF",
-                          // borderRadius: 12,
-                          paddingHorizontal: 6,
-                          paddingVertical: 2,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            color: "#00000080",
-                            fontWeight: "bold",
-                            fontSize: imageWidth * 0.6,
-                          }}
-                        >
-                          {index + 1}
-                        </Text>
-                      </View>
-                    </View>
-
-                    {/* 텍스트 정보들 */}
-                    <View
-                      style={{
-                        width: "100%",
-                        padding: 5,
-                        marginHorizontal: 10,
-                      }}
-                    >
-                      <Text style={styles.name}>{char.name}</Text>
-                      <Text style={styles.intro}>{char.intro}</Text>
-                      <Text style={styles.tag}>{char.tag}</Text>
-                      <Text
-                        style={{
-                          color: "#ffffff80",
-                          borderRadius: 6,
-                          backgroundColor: "black",
-                          alignSelf: "flex-start",
-                          paddingHorizontal: 4,
-                          paddingVertical: 2,
-                          marginTop: 4,
-                        }}
-                      >
-                        {char.creator}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
+    <View style={styles.container}>
+      <ScrollView>
+        {/* 실시간 TOP 10 캐릭터 */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>실시간 TOP 10 캐릭터</Text>
+            <Button title="더보기" color={"#7C67FF"} />
           </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {topCharacters.map((char, index) => (
+              <TouchableOpacity key={index} style={styles.card}>
+                <View style={styles.imageWrapper}>
+                  <Image source={{ uri: char.imageUri }} style={styles.image} />
+                  <View style={styles.rankOverlay}>
+                    <Text style={styles.rankText}>{index + 1}</Text>
+                  </View>
+                </View>
+                <View style={styles.textContainer}>
+                  <Text style={styles.name}>{char.name}</Text>
+                  <Text style={styles.intro}>{char.intro}</Text>
+                  <Text style={styles.tag}>{char.tag}</Text>
+                  <Text style={styles.creator}>{char.creator}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
 
-          {/* 내 맘을 훔쳐간 유죄남 모음.zip */}
-          <View style={{ padding: 20 }}>
-            <View
-              style={{
-                flexDirection: "row",
-
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text
-                style={{ color: "white", fontSize: 24, fontWeight: "bold" }}
-              >
-                내 맘을 훔쳐간 유죄남 모음.zip
-              </Text>
-              {/* <Button title="더보기" color={"#7C67FF"} /> */}
-            </View>
-            <View>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingVertical: 10 }}
-              >
-                {topCharacters.map((char, index) => (
-                  <TouchableOpacity key={index} style={styles.card}>
-                    <Image
-                      source={{ uri: char.imageUri }}
-                      style={styles.image}
-                    />
-
-                    {/* 텍스트 정보들 */}
-                    <View
-                      style={{
-                        width: "100%",
-                        padding: 5,
-                        marginHorizontal: 10,
-                      }}
-                    >
-                      <Text style={styles.name}>{char.name}</Text>
-                      <Text style={styles.intro}>{char.intro}</Text>
-                      <Text style={styles.tag}>{char.tag}</Text>
-                      <Text
-                        style={{
-                          color: "#ffffff80",
-                          borderRadius: 6,
-                          backgroundColor: "black",
-                          alignSelf: "flex-start",
-                          paddingHorizontal: 4,
-                          paddingVertical: 2,
-                          marginTop: 4,
-                        }}
-                      >
-                        {char.creator}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
+        {/* 유죄남 모음 */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>
+              내 맘을 훔쳐간 유죄남 모음.zip
+            </Text>
           </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {topCharacters.map((char, index) => (
+              <TouchableOpacity key={index} style={styles.card}>
+                <Image source={{ uri: char.imageUri }} style={styles.image} />
+                <View style={styles.textContainer}>
+                  <Text style={styles.name}>{char.name}</Text>
+                  <Text style={styles.intro}>{char.intro}</Text>
+                  <Text style={styles.tag}>{char.tag}</Text>
+                  <Text style={styles.creator}>{char.creator}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
 
-          {/* 이제 막 주목받기 시작한 캐릭터들 */}
-          <View style={{ padding: 20 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text
-                style={{ color: "white", fontSize: 24, fontWeight: "bold" }}
-              >
-                이제 막 주목받기 시작한 캐릭터들
-              </Text>
-              {/* <Button title="더보기" color={"#7C67FF"} /> */}
-            </View>
-            <View>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingVertical: 10 }}
-              >
-                {topCharacters.map((char, index) => (
-                  <TouchableOpacity key={index} style={styles.card}>
-                    <Image
-                      source={{ uri: char.imageUri }}
-                      style={styles.image}
-                    />
-
-                    {/* 텍스트 정보들 */}
-                    <View
-                      style={{
-                        width: "100%",
-                        padding: 5,
-                        marginHorizontal: 10,
-                      }}
-                    >
-                      <Text style={styles.name}>{char.name}</Text>
-                      <Text style={styles.intro}>{char.intro}</Text>
-                      <Text style={styles.tag}>{char.tag}</Text>
-                      <Text
-                        style={{
-                          color: "#ffffff80",
-                          borderRadius: 6,
-                          backgroundColor: "black",
-                          alignSelf: "flex-start",
-                          paddingHorizontal: 4,
-                          paddingVertical: 2,
-                          marginTop: 4,
-                        }}
-                      >
-                        {char.creator}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
+        {/* 주목받기 시작한 캐릭터들 */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>
+              이제 막 주목받기 시작한 캐릭터들
+            </Text>
           </View>
-        </ScrollView>
-
-      </View>
-    </SafeAreaView>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {topCharacters.map((char, index) => (
+              <TouchableOpacity key={index} style={styles.card}>
+                <Image source={{ uri: char.imageUri }} style={styles.image} />
+                <View style={styles.textContainer}>
+                  <Text style={styles.name}>{char.name}</Text>
+                  <Text style={styles.intro}>{char.intro}</Text>
+                  <Text style={styles.tag}>{char.tag}</Text>
+                  <Text style={styles.creator}>{char.creator}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -255,62 +121,52 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#1a1b1b",
   },
-  topBar: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderBottomColor: "#ffffff20",
-    borderBottomWidth: 0.3,
+  sectionContainer: {
+    padding: 20,
   },
-  navLeft: {
+  sectionHeader: {
     flexDirection: "row",
-    gap: 10,
-    padding: 16,
     alignItems: "center",
-  },
-  navRight: {
-    flexDirection: "row",
-    padding: 16,
-    alignItems: "center",
-    gap: 24,
-  },
-  navActive: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  navInactive: {
-    color: "#ffffff80",
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  loginButton: {
-    backgroundColor: "#5220cc",
-    borderRadius: 6,
-    padding: 10,
-  },
-  loginButtonText: {
-    color: "white",
-    fontSize: 16,
-  },
-  flatListContent: {
-    paddingHorizontal: 12,
-    paddingBottom: 24,
-    marginTop: 20,
-  },
-  columnWrapper: {
     justifyContent: "space-between",
-    marginBottom: 12,
+  },
+  sectionTitle: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  scrollContent: {
+    paddingVertical: 10,
   },
   card: {
     marginHorizontal: 10,
     gap: 4,
     width: imageWidth,
   },
+  imageWrapper: {
+    position: "relative",
+    marginBottom: 8,
+  },
   image: {
     width: "100%",
     height: imageWidth,
     borderRadius: 12,
+    marginHorizontal: 10,
+  },
+  rankOverlay: {
+    position: "absolute",
+    bottom: 0,
+    left: -16,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  rankText: {
+    color: "#00000080",
+    fontWeight: "bold",
+    fontSize: imageWidth * 0.6,
+  },
+  textContainer: {
+    width: "100%",
+    padding: 5,
     marginHorizontal: 10,
   },
   name: {
@@ -322,5 +178,14 @@ const styles = StyleSheet.create({
   },
   tag: {
     color: "#ffffffb3",
+  },
+  creator: {
+    color: "#ffffff80",
+    borderRadius: 6,
+    backgroundColor: "black",
+    alignSelf: "flex-start",
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    marginTop: 4,
   },
 });

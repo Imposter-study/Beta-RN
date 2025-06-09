@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  Dimensions,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,31 +7,9 @@ import BottomTab from "../../components/bottomTab";
 import Home from "./home";
 import Recommend from "./recommend";
 
-const data = Array(20).fill(null);
-const screenWidth = Dimensions.get("window").width;
-const imageWidth = screenWidth * 0.45;
-
 function HomeScreen() {
   const navigation = useNavigation();
   const [topTab, setTopTab] = useState("home");
-
-  const renderItem = ({ index }) => {
-    return (
-      <TouchableOpacity style={styles.card}>
-        <Image
-          source={{
-            uri: "https://mblogthumb-phinf.pstatic.net/20160817_259/retspe_14714118890125sC2j_PNG/%C7%C7%C4%AB%C3%F2_%281%29.png?type=w800",
-          }}
-          style={styles.image}
-        />
-        <View>
-          <Text style={styles.name}>캐릭터 이름 {index + 1}</Text>
-          <Text style={styles.intro}>캐릭터 인트로 소개글</Text>
-          <Text style={styles.tag}>#해시태그</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
@@ -137,34 +107,5 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: "white",
     fontSize: 16,
-  },
-  flatListContent: {
-    paddingHorizontal: 12,
-    paddingBottom: 24,
-    marginTop: 20,
-  },
-  columnWrapper: {
-    justifyContent: "space-between",
-    marginBottom: 12,
-  },
-  card: {
-    marginBottom: 6,
-    gap: 4,
-    width: imageWidth,
-  },
-  image: {
-    width: "100%",
-    height: imageWidth,
-    borderRadius: 12,
-  },
-  name: {
-    color: "white",
-    fontWeight: "bold",
-  },
-  intro: {
-    color: "#ffffff80",
-  },
-  tag: {
-    color: "#ffffffb3",
   },
 });
