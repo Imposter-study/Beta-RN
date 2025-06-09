@@ -13,7 +13,7 @@ import {
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import BottomTab from "../components/bottomTab";
+import BottomTab from "../../components/bottomTab";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.3;
@@ -34,29 +34,6 @@ function Recommend() {
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <View style={styles.container}>
-        {/* 상단 메뉴 */}
-        <View style={styles.topBar}>
-          <View style={styles.navLeft}>
-            <TouchableOpacity>
-              <Text style={styles.navInactive}>홈</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text style={styles.navActive}>추천</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text style={styles.navInactive}>랭킹</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.navRight}>
-            <TouchableOpacity>
-              <Feather name="search" size={24} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.loginButton}>
-              <Text style={styles.loginButtonText}>로그인</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
         <ScrollView>
           {/* 실시간 TOP 10 캐릭터 */}
           <View style={{ padding: 20 }}>
@@ -265,11 +242,6 @@ function Recommend() {
           </View>
         </ScrollView>
 
-        {/* 하단 메뉴 */}
-        <BottomTab
-          activeTab="Home"
-          onTabPress={(tabName) => navigation.navigate(tabName)}
-        />
       </View>
     </SafeAreaView>
   );

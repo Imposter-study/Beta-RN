@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,17 +8,14 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import BottomTab from "../components/bottomTab";
 
 const data = Array(20).fill(null);
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.45;
 
-function HomeScreen() {
-  const navigation = useNavigation();
+function Home() {
 
   const renderItem = ({ index }) => {
     return (
@@ -41,28 +38,6 @@ function HomeScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <View style={styles.container}>
-        {/* 상단 메뉴 */}
-        <View style={styles.topBar}>
-          <View style={styles.navLeft}>
-            <TouchableOpacity>
-              <Text style={styles.navActive}>홈</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text style={styles.navInactive}>추천</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text style={styles.navInactive}>랭킹</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.navRight}>
-            <TouchableOpacity>
-              <Feather name="search" size={24} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.loginButton}>
-              <Text style={styles.loginButtonText}>로그인</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
 
         {/* 캐릭터 리스트 */}
         <FlatList
@@ -74,61 +49,18 @@ function HomeScreen() {
           columnWrapperStyle={styles.columnWrapper}
         />
 
-        {/* 하단 메뉴 */}
-        <BottomTab
-          activeTab="Home"
-          onTabPress={(tabName) => navigation.navigate(tabName)}
-        />
       </View>
     </SafeAreaView>
   );
 }
 
-export default HomeScreen;
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
     backgroundColor: "#1a1b1b",
-  },
-  topBar: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderBottomColor: "#ffffff20",
-    borderBottomWidth: 0.3,
-  },
-  navLeft: {
-    flexDirection: "row",
-    gap: 10,
-    padding: 16,
-    alignItems: "center",
-  },
-  navRight: {
-    flexDirection: "row",
-    padding: 16,
-    alignItems: "center",
-    gap: 24,
-  },
-  navActive: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  navInactive: {
-    color: "#ffffff80",
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  loginButton: {
-    backgroundColor: "#5220cc",
-    borderRadius: 6,
-    padding: 10,
-  },
-  loginButtonText: {
-    color: "white",
-    fontSize: 16,
   },
   flatListContent: {
     paddingHorizontal: 12,
