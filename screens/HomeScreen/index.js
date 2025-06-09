@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import BottomTab from "../../components/bottomTab";
 import Home from "./home";
 import Recommend from "./recommend";
+import Ranking from "./ranking";
 
 function HomeScreen() {
   const navigation = useNavigation();
@@ -35,8 +36,14 @@ function HomeScreen() {
                 추천
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity>
-              <Text style={styles.navInactive}>랭킹</Text>
+            <TouchableOpacity onPress={() => setTopTab("ranking")}>
+              <Text
+                style={
+                  topTab === "ranking" ? styles.navActive : styles.navInactive
+                }
+              >
+                랭킹
+              </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.navRight}>
@@ -51,6 +58,7 @@ function HomeScreen() {
 
         {topTab === "home" && <Home />}
         {topTab === "recommend" && <Recommend />}
+        {topTab === "ranking" && <Ranking />}
 
         {/* 하단 메뉴 */}
         <BottomTab
