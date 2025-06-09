@@ -1,3 +1,4 @@
+import React, { useState, useRef } from "react";
 import {
   StyleSheet,
   View,
@@ -12,6 +13,57 @@ const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.25;
 
 function Ranking() {
+  const scrollViewRef = useRef(null);
+
+  // 각 섹션의 y위치를 저장할 상태
+  const [sectionPositions, setSectionPoisitions] = useState({});
+  // 탭 선택 상태
+  const [selectedTab, setSelectedTab] = useState("realtime");
+
+  // 스크롤 위치에 따라 탭 업데이트
+  const handleScroll = (event) => {
+    const scrollY = event.nativeEvent.contentOffset.y;
+
+    // 섹션 키와 위치 배열로 변환 (y 기준 오름차순 정렬)
+    const sortedSections = Object.entries(sectionPositions).sort(
+      (a, b) => a[1] - b[1]
+    );
+
+    // 현재 scrollY가 어느 섹션에 해당하는지 찾기
+    let currentTab = selectedTab;
+    for (let i = 0; i < sortedSections.length; i++) {
+      const [key, pos] = sortedSections[i];
+      const nextPos =
+        i + 1 < sortedSections.length ? sortedSections[i + 1][1] : Infinity;
+
+      if (scrollY >= pos && scrollY < nextPos) {
+        currentTab = key;
+        break;
+      }
+    }
+
+    if (currentTab !== selectedTab) {
+      setSelectedTab(currentTab);
+    }
+  };
+
+  // 탭 클릭 시 해당 위치로 스크롤
+  const onTabPress = (tabKey) => {
+    setSelectedTab(tabKey);
+    if (scrollViewRef.current && sectionPositions[tabKey] !== undefined) {
+      scrollViewRef.current.scrollTo({
+        y: sectionPositions[tabKey],
+        animated: true,
+      });
+    }
+  };
+
+  // 섹션이 화면에 렌더링 될 때 위치 측정해서 저장
+  const onLayoutSection = (tabKey, event) => {
+    const { y } = event.nativeEvent.layout;
+    setSectionPoisitions((prev) => ({ ...prev, [tabKey]: y }));
+  };
+
   const topCharacters = Array(10).fill({
     id: 1,
     imageUri:
@@ -24,35 +76,71 @@ function Ranking() {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
-        <View style={styles.topTabContainer}>
-          <View style={styles.topTabButtons}>
-            <TouchableOpacity>
-              <Text
-                style={[styles.topTabButtonText, styles.topTabButtonActive]}
-              >
-                실시간
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text style={styles.topTabButtonText}>일간</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text style={styles.topTabButtonText}>주간</Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text style={styles.topTabButtonText}>월간</Text>
-            </TouchableOpacity>
-          </View>
-          <View>
-            <Text style={styles.topTabDescription}>
-              전체 인기순 / 남성 인기순 / 여성 인기순
+      <View style={styles.topTabContainer}>
+        <View style={styles.topTabButtons}>
+          <TouchableOpacity onPress={() => onTabPress("realtime")}>
+            <Text
+              // style={[styles.topTabButtonText, styles.topTabButtonActive]}
+              style={
+                selectedTab === "realtime"
+                  ? styles.topTabButtonActive
+                  : styles.topTabButtonText
+              }
+            >
+              실시간
             </Text>
-          </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => onTabPress("daily")}>
+            <Text
+              style={
+                selectedTab === "daily"
+                  ? [styles.topTabButtonActive]
+                  : styles.topTabButtonText
+              }
+            >
+              일간
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => onTabPress("weekly")}>
+            <Text
+              style={
+                selectedTab === "weekly"
+                  ? styles.topTabButtonActive
+                  : styles.topTabButtonText
+              }
+            >
+              주간
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => onTabPress("monthly")}>
+            <Text
+              style={
+                selectedTab === "monthly"
+                  ? styles.topTabButtonActive
+                  : styles.topTabButtonText
+              }
+            >
+              월간
+            </Text>
+          </TouchableOpacity>
         </View>
-
+        <View>
+          <Text style={styles.topTabDescription}>
+            전체 인기순 / 남성 인기순 / 여성 인기순
+          </Text>
+        </View>
+      </View>
+      <ScrollView
+        ref={scrollViewRef}
+        style={{ flex: 1 }}
+        scrollEventThrottle={16} // 16ms 마다 onScroll 호출, 부드러운 반응
+        onScroll={handleScroll}
+      >
         {/* 실시간 랭킹 */}
-        <View style={styles.sectionHeader}>
+        <View
+          style={styles.sectionHeader}
+          onLayout={(e) => onLayoutSection("realtime", e)}
+        >
           <Text style={styles.sectionTitle}>지금 뜨는 랭킹 캐릭터</Text>
           <Text style={styles.sectionSubTitle}>20분전 업데이트 됨</Text>
         </View>
@@ -85,7 +173,10 @@ function Ranking() {
         </View>
 
         {/* 일간 랭킹 */}
-        <View style={styles.sectionHeader}>
+        <View
+          style={styles.sectionHeader}
+          onLayout={(e) => onLayoutSection("daily", e)}
+        >
           <Text style={styles.sectionTitle}>오늘의 랭킹 캐릭터</Text>
           <Text style={styles.sectionSubTitle}>
             매일 오전 6시에 업데이트 됨
@@ -120,7 +211,10 @@ function Ranking() {
         </View>
 
         {/* 주간 랭킹 */}
-        <View style={styles.sectionHeader}>
+        <View
+          style={styles.sectionHeader}
+          onLayout={(e) => onLayoutSection("weekly", e)}
+        >
           <Text style={styles.sectionTitle}>이번 주의 랭킹 캐릭터</Text>
           <Text style={styles.sectionSubTitle}>
             매주 월요일 오전 6시에 업데이트 됨
@@ -155,7 +249,10 @@ function Ranking() {
         </View>
 
         {/* 월간 랭킹 */}
-        <View style={styles.sectionHeader}>
+        <View
+          style={styles.sectionHeader}
+          onLayout={(e) => onLayoutSection("monthly", e)}
+        >
           <Text style={styles.sectionTitle}>6월의 랭킹 캐릭터</Text>
           <Text style={styles.sectionSubTitle}>
             매월 1일 오전 6시에 업데이트 됨
@@ -222,6 +319,12 @@ const styles = StyleSheet.create({
   },
   topTabButtonActive: {
     backgroundColor: "#6728FF",
+    color: "white",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    margin: 3,
+    borderRadius: 18,
+    fontSize: 16,
   },
   topTabDescription: {
     color: "#FFFFFF80",
