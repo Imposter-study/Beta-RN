@@ -8,6 +8,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.25;
@@ -19,6 +20,15 @@ function Ranking() {
   const [sectionPositions, setSectionPoisitions] = useState({});
   // 탭 선택 상태
   const [selectedTab, setSelectedTab] = useState("realtime");
+
+  // 드롭다운 상태 선언
+  const [open, setOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("전체 인기순");
+  const [items, setItems] = useState([
+    { label: "전체 인기순", value: "전체 인기순" },
+    { label: "남성 인기순", value: "남성 인기순" },
+    { label: "여성 인기순", value: "여성 인기순" },
+  ]);
 
   // 스크롤 위치에 따라 탭 업데이트
   const handleScroll = (event) => {
@@ -124,10 +134,39 @@ function Ranking() {
             </Text>
           </TouchableOpacity>
         </View>
-        <View>
-          <Text style={styles.topTabDescription}>
-            전체 인기순 / 남성 인기순 / 여성 인기순
-          </Text>
+        <View style={{ zIndex: 1 }}>
+          {/* <Text style={styles.topTabDescription}>
+              전체 인기순 / 남성 인기순 / 여성 인기순
+            </Text> */}
+          <DropDownPicker
+            open={open}
+            value={selectedCategory}
+            items={items}
+            setOpen={setOpen}
+            setValue={setSelectedCategory}
+            setItems={setItems}
+            containerStyle={
+              {
+                //   width: "auto",
+              }
+            }
+            style={{
+              backgroundColor: "transparent",
+              borderColor: "transparent",
+              width: 120,
+            }}
+            labelStyle={{ color: "#FFFFFF80" }}
+            textStyle={{ color: "white" }} // 드롭다운 리스트 텍스트 색
+            dropDownContainerStyle={{
+              backgroundColor: "rgb(62, 62, 65)",
+              borderColor: "#ffffff14",
+              width: "auto",
+            }}
+            listItemContainerStyle={{
+              width: 120,
+            }}
+            arrowIconStyle={{ tintColor: "#FFFFFF80" }} // 화살표 색깔 변경
+          />
         </View>
       </View>
       <ScrollView
