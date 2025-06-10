@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   View,
@@ -14,6 +15,8 @@ const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.3;
 
 function Recommend() {
+  const navigation = useNavigation();
+
   const topCharacters = Array(10).fill({
     id: 1,
     imageUri:
@@ -39,7 +42,13 @@ function Recommend() {
             contentContainerStyle={styles.scrollContent}
           >
             {topCharacters.map((char, index) => (
-              <TouchableOpacity key={index} style={styles.card}>
+              <TouchableOpacity
+                key={index}
+                style={styles.card}
+                onPress={() =>
+                  navigation.navigate("CharacterDetail", { character: char })
+                }
+              >
                 <View style={styles.imageWrapper}>
                   <Image source={{ uri: char.imageUri }} style={styles.image} />
                   <View style={styles.rankOverlay}>
@@ -70,7 +79,13 @@ function Recommend() {
             contentContainerStyle={styles.scrollContent}
           >
             {topCharacters.map((char, index) => (
-              <TouchableOpacity key={index} style={styles.card}>
+              <TouchableOpacity
+                key={index}
+                style={styles.card}
+                onPress={() =>
+                  navigation.navigate("CharacterDetail", { character: char })
+                }
+              >
                 <Image source={{ uri: char.imageUri }} style={styles.image} />
                 <View style={styles.textContainer}>
                   <Text style={styles.name}>{char.name}</Text>
@@ -96,7 +111,13 @@ function Recommend() {
             contentContainerStyle={styles.scrollContent}
           >
             {topCharacters.map((char, index) => (
-              <TouchableOpacity key={index} style={styles.card}>
+              <TouchableOpacity
+                key={index}
+                style={styles.card}
+                onPress={() =>
+                  navigation.navigate("CharacterDetail", { character: char })
+                }
+              >
                 <Image source={{ uri: char.imageUri }} style={styles.image} />
                 <View style={styles.textContainer}>
                   <Text style={styles.name}>{char.name}</Text>

@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import HomeScreen from "./screens/HomeScreen/index";
 import ChatListScreen from "./screens/chatListScreen";
+import CharacterDetailScreen from "./screens/characterDetailScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,10 @@ export default function App() {
         >
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="ChatList" component={ChatListScreen} />
+          <Stack.Screen
+            name="CharacterDetail"
+            component={CharacterDetailScreen}
+          />
         </Stack.Navigator>
         <StatusBar style="light" backgroundColor="#1a1b1b" />
       </NavigationContainer>

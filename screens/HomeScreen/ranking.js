@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useState, useRef } from "react";
 import {
   StyleSheet,
@@ -14,6 +15,7 @@ const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.25;
 
 function Ranking() {
+  const navigation = useNavigation();
   const scrollViewRef = useRef(null);
 
   // 각 섹션의 y위치를 저장할 상태
@@ -185,7 +187,13 @@ function Ranking() {
         </View>
         <View>
           {topCharacters.map((char, index) => (
-            <TouchableOpacity key={index} style={styles.characterRow}>
+            <TouchableOpacity
+              key={index}
+              style={styles.characterRow}
+              onPress={() =>
+                navigation.navigate("CharacterDetail", { character: char })
+              }
+            >
               <View style={styles.characterImageWrapper}>
                 <View style={styles.rankNumberWrapper}>
                   <Text
@@ -223,7 +231,13 @@ function Ranking() {
         </View>
         <View>
           {topCharacters.map((char, index) => (
-            <TouchableOpacity key={index} style={styles.characterRow}>
+            <TouchableOpacity
+              key={index}
+              style={styles.characterRow}
+              onPress={() =>
+                navigation.navigate("CharacterDetail", { character: char })
+              }
+            >
               <View style={styles.characterImageWrapper}>
                 <View style={styles.rankNumberWrapper}>
                   <Text
@@ -261,7 +275,13 @@ function Ranking() {
         </View>
         <View>
           {topCharacters.map((char, index) => (
-            <TouchableOpacity key={index} style={styles.characterRow}>
+            <TouchableOpacity
+              key={index}
+              style={styles.characterRow}
+              onPress={() =>
+                navigation.navigate("CharacterDetail", { character: char })
+              }
+            >
               <View style={styles.characterImageWrapper}>
                 <View style={styles.rankNumberWrapper}>
                   <Text
@@ -299,7 +319,13 @@ function Ranking() {
         </View>
         <View>
           {topCharacters.map((char, index) => (
-            <TouchableOpacity key={index} style={styles.characterRow}>
+            <TouchableOpacity
+              key={index}
+              style={styles.characterRow}
+              onPress={() =>
+                navigation.navigate("CharacterDetail", { character: char })
+              }
+            >
               <View style={styles.characterImageWrapper}>
                 <View style={styles.rankNumberWrapper}>
                   <Text
