@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
   View,
@@ -14,9 +15,26 @@ const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.45;
 
 function Home() {
+  const navigation = useNavigation();
+
+  const topCharacters = {
+    id: 1,
+    imageUri:
+      "https://mblogthumb-phinf.pstatic.net/20160817_259/retspe_14714118890125sC2j_PNG/%C7%C7%C4%AB%C3%F2_%281%29.png?type=w800",
+    name: "캐릭터 이름",
+    intro: "캐릭터 인트로 소개글",
+    tag: "#해시태그",
+    creator: "@creator",
+  };
+
   const renderItem = ({ index }) => {
     return (
-      <TouchableOpacity style={styles.card}>
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() =>
+          navigation.navigate("CharacterDetail", { character: topCharacters })
+        }
+      >
         <Image
           source={{
             uri: "https://mblogthumb-phinf.pstatic.net/20160817_259/retspe_14714118890125sC2j_PNG/%C7%C7%C4%AB%C3%F2_%281%29.png?type=w800",
