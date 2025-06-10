@@ -15,7 +15,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 function MyPageScreen() {
   const navigation = useNavigation();
-  const isLoggedIn = true;
+  const isLoggedIn = false;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -57,14 +57,14 @@ function MyPageScreen() {
             </View>
 
             {/* apple 로그인 버튼 */}
-            <View style={styles.appleLoginButton}>
+            {/* <View style={styles.appleLoginButton}>
               <Image
                 source={require("../assets/apple-symbol.png")}
                 style={styles.appleIcon}
                 resizeMode="contain"
               />
               <Text style={styles.appleLoginButtonText}>Apple로 계속하기</Text>
-            </View>
+            </View> */}
           </View>
         </View>
       ) : (
