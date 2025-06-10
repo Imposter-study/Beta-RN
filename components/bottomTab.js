@@ -6,7 +6,7 @@ function BottomTab({ activeTab = "home", onTabPress }) {
     { name: "Home", icon: "home", label: "홈" },
     { name: "ChatList", icon: "message-circle", label: "대화" },
     { name: "create", icon: "plus", label: "제작" },
-    { name: "mypage", icon: "user", label: "마이페이지" },
+    { name: "Mypage", icon: "user", label: "마이페이지" },
   ];
 
   return (
