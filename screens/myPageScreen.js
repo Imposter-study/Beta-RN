@@ -15,7 +15,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 function MyPageScreen() {
   const navigation = useNavigation();
-  const isLoggedIn = false;
+  const isLoggedIn = true;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -34,6 +34,7 @@ function MyPageScreen() {
           </View>
 
           <View style={styles.loginButtonContainer}>
+            {/* 카카오 로그인 버튼 */}
             <View style={styles.loginButton}>
               <Image
                 source={require("../assets/kakao-symbol.png")}
@@ -44,6 +45,7 @@ function MyPageScreen() {
               </Text>
             </View>
 
+            {/* 구글 로그인 버튼 */}
             <View style={styles.loginButton}>
               <Image
                 source={require("../assets/google-symbol.png")}
@@ -54,174 +56,68 @@ function MyPageScreen() {
               </Text>
             </View>
 
-            {/* <View style={styles.appleLoginButton}>
+            {/* apple 로그인 버튼 */}
+            <View style={styles.appleLoginButton}>
               <Image
                 source={require("../assets/apple-symbol.png")}
                 style={styles.appleIcon}
                 resizeMode="contain"
               />
               <Text style={styles.appleLoginButtonText}>Apple로 계속하기</Text>
-            </View> */}
+            </View>
           </View>
         </View>
       ) : (
         <ScrollView>
           {/* 회원 정보 */}
-          <View
-            style={{
-              flexDirection: "row",
-              gap: 10,
-              marginLeft: 20,
-              marginVertical: 10,
-            }}
-          >
+          <View style={styles.userInfoContainer}>
             <FontAwesome name="user-circle-o" size={70} color="gray" />
-            <View style={{ justifyContent: "center", gap: 3 }}>
-              <Text style={{ color: "white", fontSize: 24, fontWeight: "500" }}>
-                닉네임
-              </Text>
-              <Text style={{ color: "#ffffff80", fontSize: 16 }}>@아이디</Text>
+            <View style={styles.userTextContainer}>
+              <Text style={styles.nickname}>닉네임</Text>
+              <Text style={styles.userId}>@아이디</Text>
             </View>
           </View>
 
           {/* 팔로잉, 팔로워 */}
-          <View
-            style={{
-              flexDirection: "row",
-              gap: 5,
-              marginLeft: 20,
-              marginBlock: 10,
-            }}
-          >
-            <View style={{ flexDirection: "row", gap: 3 }}>
-              <Text style={{ color: "white" }}>0</Text>
-              <Text style={{ color: "#ffffff80" }}>팔로잉</Text>
+          <View style={styles.followContainer}>
+            <View style={styles.followItem}>
+              <Text style={styles.followNumber}>0</Text>
+              <Text style={styles.followLabel}>팔로잉</Text>
             </View>
-            <View style={{ flexDirection: "row", gap: 3 }}>
-              <Text style={{ color: "white" }}>0</Text>
-              <Text style={{ color: "#ffffff80" }}>팔로워</Text>
+            <View style={styles.followItem}>
+              <Text style={styles.followNumber}>0</Text>
+              <Text style={styles.followLabel}>팔로워</Text>
             </View>
           </View>
 
           {/* 프로필 공유 및 수정 버튼 */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              gap: 5,
-              marginHorizontal: 20,
-              marginBottom: 50,
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                backgroundColor: "rgb(62, 62, 65)",
-                borderRadius: 6,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text
-                style={{
-                  color: "white",
-                  paddingVertical: 10,
-                  fontSize: 18,
-                  fontWeight: "bold",
-                }}
-              >
-                프로필 공유
-              </Text>
+          <View style={styles.profileButtonContainer}>
+            <TouchableOpacity style={styles.profileButton}>
+              <Text style={styles.profileButtonText}>프로필 공유</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                backgroundColor: "rgb(62, 62, 65)",
-                borderRadius: 6,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text
-                style={{
-                  color: "white",
-                  paddingVertical: 10,
-                  fontSize: 18,
-                  fontWeight: "bold",
-                }}
-              >
-                프로필 편집
-              </Text>
+            <TouchableOpacity style={styles.profileButton}>
+              <Text style={styles.profileButtonText}>프로필 편집</Text>
             </TouchableOpacity>
           </View>
 
           {/* 유료 서비스 관리 */}
-          <View style={{ marginHorizontal: 20, marginBottom: 50 }}>
-            <Text
-              style={{
-                color: "white",
-                fontSize: 20,
-                fontWeight: "500",
-                marginBottom: 10,
-              }}
-            >
-              내 피스 / zeta pro
-            </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                backgroundColor: "rgb(38,39,39)",
-                paddingVertical: 10,
-                paddingHorizontal: 14,
-                borderTopRightRadius: 12,
-                borderTopLeftRadius: 12,
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 5,
-                }}
-              >
+          <View style={styles.serviceContainer}>
+            <Text style={styles.serviceTitle}>내 피스 / zeta pro</Text>
+            <View style={styles.serviceBoxTop}>
+              <View style={styles.serviceItem}>
                 <FontAwesome name="bitcoin" size={24} color="purple" />
-                <Text style={{ color: "white", fontSize: 18 }}>0</Text>
+                <Text style={styles.serviceText}>0</Text>
               </View>
               <MaterialIcons name="navigate-next" size={24} color="#ffffff80" />
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                backgroundColor: "rgb(38,39,39)",
-                paddingVertical: 10,
-                paddingHorizontal: 14,
-                borderBottomRightRadius: 12,
-                borderBottomLeftRadius: 12,
-              }}
-            >
-              <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
-              >
-                <Text
-                  style={{ color: "white", fontSize: 14, fontWeight: "900" }}
-                >
-                  zeta
-                </Text>
-                <Text
-                  style={{ color: "white", fontSize: 14, fontWeight: "200" }}
-                >
-                  pro
-                </Text>
-                <Text style={{ color: "#ffffff80", fontSize: 14 }}>
-                  광고 없이 zeta하기
-                </Text>
+            <View style={styles.serviceBoxBottom}>
+              <View style={styles.serviceItem}>
+                <Text style={styles.zetaBold}>zeta</Text>
+                <Text style={styles.zetaLight}>pro</Text>
+                <Text style={styles.serviceDesc}>광고 없이 zeta하기</Text>
               </View>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={{ color: "#ffffff80" }}>구매하기</Text>
+              <View style={styles.servicePurchase}>
+                <Text style={styles.purchaseText}>구매하기</Text>
                 <MaterialIcons
                   name="navigate-next"
                   size={24}
@@ -231,29 +127,18 @@ function MyPageScreen() {
             </View>
           </View>
 
-          {/* 케릭터 관리 */}
-          <View style={{ marginHorizontal: 20, marginBottom: 50 }}>
-            <Text style={{ color: "white", fontSize: 20, fontWeight: "500" }}>
-              캐릭터 관리
-            </Text>
-            <View style={{ alignItems: "center", padding: 30, gap: 10 }}>
-              <Text style={{ color: "#ffffff80", fontSize: 16 }}>
+          {/* 캐릭터 관리 */}
+          <View style={styles.characterContainer}>
+            <Text style={styles.characterTitle}>캐릭터 관리</Text>
+            <View style={styles.characterEmpty}>
+              <Text style={styles.characterEmptyText}>
                 아직 제작한 캐릭터가 없어요
               </Text>
-              <Text style={{ color: "white", fontWeight: "500", fontSize: 18 }}>
+              <Text style={styles.characterGuide}>
                 내가 원하는 캐릭터를 직접 제작해볼까요?
               </Text>
-              <TouchableOpacity style={{ marginVertical: 10 }}>
-                <Text
-                  style={{
-                    color: "white",
-                    backgroundColor: "rgb(82, 32, 204)",
-                    borderRadius: 6,
-                    paddingVertical: 10,
-                    paddingHorizontal: 20,
-                    fontSize: 18,
-                  }}
-                >
+              <TouchableOpacity style={styles.createCharacterButton}>
+                <Text style={styles.createCharacterButtonText}>
                   캐릭터 제작하기
                 </Text>
               </TouchableOpacity>
@@ -332,7 +217,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     backgroundColor: "white",
-    borderRadius: 12, // 원형
+    borderRadius: 12,
   },
   appleLoginButton: {
     flexDirection: "row",
@@ -355,6 +240,155 @@ const styles = StyleSheet.create({
   },
   appleLoginButtonText: {
     color: "black",
+    fontSize: 18,
+  },
+  userInfoContainer: {
+    flexDirection: "row",
+    gap: 10,
+    marginLeft: 20,
+    marginVertical: 10,
+  },
+  userTextContainer: {
+    justifyContent: "center",
+    gap: 3,
+  },
+  nickname: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: "500",
+  },
+  userId: {
+    color: "#ffffff80",
+    fontSize: 16,
+  },
+  followContainer: {
+    flexDirection: "row",
+    gap: 5,
+    marginLeft: 20,
+    marginVertical: 10,
+  },
+  followItem: {
+    flexDirection: "row",
+    gap: 3,
+  },
+  followNumber: {
+    color: "white",
+  },
+  followLabel: {
+    color: "#ffffff80",
+  },
+  profileButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 5,
+    marginHorizontal: 20,
+    marginBottom: 50,
+  },
+  profileButton: {
+    flex: 1,
+    backgroundColor: "rgb(62, 62, 65)",
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  profileButtonText: {
+    color: "white",
+    paddingVertical: 10,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  serviceContainer: {
+    marginHorizontal: 20,
+    marginBottom: 50,
+  },
+  serviceTitle: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "500",
+    marginBottom: 10,
+  },
+  serviceBoxTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "rgb(38,39,39)",
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderTopRightRadius: 12,
+    borderTopLeftRadius: 12,
+  },
+  serviceBoxBottom: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "rgb(38,39,39)",
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderBottomRightRadius: 12,
+    borderBottomLeftRadius: 12,
+  },
+  serviceItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+  },
+  serviceText: {
+    color: "white",
+    fontSize: 18,
+  },
+  zetaBold: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "900",
+  },
+  zetaLight: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "200",
+  },
+  serviceDesc: {
+    color: "#ffffff80",
+    fontSize: 14,
+  },
+  servicePurchase: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  purchaseText: {
+    color: "#ffffff80",
+  },
+  characterContainer: {
+    marginHorizontal: 20,
+    marginBottom: 50,
+  },
+  characterTitle: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "500",
+  },
+  characterEmpty: {
+    alignItems: "center",
+    padding: 30,
+    gap: 10,
+  },
+  characterEmptyText: {
+    color: "#ffffff80",
+    fontSize: 16,
+  },
+  characterGuide: {
+    color: "white",
+    fontWeight: "500",
+    fontSize: 18,
+  },
+  createCharacterButton: {
+    marginVertical: 10,
+  },
+  createCharacterButtonText: {
+    color: "white",
+    backgroundColor: "rgb(82, 32, 204)",
+    borderRadius: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     fontSize: 18,
   },
 });
