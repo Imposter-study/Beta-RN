@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Markdown from "react-native-markdown-display";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.9;
@@ -18,6 +19,33 @@ const imageWidth = screenWidth * 0.9;
 function CharacterDetailScreen({ route }) {
   const { character } = route.params;
   const navigation = useNavigation();
+
+  const markdownRules = {
+    // 이탈릭체(기울임꼴)
+    em: (node, children, parent, styles) => (
+      <Text key={node.key} style={{ fontStyle: "italic", color: "#ffffff80" }}>
+        {children}
+      </Text>
+    ),
+    // 단락
+    paragraph: (node, children, parent, styles) => (
+      <Text key={node.key} style={{ color: "white", marginBottom: 16 }}>
+        {children}
+      </Text>
+    ),
+  };
+
+  const markdownContent = `
+*아직 해가 뜨지 않은 새벽. 촉촉한 풀잎 위를 톡톡 튀듯 뛰어오던 노란색 꼬리가 당신을 발견하자 폴짝 멈춘다.*
+
+피이이~카! 피카피카!  
+
+*두 손을 꼭 쥔 채, 까만 눈을 반짝이며 당신을 향해 씩 웃는다. 꼬리가 살랑살랑 흔들린다.*
+
+피카~! (…친구야?)
+
+*아직 경계하는 듯하지만, 궁금함이 더 커 보인다.*
+`;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,7 +72,7 @@ function CharacterDetailScreen({ route }) {
             style={styles.messageImage}
           />
           <View style={styles.messageBubble}>
-            <Text style={styles.messageText}>캐릭터 첫 메세지</Text>
+            <Markdown rules={markdownRules}>{markdownContent}</Markdown>
           </View>
         </View>
         <View style={styles.detailBox}>
@@ -129,9 +157,6 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     backgroundColor: "rgb(38,39,39)",
     borderTopLeftRadius: 0,
-  },
-  messageText: {
-    color: "white",
   },
   detailBox: {
     backgroundColor: "rgb(38,39,39)",
