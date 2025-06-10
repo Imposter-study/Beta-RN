@@ -5,18 +5,34 @@ import {
   Image,
   Dimensions,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.9;
 
 function CharacterDetailScreen({ route }) {
   const { character } = route.params;
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.container}>
+      <View
+        style={{
+          paddingHorizontal: 10,
+          paddingVertical: 12,
+          borderBottomColor: "#ffffff0d",
+          borderBottomWidth: 0.3,
+        }}
+      >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-back-sharp" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
       <ScrollView style={{ padding: 10 }}>
         <View style={{ alignItems: "center" }}>
           <Image
@@ -109,7 +125,7 @@ function CharacterDetailScreen({ route }) {
         style={{
           backgroundColor: "rgb(26, 27, 27)",
           borderTopColor: "#ffffff14",
-          borderWidth: 0.3,
+          borderTopWidth: 0.3,
         }}
       >
         <View
