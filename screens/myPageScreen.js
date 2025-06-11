@@ -34,6 +34,20 @@ function MyPageScreen() {
           </View>
 
           <View style={styles.loginButtonContainer}>
+            {/* beta 회원가입 버튼 */}
+            <TouchableOpacity
+              style={styles.loginButton}
+              onPress={() => navigation.navigate("SignUp")}
+            >
+              {/* <Image
+                source={require("../assets/kakao-symbol.png")}
+                style={styles.loginIcon}
+              /> */}
+              <Text style={{ ...styles.loginButtonText, fontSize: 20 }}>
+                beta로 시작하기
+              </Text>
+            </TouchableOpacity>
+
             {/* 카카오 로그인 버튼 */}
             <View style={styles.loginButton}>
               <Image
