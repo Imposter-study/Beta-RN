@@ -23,6 +23,9 @@ function SignUpStep1() {
   const isFormFilled =
     username.length > 0 && password.length > 0 && passwordConfirm.length > 0;
 
+  // 패스워드가 일치하는지 확인
+  const isMissmatched = password.length > 0 && password !== passwordConfirm;
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -126,7 +129,9 @@ function SignUpStep1() {
                   onBlur={() => setFocused("")}
                   style={{
                     backgroundColor:
-                      focused === "passwordConfirm" ? "transparent" : "rgb(45,45,45)",
+                      focused === "passwordConfirm"
+                        ? "transparent"
+                        : "rgb(45,45,45)",
                     padding: 10,
                     marginVertical: 10,
                     borderRadius: 6,
@@ -140,6 +145,22 @@ function SignUpStep1() {
                   }}
                 />
               </View>
+
+              {/* 패스워드 일치 경고 */}
+              {isMissmatched ? (
+                <View
+                  style={{ flexDirection: "row", alignItems: "center", gap: 3 }}
+                >
+                  <Ionicons
+                    name="information-circle-outline"
+                    size={24}
+                    color="rgb(103, 40, 225)"
+                  />
+                  <Text style={{ color: "#ffffff80" }}>
+                    패스워드가 일치하지 않습니다
+                  </Text>
+                </View>
+              ) : null}
             </View>
           </View>
 
@@ -147,14 +168,18 @@ function SignUpStep1() {
           <View style={{ marginHorizontal: 20 }}>
             <TouchableOpacity
               style={{ alignItems: "center" }}
-              disabled={!isFormFilled} // 입력이 안 되면 비활성화
+              disabled={!isFormFilled && !isMissmatched} // 입력이 안 되면 비활성화
             >
               <Text
                 style={{
-                  backgroundColor: isFormFilled
-                    ? "rgb(103, 40, 225)"
-                    : "rgb(45, 45, 45)",
-                  color: isFormFilled ? "white" : "rgb(115, 120, 131)",
+                  backgroundColor:
+                    isFormFilled && !isMissmatched
+                      ? "rgb(103, 40, 225)"
+                      : "rgb(45, 45, 45)",
+                  color:
+                    isFormFilled && !isMissmatched
+                      ? "white"
+                      : "rgb(115, 120, 131)",
                   paddingVertical: 15,
                   borderRadius: 6,
                   fontSize: 16,
