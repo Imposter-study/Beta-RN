@@ -12,8 +12,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 function SignUpStep1() {
+  const navigation = useNavigation()
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -169,6 +172,7 @@ function SignUpStep1() {
             <TouchableOpacity
               style={{ alignItems: "center" }}
               disabled={!isFormFilled && !isMissmatched} // 입력이 안 되면 비활성화
+              onPress={ () => navigation.navigate("SignUpStep2")}
             >
               <Text
                 style={{
