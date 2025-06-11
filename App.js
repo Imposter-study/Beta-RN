@@ -7,6 +7,7 @@ import HomeScreen from "./screens/HomeScreen/index";
 import ChatListScreen from "./screens/chatListScreen";
 import CharacterDetailScreen from "./screens/characterDetailScreen";
 import MyPageScreen from "./screens/myPageScreen";
+import SignUpScreen from "./screens/SignUpScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -18,13 +19,11 @@ export default function App() {
           screenOptions={{ headerShown: false }}
           initialRouteName="Home"
         >
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="ChatList" component={ChatListScreen} />
-          <Stack.Screen
-            name="CharacterDetail"
-            component={CharacterDetailScreen}
-          />
-          <Stack.Screen name="Mypage" component={MyPageScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />                            {/* 회원가입 스크린*/}
+          <Stack.Screen name="Home" component={HomeScreen} />                                {/* 홈 스크린 */}
+          <Stack.Screen name="ChatList" component={ChatListScreen} />                        {/* 채팅 목록 스크린 */}
+          <Stack.Screen name="CharacterDetail" component={CharacterDetailScreen} />          {/* 캐릭터 상세 스크린 */}
+          <Stack.Screen name="Mypage" component={MyPageScreen} />                            {/* 마이페이지 스크린 */}
         </Stack.Navigator>
         <StatusBar style="light" backgroundColor="#1a1b1b" />
       </NavigationContainer>
