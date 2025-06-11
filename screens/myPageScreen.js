@@ -102,7 +102,7 @@ function MyPageScreen() {
 
           {/* 유료 서비스 관리 */}
           <View style={styles.serviceContainer}>
-            <Text style={styles.serviceTitle}>내 피스 / zeta pro</Text>
+            <Text style={styles.serviceTitle}>내 피스 / beta pro</Text>
             <View style={styles.serviceBoxTop}>
               <View style={styles.serviceItem}>
                 <FontAwesome name="bitcoin" size={24} color="purple" />
@@ -112,9 +112,9 @@ function MyPageScreen() {
             </View>
             <View style={styles.serviceBoxBottom}>
               <View style={styles.serviceItem}>
-                <Text style={styles.zetaBold}>zeta</Text>
-                <Text style={styles.zetaLight}>pro</Text>
-                <Text style={styles.serviceDesc}>광고 없이 zeta하기</Text>
+                <Text style={styles.betaBold}>beta</Text>
+                <Text style={styles.betaLight}>pro</Text>
+                <Text style={styles.serviceDesc}>광고 없이 beta하기</Text>
               </View>
               <View style={styles.servicePurchase}>
                 <Text style={styles.purchaseText}>구매하기</Text>
@@ -336,12 +336,12 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
   },
-  zetaBold: {
+  betaBold: {
     color: "white",
     fontSize: 14,
     fontWeight: "900",
   },
-  zetaLight: {
+  betaLight: {
     color: "white",
     fontSize: 14,
     fontWeight: "200",
