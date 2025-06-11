@@ -17,6 +17,7 @@ function SignUpStep1() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [focused, setFocused] = useState("");
 
   // 아이디와 패스워드가 모두 입력됐는지 확인
   const isFormFilled =
@@ -57,13 +58,19 @@ function SignUpStep1() {
                   placeholderTextColor="rgba(225, 225,225, 0.5)"
                   value={username}
                   onChangeText={(text) => setUsername(text)}
+                  onFocus={() => setFocused("username")}
+                  onBlur={() => setFocused("")}
                   style={{
-                    backgroundColor: "rgb(45,45,45)",
+                    backgroundColor:
+                      focused === "username" ? "transparent" : "rgb(45,45,45)",
                     padding: 10,
                     marginVertical: 10,
                     borderRadius: 6,
-                    borderWidth: 0.3,
-                    borderColor: "rgba(225, 225,225, 0.3)",
+                    borderWidth: focused === "username" ? 1.5 : 0.3,
+                    borderColor:
+                      focused === "username"
+                        ? "rgb(103, 40, 225)"
+                        : "rgba(225, 225,225, 0.3)",
                     fontSize: 16,
                     color: "white",
                   }}
@@ -83,13 +90,19 @@ function SignUpStep1() {
                   secureTextEntry={true} // 패스워드 입력 모드
                   value={password}
                   onChangeText={(text) => setPassword(text)}
+                  onFocus={() => setFocused("password")}
+                  onBlur={() => setFocused("")}
                   style={{
-                    backgroundColor: "rgb(45,45,45)",
+                    backgroundColor:
+                      focused === "password" ? "transparent" : "rgb(45,45,45)",
                     padding: 10,
                     marginVertical: 10,
                     borderRadius: 6,
-                    borderWidth: 0.3,
-                    borderColor: "rgba(225, 225,225, 0.3)",
+                    borderWidth: focused === "password" ? 1.5 : 0.3,
+                    borderColor:
+                      focused === "password"
+                        ? "rgb(103, 40, 225)"
+                        : "rgba(225, 225,225, 0.3)",
                     fontSize: 16,
                     color: "white",
                   }}
@@ -109,13 +122,19 @@ function SignUpStep1() {
                   secureTextEntry={true} // 패스워드 입력 모드
                   value={passwordConfirm}
                   onChangeText={(text) => setPasswordConfirm(text)}
+                  onFocus={() => setFocused("passwordConfirm")}
+                  onBlur={() => setFocused("")}
                   style={{
-                    backgroundColor: "rgb(45,45,45)",
+                    backgroundColor:
+                      focused === "passwordConfirm" ? "transparent" : "rgb(45,45,45)",
                     padding: 10,
                     marginVertical: 10,
                     borderRadius: 6,
-                    borderWidth: 0.3,
-                    borderColor: "rgba(225, 225,225, 0.3)",
+                    borderWidth: focused === "passwordConfirm" ? 1.5 : 0.3,
+                    borderColor:
+                      focused === "passwordConfirm"
+                        ? "rgb(103, 40, 225)"
+                        : "rgba(225, 225,225, 0.3)",
                     fontSize: 16,
                     color: "white",
                   }}
