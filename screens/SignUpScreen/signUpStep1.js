@@ -7,8 +7,16 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useState } from "react";
 
 function SignUpStep1() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+
+  // 아이디와 패스워드가 모두 입력됐는지 확인
+  const isFormFilled =
+    username.length > 0 && password.length > 0 && passwordConfirm.length > 0;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -36,6 +44,8 @@ function SignUpStep1() {
             <TextInput
               placeholder="아이디"
               placeholderTextColor="rgba(225, 225,225, 0.5)"
+              value={username}
+              onChangeText={(text) => setUsername(text)}
               style={{
                 backgroundColor: "rgb(45,45,45)",
                 padding: 10,
@@ -58,6 +68,8 @@ function SignUpStep1() {
               placeholder="패스워드"
               placeholderTextColor="rgba(225, 225,225, 0.5)"
               secureTextEntry={true} // 패스워드 입력 모드
+              value={password}
+              onChangeText={(text) => setPassword(text)}
               style={{
                 backgroundColor: "rgb(45,45,45)",
                 padding: 10,
@@ -80,6 +92,8 @@ function SignUpStep1() {
               placeholder="패스워드 확인"
               placeholderTextColor="rgba(225, 225,225, 0.5)"
               secureTextEntry={true} // 패스워드 입력 모드
+              value={passwordConfirm}
+              onChangeText={(text) => setPasswordConfirm(text)}
               style={{
                 backgroundColor: "rgb(45,45,45)",
                 padding: 10,
@@ -97,11 +111,16 @@ function SignUpStep1() {
 
       {/*  다음 버튼 */}
       <View style={{ marginHorizontal: 20 }}>
-        <TouchableOpacity style={{ alignItems: "center" }}>
+        <TouchableOpacity
+          style={{ alignItems: "center" }}
+          disabled={!isFormFilled} // 입력이 안 되면 비활성화
+        >
           <Text
             style={{
-              backgroundColor: "rgb(45, 45, 45)",
-              color: "rgb(115, 120, 131)",
+              backgroundColor: isFormFilled
+                ? "rgb(103, 40, 225)"
+                : "rgb(45, 45, 45)",
+              color: isFormFilled ? "white" : "rgb(115, 120, 131)",
               paddingVertical: 15,
               borderRadius: 6,
               fontSize: 16,
