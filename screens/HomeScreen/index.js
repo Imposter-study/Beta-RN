@@ -7,10 +7,17 @@ import BottomTab from "../../components/bottomTab";
 import Home from "./home";
 import Recommend from "./recommend";
 import Ranking from "./ranking";
+import Modal from "react-native-modal";
+import SignInButton from "../../components/signInButtons";
 
 function HomeScreen() {
   const navigation = useNavigation();
   const [topTab, setTopTab] = useState("home");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const isLoggedIn = false;
+
+  // 모달 상태 변경 함수
+  const toggleModal = () => setIsModalVisible((prev) => !prev);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
@@ -50,9 +57,14 @@ function HomeScreen() {
             <TouchableOpacity>
               <Feather name="search" size={24} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.loginButton}>
-              <Text style={styles.loginButtonText}>로그인</Text>
-            </TouchableOpacity>
+            {isLoggedIn ? null : (
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={toggleModal}
+              >
+                <Text style={styles.loginButtonText}>로그인</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
@@ -66,6 +78,77 @@ function HomeScreen() {
           onTabPress={(tabName) => navigation.navigate(tabName)}
         />
       </View>
+
+      {/* 로그인 모달 */}
+      <Modal
+        isVisible={isModalVisible}
+        onBackdropPress={toggleModal} // 비깥 눌렀을 때 닫힘
+        animationIn="slideInUp"
+        animationOut="slideOutDown"
+        style={{
+          justifyContent: "flex-end",
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: "rgb(38,38,39)",
+            flex: 0.45,
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            // minHeight:"50%"
+          }}
+        >
+          {/* 헤더 */}
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              borderBottomColor: "#ffffff0d",
+              borderBottomWidth: 0.5,
+              paddingVertical: 15,
+              paddingHorizontal: 10,
+            }}
+          >
+            <Text></Text>
+            <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+              로그인/회원가입
+            </Text>
+            <TouchableOpacity onPress={toggleModal}>
+              <Text
+                style={{ color: "white", fontSize: 24, fontWeight: "bold" }}
+              >
+                x
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {/* 본문 */}
+          <View style={{ flex: 1 }}>
+            <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
+              <Text
+                style={{ color: "white", fontSize: 24, fontWeight: "bold" }}
+              >
+                로그인하고 다양한 AI 캐릭터와
+              </Text>
+              <Text
+                style={{ color: "white", fontSize: 24, fontWeight: "bold" }}
+              >
+                자유롭게 대화해보세요
+              </Text>
+            </View>
+            <View
+              style={{
+                flex: 1,
+                // backgroundColor: "tomato",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <SignInButton togglwModal={toggleModal} />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
