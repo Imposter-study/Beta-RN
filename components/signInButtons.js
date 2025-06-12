@@ -19,7 +19,20 @@ function SignInButton({ togglwModal = () => {} }) {
             style={styles.loginIcon}
             /> */}
         <Text style={{ ...styles.loginButtonText, fontSize: 20 }}>
-          beta로 시작하기
+          beta로 시작하기(회원가입)
+        </Text>
+      </TouchableOpacity>
+
+      {/* beta 로그인 버튼 */}
+      <TouchableOpacity
+        style={styles.loginButton}
+        onPress={() => {
+          togglwModal(); // 모달 닫기
+          navigation.navigate("SignIn");
+        }}
+      >
+        <Text style={{ ...styles.loginButtonText, fontSize: 20 }}>
+          beta로 시작하기(로그인)
         </Text>
       </TouchableOpacity>
 
