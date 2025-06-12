@@ -13,6 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import { API_URL } from "../config";
 
 function SignInScreen() {
   const navigation = useNavigation();
@@ -23,6 +25,21 @@ function SignInScreen() {
 
   // 아이디와 패스워드가 모두 입력됐는지 확인
   const isFormFilled = username.length > 0 && password.length > 0;
+
+  // 로그인 요청 함수
+  const requestSignin = () => {
+    axios
+      .post(API_URL + "accounts/signin/", {
+        username,
+        password,
+      })
+      .then((response) => {
+        console.log("로그인 성공", response.data);
+      })
+      .catch((error) => {
+        console.log("로그인 실패", error);
+      });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -87,7 +104,10 @@ function SignInScreen() {
             <TouchableOpacity
               style={styles.nextButtonWrapper}
               disabled={!isFormFilled}
-              onPress={null}
+              onPress={() => {
+                requestSignin();
+                navigation.navigate("Home");
+              }}
             >
               <Text
                 style={[
