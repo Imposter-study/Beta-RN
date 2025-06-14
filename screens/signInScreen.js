@@ -8,6 +8,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -45,6 +46,7 @@ function SignInScreen() {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20} //키보드가 올라올 때, 얼마나 화면을 위로 밀어올릴지 조절
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <SafeAreaView style={styles.container}>
@@ -60,7 +62,10 @@ function SignInScreen() {
           </View>
 
           {/* 입력 내용 */}
-          <View style={styles.formContainer}>
+          <ScrollView
+            style={styles.formContainer}
+            keyboardShouldPersistTaps="handled" // 스크롤 영역 터치 시 키보드 닫힘
+          >
             <View style={styles.inputGroup}>
               {/* 아이디 입력 */}
               <View style={styles.inputWrapper}>
@@ -97,7 +102,7 @@ function SignInScreen() {
                 />
               </View>
             </View>
-          </View>
+          </ScrollView>
 
           {/* 다음 버튼 */}
           <View style={styles.buttonContainer}>
