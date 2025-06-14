@@ -25,6 +25,7 @@ function EditProfileScreen() {
   const [username, setUsername] = useState("");
   const [intro, setIntro] = useState("");
   const [focused, setFocused] = useState("");
+  const [editType, setEditType] = useState("social");
 
   // // 사용자 정보 가져오기
   // const getProfile = () => {
@@ -69,9 +70,11 @@ function EditProfileScreen() {
               style={{
                 flex: 0.5,
                 alignItems: "center",
-                borderBottomWidth: 1,
-                borderBottomColor: "rgb(103, 40, 255)",
+                borderBottomWidth: editType === "social" ? 1 : 0.5,
+                borderBottomColor:
+                  editType === "social" ? "rgb(103, 40, 255)" : "#ffffff14",
               }}
+              onPress={() => setEditType("social")}
             >
               <Text
                 style={{ color: "white", fontSize: 18, paddingVertical: 15 }}
@@ -83,9 +86,11 @@ function EditProfileScreen() {
               style={{
                 flex: 0.5,
                 alignItems: "center",
-                borderBottomWidth: 0.5,
-                borderBottomColor: "#ffffff14",
+                borderBottomWidth: editType === "chat" ? 1 : 0.5,
+                borderBottomColor:
+                  editType === "chat" ? "rgb(103, 40, 255)" : "#ffffff14",
               }}
+              onPress={() => setEditType("chat")}
             >
               <Text
                 style={{ color: "white", fontSize: 18, paddingVertical: 15 }}
@@ -96,82 +101,152 @@ function EditProfileScreen() {
           </View>
 
           {/* 본문 */}
-          <ScrollView
-            style={styles.formContainer}
-            keyboardShouldPersistTaps="handled" // 스크롤 영역 터치 시 키보드 닫힘
-          >
-            {/* 프로필 */}
-            <View
-              style={{
-                flexDirection: "row",
-                marginVertical: 15,
-                alignItems: "center",
-                gap: 10,
-              }}
+          {editType === "social" ? (
+            <ScrollView
+              style={styles.formContainer}
+              keyboardShouldPersistTaps="handled" // 스크롤 영역 터치 시 키보드 닫힘
             >
-              <FontAwesome name="user-circle-o" size={70} color="gray" />
-              <View style={{ gap: 5 }}>
-                <Text style={{ color: "white", fontSize: 24 }}>닉네임</Text>
-                <Text style={{ color: "#ffffff80", fontSize: 16 }}>
-                  @아이디
+              {/* 소셜 프로필 */}
+              {/* 프로필 */}
+              <>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginVertical: 15,
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <FontAwesome name="user-circle-o" size={70} color="gray" />
+                  <View style={{ gap: 5 }}>
+                    <Text style={{ color: "white", fontSize: 24 }}>닉네임</Text>
+                    <Text style={{ color: "#ffffff80", fontSize: 16 }}>
+                      @아이디
+                    </Text>
+                  </View>
+                </View>
+
+                {/* 입력 내용 */}
+                <View style={styles.inputGroup}>
+                  {/* 닉네임 입력 */}
+                  <View style={styles.inputWrapper}>
+                    <Text style={styles.inputLabel}>닉네임</Text>
+                    <TextInput
+                      placeholder="닉네임"
+                      placeholderTextColor="rgba(225, 225,225, 0.5)"
+                      value={nickname}
+                      onChangeText={(text) => setNickname(text)}
+                      onFocus={() => setFocused("nickname")}
+                      onBlur={() => setFocused("")}
+                      style={[
+                        styles.input,
+                        focused === "nickname" && styles.inputFocused,
+                      ]}
+                    />
+                  </View>
+
+                  {/* 아이디 입력 */}
+                  <View style={styles.inputWrapper}>
+                    <Text style={styles.inputLabel}>아이디</Text>
+                    <TextInput
+                      placeholder="아이디"
+                      placeholderTextColor="rgba(225, 225,225, 0.5)"
+                      value={username}
+                      onChangeText={(text) => setUsername(text)}
+                      onFocus={() => setFocused("username")}
+                      onBlur={() => setFocused("")}
+                      style={[
+                        styles.input,
+                        focused === "username" && styles.inputFocused,
+                      ]}
+                    />
+                  </View>
+
+                  {/* 소개 입력 */}
+                  <View style={styles.inputWrapper}>
+                    <Text style={styles.inputLabel}>소개</Text>
+                    <TextInput
+                      placeholder="소개를 입력해주세요"
+                      placeholderTextColor="rgba(225, 225,225, 0.5)"
+                      multiline={true}
+                      value={intro}
+                      onChangeText={(text) => setIntro(text)}
+                      onFocus={() => setFocused("intro")}
+                      onBlur={() => setFocused("")}
+                      style={[
+                        { ...styles.input, height: 90 },
+                        focused === "intro" && styles.inputFocused,
+                      ]}
+                    />
+                  </View>
+                </View>
+              </>
+            </ScrollView>
+          ) : null}
+
+          {/* 대화 프로필 */}
+          {editType === "chat" ? (
+            <View style={styles.formContainer}>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 10,
+                  marginVertical: 15,
+                }}
+              >
+                <Ionicons
+                  name="add"
+                  size={30}
+                  color="white"
+                  style={{
+                    borderWidth: 1,
+                    borderRadius: "100%",
+                    padding: 5,
+                    backgroundColor: "#ffffff0d",
+                    borderColor: "#ffffff14",
+                  }}
+                />
+                <Text
+                  style={{ color: "white", fontSize: 20, fontWeight: "500" }}
+                >
+                  대화 프로필 추가
                 </Text>
-              </View>
+              </TouchableOpacity>
+              <ScrollView>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginVertical: 15,
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 10,
+                  }}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 10,
+                    }}
+                  >
+                    <FontAwesome name="user-circle-o" size={40} color="gray" />
+                    <View style={{ gap: 5 }}>
+                      <Text style={{ color: "white", fontSize: 16 }}>
+                        채팅 닉네임
+                      </Text>
+                      <Text style={{ color: "#fff3", fontSize: 12 }}>
+                        설명없음
+                      </Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity>
+                    <FontAwesome name="pencil" size={18} color="#ffffff80" />
+                  </TouchableOpacity>
+                </View>
+              </ScrollView>
             </View>
-            {/* 입력 내용 */}
-            <View style={styles.inputGroup}>
-              {/* 닉네임 입력 */}
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputLabel}>닉네임</Text>
-                <TextInput
-                  placeholder="닉네임"
-                  placeholderTextColor="rgba(225, 225,225, 0.5)"
-                  value={nickname}
-                  onChangeText={(text) => setNickname(text)}
-                  onFocus={() => setFocused("nickname")}
-                  onBlur={() => setFocused("")}
-                  style={[
-                    styles.input,
-                    focused === "nickname" && styles.inputFocused,
-                  ]}
-                />
-              </View>
-
-              {/* 아이디 입력 */}
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputLabel}>아이디</Text>
-                <TextInput
-                  placeholder="아이디"
-                  placeholderTextColor="rgba(225, 225,225, 0.5)"
-                  value={username}
-                  onChangeText={(text) => setUsername(text)}
-                  onFocus={() => setFocused("username")}
-                  onBlur={() => setFocused("")}
-                  style={[
-                    styles.input,
-                    focused === "username" && styles.inputFocused,
-                  ]}
-                />
-              </View>
-
-              {/* 소개 입력 */}
-              <View style={styles.inputWrapper}>
-                <Text style={styles.inputLabel}>소개</Text>
-                <TextInput
-                  placeholder="소개를 입력해주세요"
-                  placeholderTextColor="rgba(225, 225,225, 0.5)"
-                  multiline={true}
-                  value={intro}
-                  onChangeText={(text) => setIntro(text)}
-                  onFocus={() => setFocused("intro")}
-                  onBlur={() => setFocused("")}
-                  style={[
-                    { ...styles.input, height: 90 },
-                    focused === "intro" && styles.inputFocused,
-                  ]}
-                />
-              </View>
-            </View>
-          </ScrollView>
+          ) : null}
         </SafeAreaView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
