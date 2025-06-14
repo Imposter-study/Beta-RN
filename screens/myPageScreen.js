@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import SignInButton from "../components/signInButtons";
 
 function MyPageScreen() {
   const navigation = useNavigation();
@@ -33,53 +34,7 @@ function MyPageScreen() {
             </Text>
           </View>
 
-          <View style={styles.loginButtonContainer}>
-            {/* beta 회원가입 버튼 */}
-            <TouchableOpacity
-              style={styles.loginButton}
-              onPress={() => navigation.navigate("SignUp")}
-            >
-              {/* <Image
-                source={require("../assets/kakao-symbol.png")}
-                style={styles.loginIcon}
-              /> */}
-              <Text style={{ ...styles.loginButtonText, fontSize: 20 }}>
-                beta로 시작하기
-              </Text>
-            </TouchableOpacity>
-
-            {/* 카카오 로그인 버튼 */}
-            <View style={styles.loginButton}>
-              <Image
-                source={require("../assets/kakao-symbol.png")}
-                style={styles.loginIcon}
-              />
-              <Text style={styles.loginButtonText}>
-                카카오 계정으로 계속하기
-              </Text>
-            </View>
-
-            {/* 구글 로그인 버튼 */}
-            <View style={styles.loginButton}>
-              <Image
-                source={require("../assets/google-symbol.png")}
-                style={styles.googleIcon}
-              />
-              <Text style={styles.loginButtonText}>
-                Google 계정으로 계속하기
-              </Text>
-            </View>
-
-            {/* apple 로그인 버튼 */}
-            {/* <View style={styles.appleLoginButton}>
-              <Image
-                source={require("../assets/apple-symbol.png")}
-                style={styles.appleIcon}
-                resizeMode="contain"
-              />
-              <Text style={styles.appleLoginButtonText}>Apple로 계속하기</Text>
-            </View> */}
-          </View>
+          <SignInButton />
         </View>
       ) : (
         <ScrollView>
