@@ -9,7 +9,7 @@ import CharacterDetailScreen from "./screens/characterDetailScreen";
 import MyPageScreen from "./screens/myPageScreen";
 import SignUpScreen from "./screens/SignUpScreen/index";
 import SignInScreen from "./screens/signInScreen";
-import EditProfileScreen from "./screens/editProfile";
+import EditProfileScreen from "./screens/EditProfile/index";
 
 const Stack = createNativeStackNavigator();
 
