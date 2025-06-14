@@ -9,7 +9,7 @@ import CharacterDetailScreen from "./screens/characterDetailScreen";
 import MyPageScreen from "./screens/myPageScreen";
 import SignUpScreen from "./screens/SignUpScreen/index";
 import SignInScreen from "./screens/signInScreen";
-import EditProfile from "./screens/editProfile";
+import EditProfileScreen from "./screens/editProfile";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,7 +37,7 @@ export default function App() {
           {/* 마이페이지 스크린 */}
           <Stack.Screen name="Mypage" component={MyPageScreen} />
           {/* 프로필 편집 스크린 */}
-          <Stack.Screen name="EditProfile" component={EditProfile} />
+          <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         </Stack.Navigator>
         <StatusBar style="light" backgroundColor="#1a1b1b" />
       </NavigationContainer>
