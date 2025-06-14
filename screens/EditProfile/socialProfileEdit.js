@@ -13,21 +13,13 @@ function SocialEdit() {
       style={styles.formContainer}
       keyboardShouldPersistTaps="handled" // 스크롤 영역 터치 시 키보드 닫힘
     >
-      {/* 소셜 프로필 */}
       {/* 프로필 */}
       <>
-        <View
-          style={{
-            flexDirection: "row",
-            marginVertical: 15,
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
+        <View style={styles.profileContainer}>
           <FontAwesome name="user-circle-o" size={70} color="gray" />
-          <View style={{ gap: 5 }}>
-            <Text style={{ color: "white", fontSize: 24 }}>닉네임</Text>
-            <Text style={{ color: "#ffffff80", fontSize: 16 }}>@아이디</Text>
+          <View style={styles.profileTextContainer}>
+            <Text style={styles.profileNickname}>닉네임</Text>
+            <Text style={styles.profileUsername}>@아이디</Text>
           </View>
         </View>
 
@@ -79,7 +71,7 @@ function SocialEdit() {
               onFocus={() => setFocused("intro")}
               onBlur={() => setFocused("")}
               style={[
-                { ...styles.input, height: 90 },
+                [styles.input, styles.introInput],
                 focused === "intro" && styles.inputFocused,
               ]}
             />
@@ -96,6 +88,23 @@ const styles = StyleSheet.create({
   formContainer: {
     flex: 1,
     marginHorizontal: 15,
+  },
+  profileContainer: {
+    flexDirection: "row",
+    marginVertical: 15,
+    alignItems: "center",
+    gap: 10,
+  },
+  profileTextContainer: {
+    gap: 5,
+  },
+  profileNickname: {
+    color: "white",
+    fontSize: 24,
+  },
+  profileUsername: {
+    color: "#ffffff80",
+    fontSize: 16,
   },
   inputGroup: {
     marginBottom: 30,
@@ -117,6 +126,9 @@ const styles = StyleSheet.create({
     borderColor: "rgba(225, 225,225, 0.3)",
     fontSize: 16,
     color: "white",
+  },
+  introInput: {
+    height: 90,
   },
   inputFocused: {
     backgroundColor: "transparent",

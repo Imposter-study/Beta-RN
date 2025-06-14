@@ -53,51 +53,35 @@ function EditProfileScreen() {
             </TouchableOpacity>
             <Text style={styles.headerTitle}>프로필 편집</Text>
             <TouchableOpacity>
-              <Text style={{ color: "rgba(124, 103, 255, 0.5)", fontSize: 16 }}>
-                저장
-              </Text>
+              <Text style={styles.headerSave}>저장</Text>
             </TouchableOpacity>
           </View>
 
           {/* 편집 유형 */}
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={styles.editTypeContainer}>
             <TouchableOpacity
-              style={{
-                flex: 0.5,
-                alignItems: "center",
-                borderBottomWidth: editType === "social" ? 1 : 0.5,
-                borderBottomColor:
-                  editType === "social" ? "rgb(103, 40, 255)" : "#ffffff14",
-              }}
+              style={[
+                styles.editTypeButton,
+                editType === "social" && styles.editTypeButtonActive,
+              ]}
               onPress={() => setEditType("social")}
             >
-              <Text
-                style={{ color: "white", fontSize: 18, paddingVertical: 15 }}
-              >
-                소셜 프로필
-              </Text>
+              <Text style={styles.editTypeText}>소셜 프로필</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{
-                flex: 0.5,
-                alignItems: "center",
-                borderBottomWidth: editType === "chat" ? 1 : 0.5,
-                borderBottomColor:
-                  editType === "chat" ? "rgb(103, 40, 255)" : "#ffffff14",
-              }}
+              style={[
+                styles.editTypeButton,
+                editType === "chat" && styles.editTypeButtonActive,
+              ]}
               onPress={() => setEditType("chat")}
             >
-              <Text
-                style={{ color: "white", fontSize: 18, paddingVertical: 15 }}
-              >
-                대화 프로필
-              </Text>
+              <Text style={styles.editTypeText}>대화 프로필</Text>
             </TouchableOpacity>
           </View>
 
           {/* 본문 */}
+          {/* 소셜 프로필 */}
           {editType === "social" ? <SocialEdit /> : null}
-
           {/* 대화 프로필 */}
           {editType === "chat" ? <ChatEdit /> : null}
         </SafeAreaView>
@@ -128,63 +112,27 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "500",
   },
-  formContainer: {
-    flex: 1,
-    marginHorizontal: 15,
-  },
-  inputGroup: {
-    marginBottom: 30,
-  },
-  inputWrapper: {
-    marginBottom: 15,
-  },
-  inputLabel: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "500",
-  },
-  input: {
-    backgroundColor: "rgb(45,45,45)",
-    padding: 10,
-    marginVertical: 10,
-    borderRadius: 6,
-    borderWidth: 0.3,
-    borderColor: "rgba(225, 225,225, 0.3)",
+  headerSave: {
+    color: "rgba(124, 103, 255, 0.5)",
     fontSize: 16,
-    color: "white",
   },
-  inputFocused: {
-    backgroundColor: "transparent",
-    borderWidth: 1.5,
-    borderColor: "rgb(103, 40, 225)",
-  },
-  warningContainer: {
+  editTypeContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 3,
   },
-  warningText: {
-    color: "#ffffff80",
-  },
-  buttonContainer: {
-    marginHorizontal: 20,
-  },
-  nextButtonWrapper: {
+  editTypeButton: {
+    flex: 0.5,
     alignItems: "center",
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#ffffff14",
   },
-  nextButton: {
-    paddingVertical: 15,
-    borderRadius: 6,
-    fontSize: 16,
-    width: "100%",
-    textAlign: "center",
+  editTypeButtonActive: {
+    borderBottomWidth: 1,
+    borderBottomColor: "rgb(103, 40, 255)",
   },
-  nextButtonActive: {
-    backgroundColor: "rgb(103, 40, 225)",
+  editTypeText: {
     color: "white",
-  },
-  nextButtonDisabled: {
-    backgroundColor: "rgb(45, 45, 45)",
-    color: "rgb(115, 120, 131)",
+    fontSize: 18,
+    paddingVertical: 15,
   },
 });
