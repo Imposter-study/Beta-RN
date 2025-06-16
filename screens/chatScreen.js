@@ -247,6 +247,7 @@ function ChatScreen() {
                   position: "absolute",
                   right: 10,
                 }}
+                onPress={() => setMessage((prev) => prev + "*")}
               >
                 <Text
                   style={{ color: "white", fontSize: 60, fontWeight: "300" }}
