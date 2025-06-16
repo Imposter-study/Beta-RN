@@ -22,6 +22,8 @@ function ChatScreen() {
   const navigation = useNavigation();
 
   const [chats, setChats] = useState([]);
+  const [characterId, setCharacterId] = useState("");
+  const [message, setMessage] = useState("");
 
   const character = {
     id: 1,
@@ -33,16 +35,54 @@ function ChatScreen() {
     creator: "@creator",
   };
 
+  // 채팅 내역 가져오기
   const getChat = () => {
     axios
       .get(API_URL + "room/1/")
       .then((response) => {
         setChats(response.data.chats);
+        setCharacterId(response.data.character_id);
         // console.log(response.data.chats);
       })
       .catch((error) => {
         console.log("채팅 내역 가져오기 실패", error);
       });
+  };
+
+  // 채팅 전송하기
+  const sendChat = () => {
+    if (message.trim() !== "") {
+      const userMessage = message; // 비동기 이슈 방지용
+
+      // 유저 메시지 UI에 추가
+      const updatedChats = [
+        ...chats,
+        { chat_id: chats.length, content: userMessage, role: "user" },
+      ];
+      setChats(updatedChats);
+      setMessage("");
+
+      // API 요청
+      axios
+        .post(API_URL + "room/", {
+          character_id: characterId,
+          message: userMessage,
+        })
+        .then((response) => {
+          console.log("메세지 전송 완료");
+          setChats((prev) => [
+            ...prev,
+            {
+              chat_id: prev.length,
+              content: response.data.ai_response,
+              role: "ai",
+            },
+          ]);
+        })
+        .catch((error) => {
+          console.log("메세지 전송 실패", error);
+        });
+    }
   };
 
   useEffect(() => {
@@ -173,6 +213,9 @@ function ChatScreen() {
             >
               <TextInput
                 placeholder="메시지 보내기"
+                value={message}
+                onChangeText={setMessage}
+                multiline={true}
                 style={{
                   flex: 1,
                   backgroundColor: "#3e3e41e6",
@@ -196,16 +239,31 @@ function ChatScreen() {
               </TouchableOpacity>
             </View>
             <TouchableOpacity>
-              <Ionicons
-                name="play"
-                size={18}
-                color="white"
-                style={{
-                  backgroundColor: "rgb(82, 32, 204)",
-                  borderRadius: "100%",
-                  padding: 10,
-                }}
-              />
+              {message === "" ? (
+                <Ionicons
+                  name="play"
+                  size={18}
+                  color="white"
+                  style={{
+                    backgroundColor: "rgb(82, 32, 204)",
+                    borderRadius: "100%",
+                    padding: 10,
+                  }}
+                />
+              ) : (
+                <TouchableOpacity onPress={() => sendChat()}>
+                  <Ionicons
+                    name="arrow-up-sharp"
+                    size={18}
+                    color="white"
+                    style={{
+                      backgroundColor: "rgb(82, 32, 204)",
+                      borderRadius: "100%",
+                      padding: 10,
+                    }}
+                  />
+                </TouchableOpacity>
+              )}
             </TouchableOpacity>
           </View>
         </SafeAreaView>
