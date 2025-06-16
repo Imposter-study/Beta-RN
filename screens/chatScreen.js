@@ -14,12 +14,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { API_URL } from "../config";
 
 function ChatScreen() {
   const navigation = useNavigation();
+  const scrollViewRef = useRef();
 
   const [chats, setChats] = useState([]);
   const [characterId, setCharacterId] = useState("");
@@ -61,6 +62,7 @@ function ChatScreen() {
       ];
       setChats(updatedChats);
       setMessage("");
+      scrollViewRef.current?.scrollToEnd({ animated: true });
 
       // API 요청
       axios
@@ -119,7 +121,12 @@ function ChatScreen() {
           </View>
 
           {/* 채팅 */}
-          <ScrollView>
+          <ScrollView
+            ref={scrollViewRef}
+            onContentSizeChange={() =>
+              scrollViewRef.current.scrollToEnd({ animated: true })
+            }
+          >
             <View
               style={{
                 flexDirection: "row",
@@ -197,17 +204,26 @@ function ChatScreen() {
           </ScrollView>
 
           {/* 채팅 입력 및 전송 */}
-          <View style={{ flexDirection: "row", gap: 5, marginHorizontal: 10 }}>
-            <Ionicons
-              name="flash"
-              size={18}
-              color="white"
-              style={{
-                backgroundColor: "rgb(62, 62, 65)",
-                borderRadius: "100%",
-                padding: 10,
-              }}
-            />
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 5,
+              marginHorizontal: 10,
+              alignItems: "flex-end",
+            }}
+          >
+            <View>
+              <Ionicons
+                name="flash"
+                size={18}
+                color="white"
+                style={{
+                  backgroundColor: "rgb(62, 62, 65)",
+                  borderRadius: "100%",
+                  padding: 10,
+                }}
+              />
+            </View>
             <View
               style={{ flex: 1, flexDirection: "row", position: "relative" }}
             >
@@ -221,6 +237,7 @@ function ChatScreen() {
                   backgroundColor: "#3e3e41e6",
                   borderRadius: 20,
                   padding: 10,
+                  paddingRight: 30,
                   color: "white",
                 }}
                 placeholderTextColor="#ffffff80"
