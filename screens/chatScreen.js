@@ -21,7 +21,7 @@ import { API_URL } from "../config";
 function ChatScreen() {
   const navigation = useNavigation();
 
-  const [chat, setChat] = useState([]);
+  const [chats, setChats] = useState([]);
 
   const character = {
     id: 1,
@@ -37,7 +37,7 @@ function ChatScreen() {
     axios
       .get(API_URL + "room/1/")
       .then((response) => {
-        setChat(response.data.chats);
+        setChats(response.data.chats);
         // console.log(response.data.chats);
       })
       .catch((error) => {
@@ -98,51 +98,62 @@ function ChatScreen() {
                 캐릭터가 보내는 메세지는 모두 생성된 내용이에요
               </Text>
             </View>
-            {/* 유저 채팅 */}
-            <View style={{ alignItems: "flex-end" }}>
-              <View
-                style={{
-                  backgroundColor: "rgb(124, 103, 255)",
-                  borderRadius: 16,
-                  borderTopRightRadius: 0,
-                  padding: 10,
-                  maxWidth: "70%",
-                  marginHorizontal: 20,
-                }}
-              >
-                <Text style={{ color: "white" }}>안녕</Text>
-              </View>
-            </View>
-
-            {/* 캐릭터(AI) 채팅 */}
-            <View
-              style={{ flexDirection: "row", marginHorizontal: 20, gap: 5 }}
-            >
-              <Image
-                source={{ uri: character.imageUri }}
-                style={{
-                  width: 50,
-                  height: 50,
-                  borderRadius: 100,
-                }}
-              />
-              <View style={{ flex: 1, gap: 5, alignItems: "flex-start" }}>
-                <Text style={{ color: "#ffffffb3" }}>캐릭터 이름</Text>
+            {chats.map((chat, index) =>
+              chat.role === "user" ? (
                 <View
+                  key={index}
+                  style={{ alignItems: "flex-end", marginBottom: 10 }}
+                >
+                  {/* 유저 채팅 */}
+                  <View
+                    style={{
+                      backgroundColor: "rgb(124, 103, 255)",
+                      borderRadius: 16,
+                      borderTopRightRadius: 0,
+                      padding: 10,
+                      maxWidth: "70%",
+                      marginHorizontal: 20,
+                    }}
+                  >
+                    <Text style={{ color: "white" }}>{chat.content}</Text>
+                  </View>
+                </View>
+              ) : (
+                <View
+                  key={index}
                   style={{
-                    backgroundColor: "rgb(38, 39, 39)",
-                    borderRadius: 16,
-                    borderTopLeftRadius: 0,
-                    padding: 10,
-                    maxWidth: "70%",
+                    flexDirection: "row",
+                    marginHorizontal: 20,
+                    gap: 5,
+                    marginBottom: 10,
                   }}
                 >
-                  <Text style={{ color: "white" }}>
-                    죄송합니다. 현재 응답을 생성할 수 없습니다.
-                  </Text>
+                  {/* 캐릭터(AI) 채팅 */}
+                  <Image
+                    source={{ uri: character.imageUri }}
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 100,
+                    }}
+                  />
+                  <View style={{ flex: 1, gap: 5, alignItems: "flex-start" }}>
+                    <Text style={{ color: "#ffffffb3" }}>캐릭터 이름</Text>
+                    <View
+                      style={{
+                        backgroundColor: "rgb(38, 39, 39)",
+                        borderRadius: 16,
+                        borderTopLeftRadius: 0,
+                        padding: 10,
+                        maxWidth: "70%",
+                      }}
+                    >
+                      <Text style={{ color: "white" }}>{chat.content}</Text>
+                    </View>
+                  </View>
                 </View>
-              </View>
-            </View>
+              )
+            )}
           </ScrollView>
 
           {/* 채팅 입력 및 전송 */}
