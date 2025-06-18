@@ -91,9 +91,12 @@ function CharacterDetailScreen({ route }) {
         </View>
       </ScrollView>
       <View style={styles.bottomContainer}>
-        <View style={styles.chatButton}>
+        <TouchableOpacity
+          style={styles.chatButton}
+          onPress={() => navigation.navigate("Chat")}
+        >
           <Text style={styles.chatButtonText}>대화 시작하기</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
