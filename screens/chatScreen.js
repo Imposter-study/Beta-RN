@@ -16,6 +16,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import Markdown from "react-native-markdown-display";
 import { API_URL } from "../config";
 
 function ChatScreen() {
@@ -25,6 +26,38 @@ function ChatScreen() {
   const [chats, setChats] = useState([]);
   const [characterId, setCharacterId] = useState("");
   const [message, setMessage] = useState("");
+
+  const markdownRules = {
+    paragraph: (node, children, parent, styles) => {
+      // 현재 node가 parent.children 중 마지막인지 확인
+      const siblings = parent[0].children;
+      const isLast = node.index === siblings[siblings.length - 1].index;
+
+      return (
+        <Text
+          key={node.key}
+          style={{
+            color: "white",
+            marginBottom: isLast ? 0 : 16, // 마지막이면 marginBottom 없애기
+          }}
+        >
+          {children}
+        </Text>
+      );
+    },
+
+    em: (node, children, parent, styles) => (
+      <Text key={node.key} style={{ fontStyle: "italic", color: "#ffffff80" }}>
+        {children}
+      </Text>
+    ),
+
+    bold: (node, children, parent, styles) => (
+      <Text key={node.key} style={{ fontWeight: "bold", color: "white" }}>
+        {children}
+      </Text>
+    ),
+  };
 
   const character = {
     id: 1,
@@ -88,7 +121,7 @@ function ChatScreen() {
   };
 
   useEffect(() => {
-    getChat();
+    // getChat();
   }, []);
 
   return (
@@ -162,7 +195,7 @@ function ChatScreen() {
                       marginHorizontal: 20,
                     }}
                   >
-                    <Text style={{ color: "white" }}>{chat.content}</Text>
+                    <Markdown rules={markdownRules}>{chat.content}</Markdown>
                   </View>
                 </View>
               ) : (
@@ -195,7 +228,7 @@ function ChatScreen() {
                         maxWidth: "70%",
                       }}
                     >
-                      <Text style={{ color: "white" }}>{chat.content}</Text>
+                      <Markdown rules={markdownRules}>{chat.content}</Markdown>
                     </View>
                   </View>
                 </View>
