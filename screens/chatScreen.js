@@ -30,17 +30,13 @@ function ChatScreen() {
 
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
-      // 현재 node가 parent.children 중 마지막인지 확인
       const siblings = parent[0].children;
       const isLast = node.index === siblings[siblings.length - 1].index;
 
       return (
         <Text
           key={node.key}
-          style={{
-            color: "white",
-            marginBottom: isLast ? 0 : 16, // 마지막이면 marginBottom 없애기
-          }}
+          style={{ color: "white", marginBottom: isLast ? 0 : 16 }}
         >
           {children}
         </Text>
@@ -70,26 +66,22 @@ function ChatScreen() {
     creator: "@creator",
   };
 
-  // 채팅 내역 가져오기
   const getChat = () => {
     axios
       .get(API_URL + "room/1/")
       .then((response) => {
         setChats(response.data.chats);
         setCharacterId(response.data.character_id);
-        // console.log(response.data.chats);
       })
       .catch((error) => {
         console.log("채팅 내역 가져오기 실패", error);
       });
   };
 
-  // 채팅 전송하기
   const sendChat = () => {
     if (message.trim() !== "") {
-      const userMessage = message; // 비동기 이슈 방지용
+      const userMessage = message;
 
-      // 유저 메시지 UI에 추가
       const updatedChats = [
         ...chats,
         { chat_id: chats.length, content: userMessage, role: "user" },
@@ -98,26 +90,25 @@ function ChatScreen() {
       setMessage("");
       scrollViewRef.current?.scrollToEnd({ animated: true });
 
-    //   // API 요청
-    //   axios
-    //     .post(API_URL + "room/", {
-    //       character_id: characterId,
-    //       message: userMessage,
-    //     })
-    //     .then((response) => {
-    //       console.log("메세지 전송 완료");
-    //       setChats((prev) => [
-    //         ...prev,
-    //         {
-    //           chat_id: prev.length,
-    //           content: response.data.ai_response,
-    //           role: "ai",
-    //         },
-    //       ]);
-    //     })
-    //     .catch((error) => {
-    //       console.log("메세지 전송 실패", error);
-    //     });
+      axios
+        .post(API_URL + "room/", {
+          character_id: characterId,
+          message: userMessage,
+        })
+        .then((response) => {
+          console.log("메세지 전송 완료");
+          setChats((prev) => [
+            ...prev,
+            {
+              chat_id: prev.length,
+              content: response.data.ai_response,
+              role: "ai",
+            },
+          ]);
+        })
+        .catch((error) => {
+          console.log("메세지 전송 실패", error);
+        });
     }
   };
 
@@ -128,7 +119,6 @@ function ChatScreen() {
 
     setMessage(newMessage);
 
-    // 커서 위치를 * 뒤로 이동
     const newPosition = selection.start + 1;
     setSelection({ start: newPosition, end: newPosition });
   };
@@ -139,17 +129,16 @@ function ChatScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <SafeAreaView style={styles.container}>
-          {/* 헤더 */}
           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Ionicons name="chevron-back-sharp" size={24} color="white" />
             </TouchableOpacity>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={styles.headerCenter}>
               <Text style={styles.headerTitle}>캐릭터 이름</Text>
               <TouchableOpacity
                 onPress={() =>
@@ -166,7 +155,6 @@ function ChatScreen() {
             <Ionicons name="menu" size={24} color="white" />
           </View>
 
-          {/* 채팅 */}
           <ScrollView
             ref={scrollViewRef}
             onContentSizeChange={() =>
@@ -174,74 +162,33 @@ function ChatScreen() {
             }
             keyboardShouldPersistTaps="handled"
           >
-            <View
-              style={{
-                flexDirection: "row",
-                gap: 5,
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 10,
-              }}
-            >
+            <View style={styles.infoContainer}>
               <Ionicons
                 name="alert-circle-outline"
                 size={18}
                 color="#ffffffb3"
               />
-              <Text style={{ color: "#ffffffb3" }}>
+              <Text style={styles.infoText}>
                 캐릭터가 보내는 메세지는 모두 생성된 내용이에요
               </Text>
             </View>
+
             {chats.map((chat, index) =>
               chat.role === "user" ? (
-                <View
-                  key={index}
-                  style={{ alignItems: "flex-end", marginBottom: 10 }}
-                >
-                  {/* 유저 채팅 */}
-                  <View
-                    style={{
-                      backgroundColor: "rgb(124, 103, 255)",
-                      borderRadius: 16,
-                      borderTopRightRadius: 0,
-                      padding: 10,
-                      maxWidth: "70%",
-                      marginHorizontal: 20,
-                    }}
-                  >
+                <View key={index} style={styles.userChatContainer}>
+                  <View style={styles.userChatBox}>
                     <Markdown rules={markdownRules}>{chat.content}</Markdown>
                   </View>
                 </View>
               ) : (
-                <View
-                  key={index}
-                  style={{
-                    flexDirection: "row",
-                    marginHorizontal: 20,
-                    gap: 5,
-                    marginBottom: 10,
-                  }}
-                >
-                  {/* 캐릭터(AI) 채팅 */}
+                <View key={index} style={styles.aiChatContainer}>
                   <Image
                     source={{ uri: character.imageUri }}
-                    style={{
-                      width: 50,
-                      height: 50,
-                      borderRadius: 100,
-                    }}
+                    style={styles.aiImage}
                   />
-                  <View style={{ flex: 1, gap: 5, alignItems: "flex-start" }}>
-                    <Text style={{ color: "#ffffffb3" }}>캐릭터 이름</Text>
-                    <View
-                      style={{
-                        backgroundColor: "rgb(38, 39, 39)",
-                        borderRadius: 16,
-                        borderTopLeftRadius: 0,
-                        padding: 10,
-                        maxWidth: "70%",
-                      }}
-                    >
+                  <View style={styles.aiChatContent}>
+                    <Text style={styles.aiName}>캐릭터 이름</Text>
+                    <View style={styles.aiChatBox}>
                       <Markdown rules={markdownRules}>{chat.content}</Markdown>
                     </View>
                   </View>
@@ -250,25 +197,13 @@ function ChatScreen() {
             )}
           </ScrollView>
 
-          {/* 채팅 입력 및 전송 */}
-          <View
-            style={{
-              flexDirection: "row",
-              gap: 5,
-              marginHorizontal: 10,
-              alignItems: "flex-end",
-            }}
-          >
+          <View style={styles.inputContainer}>
             <View>
               <Ionicons
                 name="flash"
                 size={18}
                 color="white"
-                style={{
-                  backgroundColor: "rgb(62, 62, 65)",
-                  borderRadius: "100%",
-                  padding: 10,
-                }}
+                style={styles.flashButton}
               />
             </View>
             <TextInput
@@ -283,22 +218,12 @@ function ChatScreen() {
               onFocus={() =>
                 scrollViewRef.current?.scrollToEnd({ animated: true })
               }
-              style={{
-                flex: 1,
-                backgroundColor: "#3e3e41e6",
-                borderRadius: 20,
-                padding: 10,
-                paddingRight: 30,
-                color: "white",
-              }}
+              style={styles.input}
               placeholderTextColor="#ffffff80"
             />
             <TouchableOpacity
-              style={{
-                position: "absolute",
-                right: 45,
-              }}
-              onPress={() => pressAsterisk()}
+              style={styles.asteriskButton}
+              onPress={pressAsterisk}
             >
               <Ionicons
                 name="medical-sharp"
@@ -307,29 +232,22 @@ function ChatScreen() {
                 style={{ padding: 10 }}
               />
             </TouchableOpacity>
+
             <TouchableOpacity>
               {message === "" ? (
                 <Ionicons
                   name="play"
                   size={18}
                   color="white"
-                  style={{
-                    backgroundColor: "rgb(82, 32, 204)",
-                    borderRadius: "100%",
-                    padding: 10,
-                  }}
+                  style={styles.sendButton}
                 />
               ) : (
-                <TouchableOpacity onPress={() => sendChat()}>
+                <TouchableOpacity onPress={sendChat}>
                   <Ionicons
                     name="arrow-up-sharp"
                     size={18}
                     color="white"
-                    style={{
-                      backgroundColor: "rgb(82, 32, 204)",
-                      borderRadius: "100%",
-                      padding: 10,
-                    }}
+                    style={styles.sendButton}
                   />
                 </TouchableOpacity>
               )}
@@ -357,9 +275,89 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginHorizontal: 10,
   },
+  headerCenter: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   headerTitle: {
     color: "white",
     fontSize: 24,
     fontWeight: "600",
+  },
+  infoContainer: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  infoText: {
+    color: "#ffffffb3",
+  },
+  userChatContainer: {
+    alignItems: "flex-end",
+    marginBottom: 10,
+  },
+  userChatBox: {
+    backgroundColor: "rgb(124, 103, 255)",
+    borderRadius: 16,
+    borderTopRightRadius: 0,
+    padding: 10,
+    maxWidth: "70%",
+    marginHorizontal: 20,
+  },
+  aiChatContainer: {
+    flexDirection: "row",
+    marginHorizontal: 20,
+    gap: 5,
+    marginBottom: 10,
+  },
+  aiImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 100,
+  },
+  aiChatContent: {
+    flex: 1,
+    gap: 5,
+    alignItems: "flex-start",
+  },
+  aiName: {
+    color: "#ffffffb3",
+  },
+  aiChatBox: {
+    backgroundColor: "rgb(38, 39, 39)",
+    borderRadius: 16,
+    borderTopLeftRadius: 0,
+    padding: 10,
+    maxWidth: "70%",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    gap: 5,
+    marginHorizontal: 10,
+    alignItems: "flex-end",
+  },
+  flashButton: {
+    backgroundColor: "rgb(62, 62, 65)",
+    borderRadius: 100,
+    padding: 10,
+  },
+  input: {
+    flex: 1,
+    backgroundColor: "#3e3e41e6",
+    borderRadius: 20,
+    padding: 10,
+    paddingRight: 30,
+    color: "white",
+  },
+  asteriskButton: {
+    position: "absolute",
+    right: 45,
+  },
+  sendButton: {
+    backgroundColor: "rgb(82, 32, 204)",
+    borderRadius: 100,
+    padding: 10,
   },
 });
