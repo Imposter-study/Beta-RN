@@ -97,26 +97,26 @@ function ChatScreen() {
       setMessage("");
       scrollViewRef.current?.scrollToEnd({ animated: true });
 
-      // API 요청
-      axios
-        .post(API_URL + "room/", {
-          character_id: characterId,
-          message: userMessage,
-        })
-        .then((response) => {
-          console.log("메세지 전송 완료");
-          setChats((prev) => [
-            ...prev,
-            {
-              chat_id: prev.length,
-              content: response.data.ai_response,
-              role: "ai",
-            },
-          ]);
-        })
-        .catch((error) => {
-          console.log("메세지 전송 실패", error);
-        });
+      //   // API 요청
+      //   axios
+      //     .post(API_URL + "room/", {
+      //       character_id: characterId,
+      //       message: userMessage,
+      //     })
+      //     .then((response) => {
+      //       console.log("메세지 전송 완료");
+      //       setChats((prev) => [
+      //         ...prev,
+      //         {
+      //           chat_id: prev.length,
+      //           content: response.data.ai_response,
+      //           role: "ai",
+      //         },
+      //       ]);
+      //     })
+      //     .catch((error) => {
+      //       console.log("메세지 전송 실패", error);
+      //     });
     }
   };
 
@@ -242,7 +242,7 @@ function ChatScreen() {
               flexDirection: "row",
               gap: 5,
               marginHorizontal: 10,
-              alignItems: "flex-end",
+              alignItems: "center",
             }}
           >
             <View>
@@ -257,38 +257,30 @@ function ChatScreen() {
                 }}
               />
             </View>
-            <View
-              style={{ flex: 1, flexDirection: "row", position: "relative" }}
+            <TextInput
+              placeholder="메시지 보내기"
+              value={message}
+              onChangeText={setMessage}
+              multiline={true}
+              style={{
+                flex: 1,
+                backgroundColor: "#3e3e41e6",
+                borderRadius: 20,
+                padding: 10,
+                paddingRight: 30,
+                color: "white",
+              }}
+              placeholderTextColor="#ffffff80"
+            />
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                right: 55,
+              }}
+              onPress={() => setMessage((prev) => prev + "*")}
             >
-              <TextInput
-                placeholder="메시지 보내기"
-                value={message}
-                onChangeText={setMessage}
-                multiline={true}
-                style={{
-                  flex: 1,
-                  backgroundColor: "#3e3e41e6",
-                  borderRadius: 20,
-                  padding: 10,
-                  paddingRight: 30,
-                  color: "white",
-                }}
-                placeholderTextColor="#ffffff80"
-              />
-              <TouchableOpacity
-                style={{
-                  position: "absolute",
-                  right: 10,
-                }}
-                onPress={() => setMessage((prev) => prev + "*")}
-              >
-                <Text
-                  style={{ color: "white", fontSize: 60, fontWeight: "300" }}
-                >
-                  *
-                </Text>
-              </TouchableOpacity>
-            </View>
+              <Ionicons name="medical-sharp" size={12} color="white" />
+            </TouchableOpacity>
             <TouchableOpacity>
               {message === "" ? (
                 <Ionicons
