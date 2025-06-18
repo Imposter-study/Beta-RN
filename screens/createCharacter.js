@@ -10,12 +10,28 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import * as ImagePicker from "expo-image-picker";
+import { useState } from "react";
 
 function CreateCharacter() {
   const navigation = useNavigation();
+  const [image, setImage] = useState(null);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -163,7 +179,7 @@ function CreateCharacter() {
               </Text>
             </TouchableOpacity>
           </View>
-          <View>
+          <>
             {/* 글자수 */}
             <View
               style={{
@@ -247,6 +263,55 @@ function CreateCharacter() {
                   marginBottom: 10,
                 }}
               >
+                {/* 이미지 등록 */}
+                <View>
+                  <View style={{ padding: 10, alignItems: "center" }}>
+                    <TouchableOpacity
+                      style={{
+                        borderWidth: 1,
+                        borderStyle: "dashed",
+                        borderColor: "rgb(103, 40, 255)",
+                        borderRadius: 12,
+                      }}
+                      onPress={pickImage}
+                    >
+                      {image ? (
+                        <Image
+                          source={{ uri: image }}
+                          style={{
+                            width: 128,
+                            height: 128,
+                            borderRadius: 12,
+                          }}
+                        />
+                      ) : (
+                        <View
+                          style={{
+                            width: 128,
+                            height: 128,
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color: "white",
+                              fontSize: 50,
+                              marginBottom: 10,
+                            }}
+                          >
+                            +
+                          </Text>
+                          <Text style={{ color: "white" }}>
+                            캐릭터 이미지를
+                          </Text>
+                          <Text style={{ color: "white" }}>추가해주세요</Text>
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                {/* 캐릭터 정보 */}
                 <View style={{ gap: 7, marginBottom: 20 }}>
                   <Text style={{ color: "rgb(229, 231, 235)", fontSize: 16 }}>
                     이름
@@ -289,7 +354,7 @@ function CreateCharacter() {
                 </Text>
               </View>
             </ScrollView>
-          </View>
+          </>
         </SafeAreaView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
