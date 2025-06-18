@@ -26,6 +26,7 @@ function ChatScreen() {
   const [chats, setChats] = useState([]);
   const [characterId, setCharacterId] = useState("");
   const [message, setMessage] = useState("");
+  const [selection, setSelection] = useState({ start: 0, end: 0 });
 
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
@@ -97,31 +98,43 @@ function ChatScreen() {
       setMessage("");
       scrollViewRef.current?.scrollToEnd({ animated: true });
 
-      //   // API 요청
-      //   axios
-      //     .post(API_URL + "room/", {
-      //       character_id: characterId,
-      //       message: userMessage,
-      //     })
-      //     .then((response) => {
-      //       console.log("메세지 전송 완료");
-      //       setChats((prev) => [
-      //         ...prev,
-      //         {
-      //           chat_id: prev.length,
-      //           content: response.data.ai_response,
-      //           role: "ai",
-      //         },
-      //       ]);
-      //     })
-      //     .catch((error) => {
-      //       console.log("메세지 전송 실패", error);
-      //     });
+      // API 요청
+      axios
+        .post(API_URL + "room/", {
+          character_id: characterId,
+          message: userMessage,
+        })
+        .then((response) => {
+          console.log("메세지 전송 완료");
+          setChats((prev) => [
+            ...prev,
+            {
+              chat_id: prev.length,
+              content: response.data.ai_response,
+              role: "ai",
+            },
+          ]);
+        })
+        .catch((error) => {
+          console.log("메세지 전송 실패", error);
+        });
     }
   };
 
+  const pressAsterisk = () => {
+    const before = message.slice(0, selection.start);
+    const after = message.slice(selection.end);
+    const newMessage = before + "*" + after;
+
+    setMessage(newMessage);
+
+    // 커서 위치를 * 뒤로 이동
+    const newPosition = selection.start + 1;
+    setSelection({ start: newPosition, end: newPosition });
+  };
+
   useEffect(() => {
-    // getChat();
+    getChat();
   }, []);
 
   return (
@@ -242,7 +255,7 @@ function ChatScreen() {
               flexDirection: "row",
               gap: 5,
               marginHorizontal: 10,
-              alignItems: "center",
+              alignItems: "flex-end",
             }}
           >
             <View>
@@ -262,6 +275,10 @@ function ChatScreen() {
               value={message}
               onChangeText={setMessage}
               multiline={true}
+              selection={selection}
+              onSelectionChange={({ nativeEvent: { selection } }) =>
+                setSelection(selection)
+              }
               style={{
                 flex: 1,
                 backgroundColor: "#3e3e41e6",
@@ -275,11 +292,16 @@ function ChatScreen() {
             <TouchableOpacity
               style={{
                 position: "absolute",
-                right: 55,
+                right: 45,
               }}
-              onPress={() => setMessage((prev) => prev + "*")}
+              onPress={() => pressAsterisk()}
             >
-              <Ionicons name="medical-sharp" size={12} color="white" />
+              <Ionicons
+                name="medical-sharp"
+                size={12}
+                color="white"
+                style={{ padding: 10 }}
+              />
             </TouchableOpacity>
             <TouchableOpacity>
               {message === "" ? (
