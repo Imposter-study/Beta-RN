@@ -98,26 +98,26 @@ function ChatScreen() {
       setMessage("");
       scrollViewRef.current?.scrollToEnd({ animated: true });
 
-      // API 요청
-      axios
-        .post(API_URL + "room/", {
-          character_id: characterId,
-          message: userMessage,
-        })
-        .then((response) => {
-          console.log("메세지 전송 완료");
-          setChats((prev) => [
-            ...prev,
-            {
-              chat_id: prev.length,
-              content: response.data.ai_response,
-              role: "ai",
-            },
-          ]);
-        })
-        .catch((error) => {
-          console.log("메세지 전송 실패", error);
-        });
+    //   // API 요청
+    //   axios
+    //     .post(API_URL + "room/", {
+    //       character_id: characterId,
+    //       message: userMessage,
+    //     })
+    //     .then((response) => {
+    //       console.log("메세지 전송 완료");
+    //       setChats((prev) => [
+    //         ...prev,
+    //         {
+    //           chat_id: prev.length,
+    //           content: response.data.ai_response,
+    //           role: "ai",
+    //         },
+    //       ]);
+    //     })
+    //     .catch((error) => {
+    //       console.log("메세지 전송 실패", error);
+    //     });
     }
   };
 
@@ -172,6 +172,7 @@ function ChatScreen() {
             onContentSizeChange={() =>
               scrollViewRef.current.scrollToEnd({ animated: true })
             }
+            keyboardShouldPersistTaps="handled"
           >
             <View
               style={{
@@ -278,6 +279,9 @@ function ChatScreen() {
               selection={selection}
               onSelectionChange={({ nativeEvent: { selection } }) =>
                 setSelection(selection)
+              }
+              onFocus={() =>
+                scrollViewRef.current?.scrollToEnd({ animated: true })
               }
               style={{
                 flex: 1,
