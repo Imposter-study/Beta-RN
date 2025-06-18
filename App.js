@@ -11,6 +11,7 @@ import SignUpScreen from "./screens/SignUpScreen/index";
 import SignInScreen from "./screens/signInScreen";
 import EditProfileScreen from "./screens/EditProfile/index";
 import ChatScreen from "./screens/chatScreen";
+import CreateCharacter from "./screens/createCharacter";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,6 +38,8 @@ export default function App() {
             name="CharacterDetail"
             component={CharacterDetailScreen}
           />
+          {/* 캐릭터 제작 페이지 */}
+          <Stack.Screen name="CreateCharacter" component={CreateCharacter} />
           {/* 마이페이지 스크린 */}
           <Stack.Screen name="Mypage" component={MyPageScreen} />
           {/* 프로필 편집 스크린 */}
