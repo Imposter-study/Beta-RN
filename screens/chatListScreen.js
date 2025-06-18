@@ -1,11 +1,38 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomTab from "../components/bottomTab";
+import axios from "axios";
+import { API_URL } from "../config";
+import { useEffect, useState } from "react";
 
 function ChatListScreen() {
   const navigation = useNavigation();
+  const [chatRooms, setChatRooms] = useState([]);
+
+  const getChatRoom = () => {
+    axios
+      .get(API_URL + "room/list/")
+      .then((response) => {
+        console.log(response.data);
+        setChatRooms(response.data);
+      })
+      .catch((error) => {
+        console.log("채팅방 목록 조회 실패", error);
+      });
+  };
+
+  useEffect(() => {
+    getChatRoom();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
@@ -34,11 +61,49 @@ function ChatListScreen() {
         {/* 대화 목록 */}
         <View style={styles.chatSection}>
           <Text style={styles.chatSort}>최신순/오래된순</Text>
-          <View style={styles.emptyChatBox}>
-            <Text style={styles.emptyChatText}>
-              아직 대화한 캐릭터가 없어요
-            </Text>
-          </View>
+          {chatRooms.length === 0 ? (
+            <View style={styles.emptyChatBox}>
+              <Text style={styles.emptyChatText}>
+                아직 대화한 캐릭터가 없어요
+              </Text>
+            </View>
+          ) : (
+            <ScrollView>
+              {chatRooms.map((room) => (
+                <TouchableOpacity
+                  style={{
+                    flexDirection: "row",
+                    marginTop: 15,
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                  onPress={() => navigation.navigate("Chat")}
+                  key={room.room_id}
+                >
+                  <Image
+                    source={{
+                      uri: "https://mblogthumb-phinf.pstatic.net/20160817_259/retspe_14714118890125sC2j_PNG/%C7%C7%C4%AB%C3%F2_%281%29.png?type=w800",
+                    }}
+                    style={{ width: 50, height: 50, borderRadius: 100 }}
+                  />
+                  <View>
+                    <Text
+                      style={{
+                        color: "rgb(249, 250, 251)",
+                        fontSize: 16,
+                        fontWeight: "500",
+                      }}
+                    >
+                      {room.character_id}
+                    </Text>
+                    <Text style={{ color: "rgb(133, 141, 155)" }}>
+                      last chat
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
         </View>
 
         {/* 하단메뉴 */}
