@@ -16,7 +16,7 @@ import SignInButton from "../components/signInButtons";
 
 function MyPageScreen() {
   const navigation = useNavigation();
-  const isLoggedIn = false;
+  const isLoggedIn = true;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -64,7 +64,10 @@ function MyPageScreen() {
             <TouchableOpacity style={styles.profileButton}>
               <Text style={styles.profileButtonText}>프로필 공유</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.profileButton}>
+            <TouchableOpacity
+              style={styles.profileButton}
+              onPress={() => navigation.navigate("EditProfile")}
+            >
               <Text style={styles.profileButtonText}>프로필 편집</Text>
             </TouchableOpacity>
           </View>
