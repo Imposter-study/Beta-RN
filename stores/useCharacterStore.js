@@ -20,6 +20,8 @@ const useCharacterStore = create((set) => ({
   setImage: (newImage) => set({ character_image: newImage }),
   setPresentation: (newPresentation) => set({ presentation: newPresentation }),
 
+  setIntro: (newIntro) => set((state) => ({ intro: [...state.intro, newIntro] })),
+
   // 내용 초기화 함수
   resetCharacter: () =>
     set({

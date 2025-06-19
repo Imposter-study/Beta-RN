@@ -5,13 +5,14 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Image,
 } from "react-native";
 import useCharacterStore from "../../stores/useCharacterStore";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 function Intro() {
-  const { name } = useCharacterStore();
+  const { name, intro, setIntro, character_image } = useCharacterStore();
 
   return (
     <>
@@ -39,10 +40,121 @@ function Intro() {
         >
           첫 상황을 만들어주세요
         </Text>
-        <ScrollView>
-          <Text style={{ color: "#ffffff80" }}>
-            캐릭터의 첫 메세지를 입력해주세요
-          </Text>
+        <ScrollView style={{ marginTop: 10 }}>
+          {intro.length !== 0 ? (
+            <Text style={{ color: "#ffffff80" }}>
+              캐릭터의 첫 메세지를 입력해주세요
+            </Text>
+          ) : (
+            <View>
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
+              >
+                {character_image ? (
+                  <Image
+                    source={{ uri: character_image }}
+                    style={{ width: 36, height: 36, borderRadius: 100 }}
+                  />
+                ) : (
+                  <Feather
+                    name="zap"
+                    size={18}
+                    color="#fff3"
+                    style={{
+                      borderRadius: 100,
+                      padding: 10,
+                      backgroundColor: "rgb(51 51 51)",
+                    }}
+                  />
+                )}
+                {/* 캐릭터(AI) 메세지 */}
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 18,
+                    padding: 10,
+                    backgroundColor: "rgb(38 39 39)",
+                    borderRadius: 16,
+                    borderTopLeftRadius: 0,
+                    alignSelf: "flex-start",
+                  }}
+                >
+                  test
+                </Text>
+                <TouchableOpacity>
+                  <FontAwesome6
+                    name="pen"
+                    size={14}
+                    color="#ffffff80"
+                    style={{
+                      padding: 10,
+                      backgroundColor: "rgb(38 39 39)",
+                      borderRadius: 100,
+                    }}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Feather
+                    name="trash-2"
+                    size={14}
+                    color="#ffffff80"
+                    style={{
+                      padding: 10,
+                      backgroundColor: "rgb(38 39 39)",
+                      borderRadius: 100,
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
+              {/* 유저 메세지 */}
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "flex-end",
+                  gap: 5,
+                }}
+              >
+                <TouchableOpacity>
+                  <FontAwesome6
+                    name="pen"
+                    size={14}
+                    color="#ffffff80"
+                    style={{
+                      padding: 10,
+                      backgroundColor: "rgb(38 39 39)",
+                      borderRadius: 100,
+                    }}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Feather
+                    name="trash-2"
+                    size={14}
+                    color="#ffffff80"
+                    style={{
+                      padding: 10,
+                      backgroundColor: "rgb(38 39 39)",
+                      borderRadius: 100,
+                    }}
+                  />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 18,
+                    padding: 10,
+                    backgroundColor: "rgb(124 103 255)",
+                    borderRadius: 16,
+                    borderTopRightRadius: 0,
+                    alignSelf: "flex-start",
+                  }}
+                >
+                  test
+                </Text>
+              </View>
+            </View>
+          )}
         </ScrollView>
       </View>
 
@@ -84,7 +196,23 @@ function Intro() {
                   }}
                 >
                   {/* 이미지 자리 */}
-                  <Feather name="zap" size={24} color="black" />
+                  {character_image ? (
+                    <Image
+                      source={{ uri: character_image }}
+                      style={{ width: 24, height: 24, borderRadius: 100 }}
+                    />
+                  ) : (
+                    <Feather
+                      name="zap"
+                      size={14}
+                      color="#fff3"
+                      style={{
+                        borderRadius: 100,
+                        padding: 5,
+                        backgroundColor: "rgb(51 51 51)",
+                      }}
+                    />
+                  )}
                   <Text style={{ color: "#ffffff80" }}>{name}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -95,7 +223,16 @@ function Intro() {
                     paddingBottom: 12,
                   }}
                 >
-                  <Feather name="eye" size={24} color="black" />
+                  <Feather
+                    name="eye"
+                    size={14}
+                    color="#fff3"
+                    style={{
+                      borderRadius: 100,
+                      padding: 5,
+                      backgroundColor: "rgb(51 51 51)",
+                    }}
+                  />
                   <Text style={{ color: "white" }}>유저</Text>
                 </TouchableOpacity>
               </View>
