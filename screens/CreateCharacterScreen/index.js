@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Content from "./content";
 import { useState } from "react";
+import Intro from "./intro";
 
 function CreateCharacter() {
   const navigation = useNavigation();
@@ -170,7 +171,7 @@ function CreateCharacter() {
           </View>
 
           {nowScreen === "content" ? <Content /> : null}
-          {nowScreen === "intro" ? <Content /> : null}
+          {nowScreen === "intro" ? <Intro /> : null}
           {nowScreen === "example situation" ? <Content /> : null}
           {nowScreen === "introduction" ? <Content /> : null}
         </SafeAreaView>
