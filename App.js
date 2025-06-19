@@ -11,7 +11,7 @@ import SignUpScreen from "./screens/SignUpScreen/index";
 import SignInScreen from "./screens/signInScreen";
 import EditProfileScreen from "./screens/EditProfile/index";
 import ChatScreen from "./screens/chatScreen";
-import CreateCharacter from "./screens/createCharacter";
+import CreateCharacter from "./screens/CreateCharacterScreen/index";
 
 const Stack = createNativeStackNavigator();
 
