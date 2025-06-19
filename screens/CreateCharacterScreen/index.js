@@ -92,16 +92,17 @@ function CreateCharacter() {
                 flex: 0.25,
                 justifyContent: "center",
                 alignItems: "center",
-                borderBottomColor: "white",
-                borderBottomWidth: 2,
+                borderBottomColor:
+                  nowScreen === "content" ? "white" : "#ffffff14",
+                borderBottomWidth: nowScreen === "content" ? 2 : 1,
               }}
             >
               <Text
                 style={{
-                  color: "white",
+                  color: nowScreen === "content" ? "white" : "#ffffff80",
+                  fontWeight: nowScreen === "content" && "500",
                   fontSize: 18,
-                  fontWeight: "500",
-                  padding: 10,
+                  padding: 15,
                 }}
               >
                 *내용
@@ -113,16 +114,17 @@ function CreateCharacter() {
                 flex: 0.25,
                 justifyContent: "center",
                 alignItems: "center",
-                borderBottomColor: "#ffffff14",
-                borderBottomWidth: 1,
+                borderBottomColor:
+                  nowScreen === "intro" ? "white" : "#ffffff14",
+                borderBottomWidth: nowScreen === "intro" ? 2 : 1,
               }}
             >
               <Text
                 style={{
-                  color: "white",
+                  color: nowScreen === "intro" ? "white" : "#ffffff80",
+                  fontWeight: nowScreen === "intro" && "500",
                   fontSize: 18,
-                  fontWeight: "500",
-                  padding: 10,
+                  padding: 15,
                 }}
               >
                 *인트로
@@ -134,16 +136,18 @@ function CreateCharacter() {
                 flex: 0.25,
                 justifyContent: "center",
                 alignItems: "center",
-                borderBottomColor: "#ffffff14",
-                borderBottomWidth: 1,
+                borderBottomColor:
+                  nowScreen === "example situation" ? "white" : "#ffffff14",
+                borderBottomWidth: nowScreen === "example situation" ? 2 : 1,
               }}
             >
               <Text
                 style={{
-                  color: "white",
+                  color:
+                    nowScreen === "example situation" ? "white" : "#ffffff80",
+                  fontWeight: nowScreen === "example situation" && "500",
                   fontSize: 18,
-                  fontWeight: "500",
-                  padding: 10,
+                  padding: 15,
                 }}
               >
                 상황 예시
@@ -155,16 +159,17 @@ function CreateCharacter() {
                 flex: 0.25,
                 justifyContent: "center",
                 alignItems: "center",
-                borderBottomColor: "#ffffff14",
-                borderBottomWidth: 1,
+                borderBottomColor:
+                  nowScreen === "introduction" ? "white" : "#ffffff14",
+                borderBottomWidth: nowScreen === "introduction" ? 2 : 1,
               }}
             >
               <Text
                 style={{
-                  color: "white",
+                  color: nowScreen === "introduction" ? "white" : "#ffffff80",
+                  fontWeight: nowScreen === "introduction" && "500",
                   fontSize: 18,
-                  fontWeight: "500",
-                  padding: 10,
+                  padding: 15,
                 }}
               >
                 소개
@@ -193,8 +198,6 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 10,
     paddingVertical: 12,
-    borderBottomColor: "#ffffff0d",
-    borderBottomWidth: 0.3,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
