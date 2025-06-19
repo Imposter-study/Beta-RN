@@ -15,6 +15,7 @@ import Content from "./content";
 import { useState } from "react";
 import Intro from "./intro";
 import Situation from "./situation";
+import Introduction from "./introduction";
 
 function CreateCharacter() {
   const navigation = useNavigation();
@@ -174,7 +175,7 @@ function CreateCharacter() {
           {nowScreen === "content" ? <Content /> : null}
           {nowScreen === "intro" ? <Intro /> : null}
           {nowScreen === "example situation" ? <Situation /> : null}
-          {nowScreen === "introduction" ? <Content /> : null}
+          {nowScreen === "introduction" ? <Introduction /> : null}
         </SafeAreaView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
