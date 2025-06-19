@@ -8,6 +8,7 @@ import {
   Keyboard,
   Platform,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -20,6 +21,15 @@ import Introduction from "./introduction";
 function CreateCharacter() {
   const navigation = useNavigation();
   const [nowScreen, setNowScreen] = useState("content");
+
+  const onClose = () => {
+    const title = "지금 나가면 수정한 내용이 삭제돼요";
+    const message = `제한된 분량을 초과하거나, 형식에 맞지 않는 내용이 있어\n저장할 수 없어요.\n저장하시려면 수정해주세요.`;
+    Alert.alert(title, message, [
+      { text: "취소" },
+      { text: "나가기", onPress: () => navigation.goBack() },
+    ]);
+  };
 
   return (
     <KeyboardAvoidingView
@@ -34,7 +44,7 @@ function CreateCharacter() {
             <View
               style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
             >
-              <TouchableOpacity onPress={() => navigation.goBack()}>
+              <TouchableOpacity onPress={() => onClose()}>
                 <Ionicons name="close" size={28} color="white" />
               </TouchableOpacity>
               <Text style={styles.headerTitle}>제작</Text>
