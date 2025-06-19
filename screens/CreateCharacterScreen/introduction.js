@@ -7,8 +7,13 @@ import {
   TextInput,
   Switch,
 } from "react-native";
+import useCharacterStore from "../../stores/useCharacterStore";
+import { useState } from "react";
 
 function Introduction() {
+  const { presentation, setPresentation } = useCharacterStore();
+  const [creatorComment, setCreatorComment] = useState("");
+
   return (
     <>
       {/* 캐릭터 제작 */}
@@ -35,20 +40,36 @@ function Introduction() {
             <Text style={{ color: "rgb(229, 231, 235)", fontSize: 16 }}>
               소개글
             </Text>
-            <TextInput
-              placeholder="제목과 함께 보일 소개글을 써주세요"
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
-              multiline={true}
-              style={{
-                color: "white",
-                paddingHorizontal: 7,
-                paddingVertical: 10,
-                borderWidth: 1,
-                borderColor: "#ffffff0d",
-                borderRadius: 6,
-                height: 70,
-              }}
-            />
+            <View>
+              <TextInput
+                value={presentation}
+                onChangeText={(text) => setPresentation(text)}
+                maxLength={40}
+                placeholder="제목과 함께 보일 소개글을 써주세요"
+                placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                multiline={true}
+                style={{
+                  color: "white",
+                  paddingHorizontal: 7,
+                  paddingVertical: 10,
+                  borderWidth: 1,
+                  borderColor: "#ffffff0d",
+                  borderRadius: 6,
+                  height: 70,
+                  backgroundColor: "#0000000d",
+                }}
+              />
+              <Text
+                style={{
+                  color: "rgba(255, 255, 255, 0.5)",
+                  position: "absolute",
+                  bottom: 10,
+                  right: 10,
+                }}
+              >
+                {presentation.length}/40
+              </Text>
+            </View>
           </View>
           <View style={{ gap: 7, marginBottom: 20 }}>
             <View style={{ gap: 5 }}>
@@ -79,20 +100,36 @@ function Introduction() {
             <Text style={{ color: "rgb(229, 231, 235)", fontSize: 16 }}>
               크리에이터 코멘트
             </Text>
-            <TextInput
-              placeholder={`유저들에게 하고 싶은 말을 써주세요\n상세 페이지에서 보여 드려요\nex. 대화 많이 해주셔서 감사해요`}
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
-              multiline={true}
-              style={{
-                color: "white",
-                paddingHorizontal: 7,
-                paddingVertical: 10,
-                borderWidth: 1,
-                borderColor: "#ffffff0d",
-                borderRadius: 6,
-                height: 150,
-              }}
-            />
+            <View>
+              <TextInput
+                value={creatorComment}
+                onChangeText={(text) => setCreatorComment(text)}
+                maxLength={150}
+                placeholder={`유저들에게 하고 싶은 말을 써주세요\n상세 페이지에서 보여 드려요\nex. 대화 많이 해주셔서 감사해요`}
+                placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                multiline={true}
+                style={{
+                  color: "white",
+                  paddingHorizontal: 7,
+                  paddingVertical: 10,
+                  borderWidth: 1,
+                  borderColor: "#ffffff0d",
+                  borderRadius: 6,
+                  height: 150,
+                  backgroundColor: "#0000000d",
+                }}
+              />
+              <Text
+                style={{
+                  color: "rgba(255, 255, 255, 0.5)",
+                  position: "absolute",
+                  bottom: 10,
+                  right: 10,
+                }}
+              >
+                {creatorComment.length}/150
+              </Text>
+            </View>
           </View>
         </View>
 
