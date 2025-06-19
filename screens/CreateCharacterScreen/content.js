@@ -12,7 +12,7 @@ import { useState } from "react";
 import useCharacterStore from "../../stores/useCharacterStore";
 
 function Content() {
-  const [image, setImage] = useState(null);
+  // const [image, setImage] = useState(null);
   const {
     title,
     setTitle,
@@ -22,6 +22,8 @@ function Content() {
     setName,
     character_info,
     setCharacterInfo,
+    character_image,
+    setImage,
   } = useCharacterStore();
 
   const MAX_LENGTH = 1200;
@@ -163,9 +165,9 @@ function Content() {
                 }}
                 onPress={pickImage}
               >
-                {image ? (
+                {character_image ? (
                   <Image
-                    source={{ uri: image }}
+                    source={{ uri: character_image }}
                     style={{
                       width: 128,
                       height: 128,

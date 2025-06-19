@@ -17,6 +17,7 @@ const useCharacterStore = create((set) => ({
   setName: (newName) => set({ name: newName }),
   setCharacterInfo: (newCharacterInfo) =>
     set({ character_info: newCharacterInfo }),
+  setImage: (newImage) => set({ character_image: newImage }),
 
   // 내용 초기화 함수
   resetCharacter: () =>
