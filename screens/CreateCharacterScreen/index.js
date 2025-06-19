@@ -17,17 +17,26 @@ import { useState } from "react";
 import Intro from "./intro";
 import Situation from "./situation";
 import Introduction from "./introduction";
+import useCharacterStore from "../../stores/useCharacterStore";
 
 function CreateCharacter() {
   const navigation = useNavigation();
   const [nowScreen, setNowScreen] = useState("content");
+
+  const { resetCharacter } = useCharacterStore();
 
   const onClose = () => {
     const title = "지금 나가면 수정한 내용이 삭제돼요";
     const message = `제한된 분량을 초과하거나, 형식에 맞지 않는 내용이 있어\n저장할 수 없어요.\n저장하시려면 수정해주세요.`;
     Alert.alert(title, message, [
       { text: "취소" },
-      { text: "나가기", onPress: () => navigation.goBack() },
+      {
+        text: "나가기",
+        onPress: () => {
+          resetCharacter();
+          navigation.goBack();
+        },
+      },
     ]);
   };
 
