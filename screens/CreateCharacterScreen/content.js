@@ -164,6 +164,7 @@ function Content() {
               placeholder="짧은 이름이 부르기 편해요. ex.수현"
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               style={{
+                color: "white",
                 paddingHorizontal: 7,
                 paddingVertical: 10,
                 borderWidth: 1,
@@ -181,6 +182,7 @@ function Content() {
               placeholderTextColor="rgba(255, 255, 255, 0.5)"
               multiline={true}
               style={{
+                color: "white",
                 paddingHorizontal: 7,
                 paddingVertical: 10,
                 borderWidth: 1,
