@@ -16,11 +16,23 @@ function Intro() {
   const { name, intro, setIntro, character_image } = useCharacterStore();
   const [sender, setSender] = useState(name);
   const [message, setMessage] = useState("");
+  const [selection, setSelection] = useState({ start: 0, end: 0 });
 
   const addIntro = () => {
     const introMessage = { message, role: sender };
     setIntro(introMessage);
     setMessage("");
+  };
+
+  const pressAsterisk = () => {
+    const before = message.slice(0, selection.start);
+    const after = message.slice(selection.end);
+    const newMessage = before + "*" + after;
+
+    setMessage(newMessage);
+
+    const newPosition = selection.start + 1;
+    setSelection({ start: newPosition, end: newPosition });
   };
 
   return (
@@ -274,6 +286,10 @@ function Intro() {
               placeholder={`${sender}의 메세지 입력`}
               placeholderTextColor="#9ca3af"
               multiline={true}
+              selection={selection}
+              onSelectionChange={({ nativeEvent: { selection } }) =>
+                setSelection(selection)
+              }
               style={{
                 color: "white",
                 fontSize: 16,
@@ -305,7 +321,7 @@ function Intro() {
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >
                 {/* asterisk */}
-                <TouchableOpacity>
+                <TouchableOpacity onPress={pressAsterisk}>
                   <FontAwesome6
                     name="asterisk"
                     size={18}
