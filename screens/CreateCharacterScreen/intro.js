@@ -13,13 +13,14 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useState } from "react";
 
 function Intro() {
-  const { name, intro, setIntro, character_image } = useCharacterStore();
+  const { name, intro, setIntro, deleteIntro, character_image } =
+    useCharacterStore();
   const [sender, setSender] = useState(name);
   const [message, setMessage] = useState("");
   const [selection, setSelection] = useState({ start: 0, end: 0 });
 
   const addIntro = () => {
-    const introMessage = { message, role: sender };
+    const introMessage = { id: Date.now(), message, role: sender };
     setIntro(introMessage);
     setMessage("");
   };
@@ -68,10 +69,10 @@ function Intro() {
             </Text>
           ) : (
             <View>
-              {intro.map((item, idx) =>
+              {intro.map((item) =>
                 item.role === "user" ? (
                   <View
-                    key={idx}
+                    key={item.id}
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
@@ -93,7 +94,7 @@ function Intro() {
                         }}
                       />
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => deleteIntro(item.id)}>
                       {/* 삭제 버튼 */}
                       <Feather
                         name="trash-2"
@@ -123,7 +124,7 @@ function Intro() {
                   </View>
                 ) : (
                   <View
-                    key={idx}
+                    key={item.id}
                     style={{
                       flexDirection: "row",
                       alignItems: "center",
@@ -176,7 +177,7 @@ function Intro() {
                         }}
                       />
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => deleteIntro(item.id)}>
                       {/* 삭제 버튼 */}
                       <Feather
                         name="trash-2"
