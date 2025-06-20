@@ -9,8 +9,10 @@ import {
 } from "react-native";
 import useCharacterStore from "../../stores/useCharacterStore";
 import { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 function Introduction() {
+  const navigation = useNavigation();
   const { presentation, setPresentation } = useCharacterStore();
   const [creatorComment, setCreatorComment] = useState("");
 
@@ -81,7 +83,7 @@ function Introduction() {
               </Text>
             </View>
             <View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("Hashtag")}>
                 <Text
                   style={{
                     color: "white",
