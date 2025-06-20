@@ -35,6 +35,17 @@ function Intro() {
     setSelection({ start: newPosition, end: newPosition });
   };
 
+  const pressUser = () => {
+    const before = message.slice(0, selection.start);
+    const after = message.slice(selection.end);
+    const newMessage = before + "{{user}}" + after;
+
+    setMessage(newMessage);
+
+    const newPosition = selection.start + 8;
+    setSelection({ start: newPosition, end: newPosition });
+  };
+
   return (
     <>
       {/* 글자수 */}
@@ -303,7 +314,7 @@ function Intro() {
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <TouchableOpacity>
+              <TouchableOpacity onPress={pressUser}>
                 <Text
                   style={{
                     color: "white",
