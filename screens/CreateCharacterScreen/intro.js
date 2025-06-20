@@ -13,7 +13,7 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useState } from "react";
 
 function Intro() {
-  const { name, intro, setIntro, deleteIntro, character_image } =
+  const { name, intro, setIntro, deleteIntro, editIntro, character_image } =
     useCharacterStore();
   const [sender, setSender] = useState(name);
   const [message, setMessage] = useState("");
@@ -27,15 +27,40 @@ function Intro() {
     setMessage("");
   };
 
-  const insertTextAtCursor = (text) => {
-    const before = message.slice(0, selection.start);
-    const after = message.slice(selection.end);
-    const newMessage = before + text + after;
-
-    setMessage(newMessage);
+  const insertTextAtCursor = (text, isEdit = false) => {
+    if (!isEdit) {
+      const before = message.slice(0, selection.start);
+      const after = message.slice(selection.end);
+      const newMessage = before + text + after;
+      setMessage(newMessage);
+    } else {
+      const before = editMessage.slice(0, selection.start);
+      const after = editMessage.slice(selection.end);
+      const newMessage = before + text + after;
+      setEditMessage(newMessage);
+    }
 
     const newPosition = selection.start + text.length;
     setSelection({ start: newPosition, end: newPosition });
+  };
+
+  const onEdit = (item) => {
+    setEdit(item.id);
+    setEditMessage(item.message);
+    setMessage(item.message);
+  };
+
+  const cancelEdit = () => {
+    setEdit(false);
+    setMessage("");
+    setEditMessage("");
+  };
+
+  const doneEdit = () => {
+    editIntro(edit, editMessage);
+    setEdit(false);
+    setMessage("");
+    setEditMessage("");
   };
 
   return (
@@ -87,6 +112,11 @@ function Intro() {
                       <TextInput
                         value={editMessage}
                         onChangeText={(text) => setEditMessage(text)}
+                        multiline={true}
+                        selection={selection}
+                        onSelectionChange={({ nativeEvent: { selection } }) =>
+                          setSelection(selection)
+                        }
                         style={{
                           color: "white",
                           fontSize: 18,
@@ -102,12 +132,7 @@ function Intro() {
                       />
                     ) : (
                       <>
-                        <TouchableOpacity
-                          onPress={() => {
-                            setEdit(item.id);
-                            setEditMessage(item.message);
-                          }}
-                        >
+                        <TouchableOpacity onPress={() => onEdit(item)}>
                           {/* 수정 버튼 */}
                           <FontAwesome6
                             name="pen"
@@ -182,6 +207,11 @@ function Intro() {
                       <TextInput
                         value={editMessage}
                         onChangeText={(text) => setEditMessage(text)}
+                        multiline={true}
+                        selection={selection}
+                        onSelectionChange={({ nativeEvent: { selection } }) =>
+                          setSelection(selection)
+                        }
                         style={{
                           color: "white",
                           fontSize: 18,
@@ -211,12 +241,7 @@ function Intro() {
                         >
                           {item.message}
                         </Text>
-                        <TouchableOpacity
-                          onPress={() => {
-                            setEdit(item.id);
-                            setEditMessage(item.message);
-                          }}
-                        >
+                        <TouchableOpacity onPress={() => onEdit(item)}>
                           {/* 수정 버튼 */}
                           <FontAwesome6
                             name="pen"
@@ -262,7 +287,7 @@ function Intro() {
             marginHorizontal: 15,
           }}
         >
-          <TouchableOpacity onPress={() => setEdit(false)}>
+          <TouchableOpacity onPress={cancelEdit}>
             <Feather
               name="x"
               size={20}
@@ -279,7 +304,7 @@ function Intro() {
           </Text>
           {/* asterick, send */}
           <View style={{ flexDirection: "row", gap: 10 }}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => insertTextAtCursor("*", true)}>
               <FontAwesome6
                 name="asterisk"
                 size={20}
@@ -292,13 +317,20 @@ function Intro() {
                 }}
               />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={doneEdit}>
               <Feather
                 name="check"
                 size={20}
-                color={message ? "white" : "rgb(115 120 131)"}
+                color={
+                  editMessage !== "" && editMessage !== message
+                    ? "white"
+                    : "rgb(115 120 131)"
+                }
                 style={{
-                  backgroundColor: message ? "rgb(82 32 204)" : "rgb(45 45 45)",
+                  backgroundColor:
+                    editMessage !== "" && editMessage !== message
+                      ? "rgb(82 32 204)"
+                      : "rgb(45 45 45)",
                   padding: 7,
                   borderRadius: 100,
                 }}

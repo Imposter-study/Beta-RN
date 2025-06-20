@@ -26,6 +26,12 @@ const useCharacterStore = create((set) => ({
     set((state) => ({
       intro: state.intro.filter((element) => element.id !== id),
     })),
+  editIntro: (id, newMessage) =>
+    set((state) => ({
+      intro: state.intro.map((item) =>
+        item.id === id ? { ...item, message: newMessage } : item
+      ),
+    })),
 
   // 내용 초기화 함수
   resetCharacter: () =>
