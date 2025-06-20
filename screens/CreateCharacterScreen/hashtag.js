@@ -13,13 +13,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { useNavigation } from "@react-navigation/native";
+import useCharacterStore from "../../stores/useCharacterStore";
 
 function Hashtag() {
   const navigation = useNavigation();
-  const [tags, setTags] = useState([]);
+  const { hashtag, setHashtag, deleteHashtag } = useCharacterStore();
   const [tag, setTag] = useState("");
 
-  const tagCount = tags.length;
+  const tagCount = hashtag.length;
 
   return (
     <KeyboardAvoidingView
@@ -56,7 +57,7 @@ function Hashtag() {
               borderBottomColor: "#ffffff0d",
             }}
           >
-            {tags.map((t, idx) => (
+            {hashtag.map((t, idx) => (
               <TouchableOpacity
                 key={idx}
                 style={{
@@ -67,9 +68,7 @@ function Hashtag() {
                   alignSelf: "flex-start",
                   alignItems: "center",
                 }}
-                onPress={() =>
-                  setTags((prev) => prev.filter((_, index) => index !== idx))
-                }
+                onPress={() => deleteHashtag(idx)}
               >
                 <Text style={{ color: "white" }}>#{t}</Text>
                 <EvilIcons name="close" size={14} color="#ffffff80" />
@@ -91,7 +90,7 @@ function Hashtag() {
                   onChangeText={(text) => setTag(text)}
                   returnKeyType="done"
                   onSubmitEditing={() => {
-                    setTags((prev) => [...prev, tag]);
+                    setHashtag(tag);
                     setTag("");
                   }}
                   autoFocus={true}

@@ -9,7 +9,7 @@ const useCharacterStore = create((set) => ({
   intro: [], // 첫 상황
   example_situation: [], // 상황 예시
   presentation: "", // 소개글?
-  // 해시태그
+  hashtag: [], // 해시태그
   // 크리에이터 코멘트
 
   setTitle: (newTitle) => set({ title: newTitle }),
@@ -33,6 +33,12 @@ const useCharacterStore = create((set) => ({
       ),
     })),
 
+  setHashtag: (newHashtag) =>
+    set((state) => ({ hashtag: [...state.hashtag, newHashtag] })),
+  deleteHashtag: (idx) =>
+    set((state) => ({
+      hashtag: state.hashtag.filter((_, index) => idx !== index),
+    })),
   // 내용 초기화 함수
   resetCharacter: () =>
     set({
