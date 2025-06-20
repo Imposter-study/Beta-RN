@@ -10,9 +10,18 @@ import {
 import useCharacterStore from "../../stores/useCharacterStore";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { useState } from "react";
 
 function Intro() {
   const { name, intro, setIntro, character_image } = useCharacterStore();
+  const [sender, setSender] = useState(name);
+  const [message, setMessage] = useState("");
+
+  const addIntro = () => {
+    const introMessage = { message, role: sender };
+    setIntro(introMessage);
+    setMessage("");
+  };
 
   return (
     <>
@@ -41,118 +50,136 @@ function Intro() {
           첫 상황을 만들어주세요
         </Text>
         <ScrollView style={{ marginTop: 10 }}>
-          {intro.length !== 0 ? (
+          {intro.length === 0 ? (
             <Text style={{ color: "#ffffff80" }}>
               캐릭터의 첫 메세지를 입력해주세요
             </Text>
           ) : (
             <View>
-              <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
-              >
-                {character_image ? (
-                  <Image
-                    source={{ uri: character_image }}
-                    style={{ width: 36, height: 36, borderRadius: 100 }}
-                  />
+              {intro.map((item, idx) =>
+                item.role === "user" ? (
+                  <View
+                    key={idx}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "flex-end",
+                      gap: 5,
+                      marginBottom: 20,
+                    }}
+                  >
+                    <TouchableOpacity>
+                      {/* 수정 버튼 */}
+                      <FontAwesome6
+                        name="pen"
+                        size={14}
+                        color="#ffffff80"
+                        style={{
+                          padding: 10,
+                          backgroundColor: "rgb(38 39 39)",
+                          borderRadius: 100,
+                        }}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      {/* 삭제 버튼 */}
+                      <Feather
+                        name="trash-2"
+                        size={14}
+                        color="#ffffff80"
+                        style={{
+                          padding: 10,
+                          backgroundColor: "rgb(38 39 39)",
+                          borderRadius: 100,
+                        }}
+                      />
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        color: "white",
+                        fontSize: 18,
+                        padding: 10,
+                        backgroundColor: "rgb(124 103 255)",
+                        borderRadius: 16,
+                        borderTopRightRadius: 0,
+                        alignSelf: "flex-start",
+                        maxWidth: "70%",
+                      }}
+                    >
+                      {item.message}
+                    </Text>
+                  </View>
                 ) : (
-                  <Feather
-                    name="zap"
-                    size={18}
-                    color="#fff3"
+                  <View
+                    key={idx}
                     style={{
-                      borderRadius: 100,
-                      padding: 10,
-                      backgroundColor: "rgb(51 51 51)",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 5,
+                      marginBottom: 20,
                     }}
-                  />
-                )}
-                {/* 캐릭터(AI) 메세지 */}
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 18,
-                    padding: 10,
-                    backgroundColor: "rgb(38 39 39)",
-                    borderRadius: 16,
-                    borderTopLeftRadius: 0,
-                    alignSelf: "flex-start",
-                  }}
-                >
-                  test
-                </Text>
-                <TouchableOpacity>
-                  <FontAwesome6
-                    name="pen"
-                    size={14}
-                    color="#ffffff80"
-                    style={{
-                      padding: 10,
-                      backgroundColor: "rgb(38 39 39)",
-                      borderRadius: 100,
-                    }}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Feather
-                    name="trash-2"
-                    size={14}
-                    color="#ffffff80"
-                    style={{
-                      padding: 10,
-                      backgroundColor: "rgb(38 39 39)",
-                      borderRadius: 100,
-                    }}
-                  />
-                </TouchableOpacity>
-              </View>
-              {/* 유저 메세지 */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                  gap: 5,
-                }}
-              >
-                <TouchableOpacity>
-                  <FontAwesome6
-                    name="pen"
-                    size={14}
-                    color="#ffffff80"
-                    style={{
-                      padding: 10,
-                      backgroundColor: "rgb(38 39 39)",
-                      borderRadius: 100,
-                    }}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Feather
-                    name="trash-2"
-                    size={14}
-                    color="#ffffff80"
-                    style={{
-                      padding: 10,
-                      backgroundColor: "rgb(38 39 39)",
-                      borderRadius: 100,
-                    }}
-                  />
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 18,
-                    padding: 10,
-                    backgroundColor: "rgb(124 103 255)",
-                    borderRadius: 16,
-                    borderTopRightRadius: 0,
-                    alignSelf: "flex-start",
-                  }}
-                >
-                  test
-                </Text>
-              </View>
+                  >
+                    {character_image ? (
+                      <Image
+                        source={{ uri: character_image }}
+                        style={{ width: 36, height: 36, borderRadius: 100 }}
+                      />
+                    ) : (
+                      <Feather
+                        name="zap"
+                        size={18}
+                        color="#fff3"
+                        style={{
+                          borderRadius: 100,
+                          padding: 10,
+                          backgroundColor: "rgb(51 51 51)",
+                        }}
+                      />
+                    )}
+                    {/* 캐릭터(AI) 메세지 */}
+                    <Text
+                      style={{
+                        color: "white",
+                        fontSize: 18,
+                        padding: 10,
+                        backgroundColor: "rgb(38 39 39)",
+                        borderRadius: 16,
+                        borderTopLeftRadius: 0,
+                        alignSelf: "flex-start",
+                        maxWidth: "70%",
+                      }}
+                    >
+                      {item.message}
+                    </Text>
+                    <TouchableOpacity>
+                      {/* 수정 버튼 */}
+                      <FontAwesome6
+                        name="pen"
+                        size={14}
+                        color="#ffffff80"
+                        style={{
+                          padding: 10,
+                          backgroundColor: "rgb(38 39 39)",
+                          borderRadius: 100,
+                        }}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      {/* 삭제 버튼 */}
+                      <Feather
+                        name="trash-2"
+                        size={14}
+                        color="#ffffff80"
+                        style={{
+                          padding: 10,
+                          backgroundColor: "rgb(38 39 39)",
+                          borderRadius: 100,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )
+              )}
             </View>
           )}
         </ScrollView>
@@ -186,13 +213,14 @@ function Intro() {
             >
               <View style={{ flexDirection: "row", gap: 10 }}>
                 <TouchableOpacity
+                  onPress={() => setSender(name)}
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
                     gap: 5,
                     paddingBottom: 12,
-                    borderBottomColor: "white",
-                    borderBottomWidth: 1.5,
+                    borderBottomColor: sender === name && "white",
+                    borderBottomWidth: sender === name && 1.5,
                   }}
                 >
                   {/* 이미지 자리 */}
@@ -216,11 +244,14 @@ function Intro() {
                   <Text style={{ color: "#ffffff80" }}>{name}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
+                  onPress={() => setSender("user")}
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
                     gap: 5,
                     paddingBottom: 12,
+                    borderBottomColor: sender === "user" && "white",
+                    borderBottomWidth: sender === "user" && 1.5,
                   }}
                 >
                   <Feather
@@ -238,7 +269,9 @@ function Intro() {
               </View>
             </View>
             <TextInput
-              placeholder={`${name}의 메세지 입력`}
+              value={message}
+              onChangeText={(text) => setMessage(text)}
+              placeholder={`${sender}의 메세지 입력`}
               placeholderTextColor="#9ca3af"
               multiline={true}
               style={{
@@ -271,6 +304,7 @@ function Intro() {
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >
+                {/* asterisk */}
                 <TouchableOpacity>
                   <FontAwesome6
                     name="asterisk"
@@ -279,13 +313,16 @@ function Intro() {
                     style={{ padding: 10 }}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                {/* 전송 버튼 */}
+                <TouchableOpacity onPress={() => addIntro()}>
                   <Feather
                     name="arrow-up"
                     size={24}
-                    color="rgb(115 120 131)"
+                    color={message ? "white" : "rgb(115 120 131)"}
                     style={{
-                      backgroundColor: "rgb(45 45 45)",
+                      backgroundColor: message
+                        ? "rgb(82 32 204)"
+                        : "rgb(45 45 45)",
                       paddingHorizontal: 10,
                       paddingVertical: 5,
                       borderRadius: 100,
