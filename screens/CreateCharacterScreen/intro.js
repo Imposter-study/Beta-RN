@@ -24,25 +24,14 @@ function Intro() {
     setMessage("");
   };
 
-  const pressAsterisk = () => {
+  const insertTextAtCursor = (text) => {
     const before = message.slice(0, selection.start);
     const after = message.slice(selection.end);
-    const newMessage = before + "*" + after;
+    const newMessage = before + text + after;
 
     setMessage(newMessage);
 
-    const newPosition = selection.start + 1;
-    setSelection({ start: newPosition, end: newPosition });
-  };
-
-  const pressUser = () => {
-    const before = message.slice(0, selection.start);
-    const after = message.slice(selection.end);
-    const newMessage = before + "{{user}}" + after;
-
-    setMessage(newMessage);
-
-    const newPosition = selection.start + 8;
+    const newPosition = selection.start + text.length;
     setSelection({ start: newPosition, end: newPosition });
   };
 
@@ -314,7 +303,7 @@ function Intro() {
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <TouchableOpacity onPress={pressUser}>
+              <TouchableOpacity onPress={() => insertTextAtCursor("{{user}}")}>
                 <Text
                   style={{
                     color: "white",
@@ -332,7 +321,7 @@ function Intro() {
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >
                 {/* asterisk */}
-                <TouchableOpacity onPress={pressAsterisk}>
+                <TouchableOpacity onPress={() => insertTextAtCursor("*")}>
                   <FontAwesome6
                     name="asterisk"
                     size={18}
