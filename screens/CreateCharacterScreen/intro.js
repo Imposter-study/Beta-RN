@@ -18,6 +18,8 @@ function Intro() {
   const [sender, setSender] = useState(name);
   const [message, setMessage] = useState("");
   const [selection, setSelection] = useState({ start: 0, end: 0 });
+  const [edit, setEdit] = useState(false);
+  const [editMessage, setEditMessage] = useState("");
 
   const addIntro = () => {
     const introMessage = { id: Date.now(), message, role: sender };
@@ -81,46 +83,72 @@ function Intro() {
                       marginBottom: 20,
                     }}
                   >
-                    <TouchableOpacity>
-                      {/* 수정 버튼 */}
-                      <FontAwesome6
-                        name="pen"
-                        size={14}
-                        color="#ffffff80"
+                    {edit === item.id ? (
+                      <TextInput
+                        value={editMessage}
+                        onChangeText={(text) => setEditMessage(text)}
                         style={{
+                          color: "white",
+                          fontSize: 18,
                           padding: 10,
-                          backgroundColor: "rgb(38 39 39)",
-                          borderRadius: 100,
+                          backgroundColor: "black",
+                          borderRadius: 16,
+                          borderTopRightRadius: 0,
+                          alignSelf: "flex-start",
+                          maxWidth: "70%",
+                          borderWidth: 1,
+                          borderColor: "rgb(82 32 204)",
                         }}
                       />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => deleteIntro(item.id)}>
-                      {/* 삭제 버튼 */}
-                      <Feather
-                        name="trash-2"
-                        size={14}
-                        color="#ffffff80"
-                        style={{
-                          padding: 10,
-                          backgroundColor: "rgb(38 39 39)",
-                          borderRadius: 100,
-                        }}
-                      />
-                    </TouchableOpacity>
-                    <Text
-                      style={{
-                        color: "white",
-                        fontSize: 18,
-                        padding: 10,
-                        backgroundColor: "rgb(124 103 255)",
-                        borderRadius: 16,
-                        borderTopRightRadius: 0,
-                        alignSelf: "flex-start",
-                        maxWidth: "70%",
-                      }}
-                    >
-                      {item.message}
-                    </Text>
+                    ) : (
+                      <>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setEdit(item.id);
+                            setEditMessage(item.message);
+                          }}
+                        >
+                          {/* 수정 버튼 */}
+                          <FontAwesome6
+                            name="pen"
+                            size={14}
+                            color="#ffffff80"
+                            style={{
+                              padding: 10,
+                              backgroundColor: "rgb(82 84 87)",
+                              borderRadius: 100,
+                            }}
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => deleteIntro(item.id)}>
+                          {/* 삭제 버튼 */}
+                          <Feather
+                            name="trash-2"
+                            size={14}
+                            color="#ffffff80"
+                            style={{
+                              padding: 10,
+                              backgroundColor: "rgb(82 84 87)",
+                              borderRadius: 100,
+                            }}
+                          />
+                        </TouchableOpacity>
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 18,
+                            padding: 10,
+                            backgroundColor: "rgb(124 103 255)",
+                            borderRadius: 16,
+                            borderTopRightRadius: 0,
+                            alignSelf: "flex-start",
+                            maxWidth: "70%",
+                          }}
+                        >
+                          {item.message}
+                        </Text>
+                      </>
+                    )}
                   </View>
                 ) : (
                   <View
@@ -150,46 +178,72 @@ function Intro() {
                       />
                     )}
                     {/* 캐릭터(AI) 메세지 */}
-                    <Text
-                      style={{
-                        color: "white",
-                        fontSize: 18,
-                        padding: 10,
-                        backgroundColor: "rgb(38 39 39)",
-                        borderRadius: 16,
-                        borderTopLeftRadius: 0,
-                        alignSelf: "flex-start",
-                        maxWidth: "70%",
-                      }}
-                    >
-                      {item.message}
-                    </Text>
-                    <TouchableOpacity>
-                      {/* 수정 버튼 */}
-                      <FontAwesome6
-                        name="pen"
-                        size={14}
-                        color="#ffffff80"
+                    {edit === item.id ? (
+                      <TextInput
+                        value={editMessage}
+                        onChangeText={(text) => setEditMessage(text)}
                         style={{
+                          color: "white",
+                          fontSize: 18,
                           padding: 10,
-                          backgroundColor: "rgb(38 39 39)",
-                          borderRadius: 100,
+                          backgroundColor: "black",
+                          borderRadius: 16,
+                          borderTopLeftRadius: 0,
+                          alignSelf: "flex-start",
+                          maxWidth: "70%",
+                          borderWidth: 1,
+                          borderColor: "rgb(82 32 204)",
                         }}
                       />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => deleteIntro(item.id)}>
-                      {/* 삭제 버튼 */}
-                      <Feather
-                        name="trash-2"
-                        size={14}
-                        color="#ffffff80"
-                        style={{
-                          padding: 10,
-                          backgroundColor: "rgb(38 39 39)",
-                          borderRadius: 100,
-                        }}
-                      />
-                    </TouchableOpacity>
+                    ) : (
+                      <>
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 18,
+                            padding: 10,
+                            backgroundColor: "rgb(38 39 39)",
+                            borderRadius: 16,
+                            borderTopLeftRadius: 0,
+                            alignSelf: "flex-start",
+                            maxWidth: "70%",
+                          }}
+                        >
+                          {item.message}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => {
+                            setEdit(item.id);
+                            setEditMessage(item.message);
+                          }}
+                        >
+                          {/* 수정 버튼 */}
+                          <FontAwesome6
+                            name="pen"
+                            size={14}
+                            color="#ffffff80"
+                            style={{
+                              padding: 10,
+                              backgroundColor: "rgb(38 39 39)",
+                              borderRadius: 100,
+                            }}
+                          />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => deleteIntro(item.id)}>
+                          {/* 삭제 버튼 */}
+                          <Feather
+                            name="trash-2"
+                            size={14}
+                            color="#ffffff80"
+                            style={{
+                              padding: 10,
+                              backgroundColor: "rgb(38 39 39)",
+                              borderRadius: 100,
+                            }}
+                          />
+                        </TouchableOpacity>
+                      </>
+                    )}
                   </View>
                 )
               )}
@@ -199,52 +253,130 @@ function Intro() {
       </View>
 
       {/* 인트로 입력 */}
-      <View
-        style={{
-          backgroundColor: "rgb(38, 39, 39)",
-          borderTopLeftRadius: 16,
-          borderTopRightRadius: 16,
-        }}
-      >
-        {!name ? (
-          <Text
-            style={{
-              color: "#ffffff80",
-              fontSize: 16,
-              padding: 12,
-            }}
-          >
-            캐릭터의 이름을 먼저 입력해주세요
-          </Text>
-        ) : (
-          <View style={{ padding: 12 }}>
-            <View
+      {edit ? (
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginHorizontal: 15,
+          }}
+        >
+          <TouchableOpacity onPress={() => setEdit(false)}>
+            <Feather
+              name="x"
+              size={20}
+              color="white"
               style={{
-                borderBottomWidth: 1,
-                borderBottomColor: "#ffffff0d",
+                borderRadius: 100,
+                padding: 7,
+                backgroundColor: "rgb(51 51 51)",
+              }}
+            />
+          </TouchableOpacity>
+          <Text style={{ color: "#ffffff80", fontSize: 16 }}>
+            메세지를 수정해주세요
+          </Text>
+          {/* asterick, send */}
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <TouchableOpacity>
+              <FontAwesome6
+                name="asterisk"
+                size={20}
+                color="white"
+                style={{
+                  borderRadius: 100,
+                  paddingVertical: 7,
+                  paddingHorizontal: 10,
+                  backgroundColor: "rgb(51 51 51)",
+                }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Feather
+                name="check"
+                size={20}
+                color={message ? "white" : "rgb(115 120 131)"}
+                style={{
+                  backgroundColor: message ? "rgb(82 32 204)" : "rgb(45 45 45)",
+                  padding: 7,
+                  borderRadius: 100,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      ) : (
+        <View
+          style={{
+            backgroundColor: "rgb(38, 39, 39)",
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+          }}
+        >
+          {!name ? (
+            <Text
+              style={{
+                color: "#ffffff80",
+                fontSize: 16,
+                padding: 12,
               }}
             >
-              <View style={{ flexDirection: "row", gap: 10 }}>
-                <TouchableOpacity
-                  onPress={() => setSender(name)}
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 5,
-                    paddingBottom: 12,
-                    borderBottomColor: sender === name && "white",
-                    borderBottomWidth: sender === name && 1.5,
-                  }}
-                >
-                  {/* 이미지 자리 */}
-                  {character_image ? (
-                    <Image
-                      source={{ uri: character_image }}
-                      style={{ width: 24, height: 24, borderRadius: 100 }}
-                    />
-                  ) : (
+              캐릭터의 이름을 먼저 입력해주세요
+            </Text>
+          ) : (
+            <View style={{ padding: 12 }}>
+              <View
+                style={{
+                  borderBottomWidth: 1,
+                  borderBottomColor: "#ffffff0d",
+                }}
+              >
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                  <TouchableOpacity
+                    onPress={() => setSender(name)}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 5,
+                      paddingBottom: 12,
+                      borderBottomColor: sender === name && "white",
+                      borderBottomWidth: sender === name && 1.5,
+                    }}
+                  >
+                    {/* 이미지 자리 */}
+                    {character_image ? (
+                      <Image
+                        source={{ uri: character_image }}
+                        style={{ width: 24, height: 24, borderRadius: 100 }}
+                      />
+                    ) : (
+                      <Feather
+                        name="zap"
+                        size={14}
+                        color="#fff3"
+                        style={{
+                          borderRadius: 100,
+                          padding: 5,
+                          backgroundColor: "rgb(51 51 51)",
+                        }}
+                      />
+                    )}
+                    <Text style={{ color: "#ffffff80" }}>{name}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setSender("user")}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 5,
+                      paddingBottom: 12,
+                      borderBottomColor: sender === "user" && "white",
+                      borderBottomWidth: sender === "user" && 1.5,
+                    }}
+                  >
                     <Feather
-                      name="zap"
+                      name="eye"
                       size={14}
                       color="#fff3"
                       style={{
@@ -253,104 +385,90 @@ function Intro() {
                         backgroundColor: "rgb(51 51 51)",
                       }}
                     />
-                  )}
-                  <Text style={{ color: "#ffffff80" }}>{name}</Text>
-                </TouchableOpacity>
+                    <Text style={{ color: "white" }}>유저</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <TextInput
+                value={message}
+                onChangeText={(text) => setMessage(text)}
+                placeholder={`${sender}의 메세지 입력`}
+                placeholderTextColor="#9ca3af"
+                multiline={true}
+                selection={selection}
+                onSelectionChange={({ nativeEvent: { selection } }) =>
+                  setSelection(selection)
+                }
+                style={{
+                  color: "white",
+                  fontSize: 16,
+                  fontWeight: "400",
+                  marginTop: 10,
+                  padding: 10,
+                  minHeight: 70,
+                  maxHeight: 124,
+                }}
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
                 <TouchableOpacity
-                  onPress={() => setSender("user")}
+                  onPress={() => insertTextAtCursor("{{user}}")}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      backgroundColor: "rgb(62 62 65)",
+                      borderRadius: 18,
+                      paddingVertical: 7,
+                      paddingHorizontal: 10,
+                      alignSelf: "flex-start",
+                    }}
+                  >
+                    {"{{"}user{"}}"}
+                  </Text>
+                </TouchableOpacity>
+                <View
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
-                    gap: 5,
-                    paddingBottom: 12,
-                    borderBottomColor: sender === "user" && "white",
-                    borderBottomWidth: sender === "user" && 1.5,
+                    gap: 10,
                   }}
                 >
-                  <Feather
-                    name="eye"
-                    size={14}
-                    color="#fff3"
-                    style={{
-                      borderRadius: 100,
-                      padding: 5,
-                      backgroundColor: "rgb(51 51 51)",
-                    }}
-                  />
-                  <Text style={{ color: "white" }}>유저</Text>
-                </TouchableOpacity>
+                  {/* asterisk */}
+                  <TouchableOpacity onPress={() => insertTextAtCursor("*")}>
+                    <FontAwesome6
+                      name="asterisk"
+                      size={18}
+                      color="#ffffff80"
+                      style={{ padding: 10 }}
+                    />
+                  </TouchableOpacity>
+                  {/* 전송 버튼 */}
+                  <TouchableOpacity onPress={() => addIntro()}>
+                    <Feather
+                      name="arrow-up"
+                      size={24}
+                      color={message ? "white" : "rgb(115 120 131)"}
+                      style={{
+                        backgroundColor: message
+                          ? "rgb(82 32 204)"
+                          : "rgb(45 45 45)",
+                        paddingHorizontal: 10,
+                        paddingVertical: 5,
+                        borderRadius: 100,
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-            <TextInput
-              value={message}
-              onChangeText={(text) => setMessage(text)}
-              placeholder={`${sender}의 메세지 입력`}
-              placeholderTextColor="#9ca3af"
-              multiline={true}
-              selection={selection}
-              onSelectionChange={({ nativeEvent: { selection } }) =>
-                setSelection(selection)
-              }
-              style={{
-                color: "white",
-                fontSize: 16,
-                fontWeight: "400",
-                marginTop: 10,
-                padding: 10,
-                minHeight: 70,
-                maxHeight: 124,
-              }}
-            />
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              <TouchableOpacity onPress={() => insertTextAtCursor("{{user}}")}>
-                <Text
-                  style={{
-                    color: "white",
-                    backgroundColor: "rgb(62 62 65)",
-                    borderRadius: 18,
-                    paddingVertical: 7,
-                    paddingHorizontal: 10,
-                    alignSelf: "flex-start",
-                  }}
-                >
-                  {"{{"}user{"}}"}
-                </Text>
-              </TouchableOpacity>
-              <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
-              >
-                {/* asterisk */}
-                <TouchableOpacity onPress={() => insertTextAtCursor("*")}>
-                  <FontAwesome6
-                    name="asterisk"
-                    size={18}
-                    color="#ffffff80"
-                    style={{ padding: 10 }}
-                  />
-                </TouchableOpacity>
-                {/* 전송 버튼 */}
-                <TouchableOpacity onPress={() => addIntro()}>
-                  <Feather
-                    name="arrow-up"
-                    size={24}
-                    color={message ? "white" : "rgb(115 120 131)"}
-                    style={{
-                      backgroundColor: message
-                        ? "rgb(82 32 204)"
-                        : "rgb(45 45 45)",
-                      paddingHorizontal: 10,
-                      paddingVertical: 5,
-                      borderRadius: 100,
-                    }}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        )}
-      </View>
+          )}
+        </View>
+      )}
     </>
   );
 }
