@@ -10,11 +10,15 @@ import {
 import useCharacterStore from "../../stores/useCharacterStore";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import EvilIcons from "@expo/vector-icons/EvilIcons";
 
 function Introduction() {
   const navigation = useNavigation();
-  const { presentation, setPresentation } = useCharacterStore();
+  const { presentation, setPresentation, hashtag, deleteHashtag } =
+    useCharacterStore();
   const [creatorComment, setCreatorComment] = useState("");
+
+  const tagCount = hashtag.length;
 
   return (
     <>
@@ -82,20 +86,47 @@ function Introduction() {
                 해시태그가 있으면 10배 더 많이 노출될 거에요
               </Text>
             </View>
-            <View>
-              <TouchableOpacity onPress={() => navigation.navigate("Hashtag")}>
-                <Text
+            <View
+              style={{
+                flexDirection: "row",
+                gap: 5,
+                flexWrap: "wrap",
+              }}
+            >
+              {hashtag.map((t, idx) => (
+                <TouchableOpacity
+                  key={idx}
                   style={{
-                    color: "white",
-                    backgroundColor: "rgb(62, 62, 65)",
+                    flexDirection: "row",
+                    backgroundColor: "rgb(62 62 65)",
                     padding: 10,
-                    borderRadius: 5,
+                    borderRadius: 6,
                     alignSelf: "flex-start",
+                    alignItems: "center",
                   }}
+                  onPress={() => deleteHashtag(idx)}
                 >
-                  + 추가 0/10
-                </Text>
-              </TouchableOpacity>
+                  <Text style={{ color: "white" }}>#{t}</Text>
+                  <EvilIcons name="close" size={14} color="#ffffff80" />
+                </TouchableOpacity>
+              ))}
+              {tagCount < 10 ? (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("Hashtag")}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      backgroundColor: "rgb(62, 62, 65)",
+                      padding: 10,
+                      borderRadius: 5,
+                      alignSelf: "flex-start",
+                    }}
+                  >
+                    + 추가 {tagCount}/10
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
             </View>
           </View>
           <View style={{ gap: 7 }}>
