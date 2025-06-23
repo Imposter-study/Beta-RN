@@ -14,6 +14,7 @@ import ChatScreen from "./screens/chatScreen";
 import CreateCharacter from "./screens/CreateCharacterScreen/index";
 import Hashtag from "./screens/CreateCharacterScreen/hashtag";
 import AddSituation from "./screens/CreateCharacterScreen/addSituation";
+import Toast from "react-native-toast-message";
 
 const Stack = createNativeStackNavigator();
 
@@ -53,6 +54,7 @@ export default function App() {
         </Stack.Navigator>
         <StatusBar style="light" backgroundColor="#1a1b1b" />
       </NavigationContainer>
+      <Toast />
     </SafeAreaProvider>
   );
 }

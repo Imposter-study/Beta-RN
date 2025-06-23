@@ -12,6 +12,7 @@ import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useState } from "react";
 import Markdown from "react-native-markdown-display";
+import Toast from "react-native-toast-message";
 
 function Intro() {
   const { name, intro, setIntro, deleteIntro, editIntro, character_image } =
@@ -98,6 +99,19 @@ function Intro() {
     setEdit(false);
     setMessage("");
     setEditMessage("");
+  };
+
+  const setSenderToUser = () => {
+    if (intro.length === 0) {
+      Toast.show({
+        type: "error",
+        text1: "유저는 인트로의 첫 메세지를 시작할 수 없어요",
+        position: "top",
+        visibilityTime: 3000,
+      });
+    } else {
+      setSender("user");
+    }
   };
 
   return (
@@ -305,7 +319,7 @@ function Intro() {
                     <Text style={styles.senderNameText}>{name}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => setSender("user")}
+                    onPress={setSenderToUser}
                     style={[
                       styles.senderOption,
                       sender === "user" && styles.senderOptionActive,
