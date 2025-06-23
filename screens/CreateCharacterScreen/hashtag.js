@@ -24,7 +24,7 @@ function Hashtag() {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.keyboardAvoidingView}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
@@ -35,56 +35,23 @@ function Hashtag() {
             <View></View>
             <Text style={styles.headerTitle}>해시태그 입력({tagCount}/10)</Text>
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text
-                style={{
-                  color: "rgb(124 103 255)",
-                  fontSize: 16,
-                  fontWeight: "500",
-                }}
-              >
-                확인
-              </Text>
+              <Text style={styles.confirmButtonText}>확인</Text>
             </TouchableOpacity>
           </View>
-          <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-              gap: 10,
-              paddingHorizontal: 15,
-              paddingVertical: 20,
-              borderBottomWidth: 0.7,
-              borderBottomColor: "#ffffff0d",
-            }}
-          >
+          <View style={styles.tagsContainer}>
             {hashtag.map((t, idx) => (
               <TouchableOpacity
                 key={idx}
-                style={{
-                  flexDirection: "row",
-                  backgroundColor: "rgb(62 62 65)",
-                  padding: 10,
-                  borderRadius: 6,
-                  alignSelf: "flex-start",
-                  alignItems: "center",
-                }}
+                style={styles.tagBubble}
                 onPress={() => deleteHashtag(idx)}
               >
-                <Text style={{ color: "white" }}>#{t}</Text>
+                <Text style={styles.tagText}>#{t}</Text>
                 <EvilIcons name="close" size={14} color="#ffffff80" />
               </TouchableOpacity>
             ))}
             {tagCount < 10 ? (
-              <View
-                style={{
-                  flexDirection: "row",
-                  backgroundColor: "rgb(62 62 65)",
-                  padding: 10,
-                  borderRadius: 6,
-                  alignSelf: "flex-start",
-                }}
-              >
-                <Text style={{ color: "rgb(229 231 235)" }}>#</Text>
+              <View style={styles.tagInputBubble}>
+                <Text style={styles.tagInputHash}>#</Text>
                 <TextInput
                   value={tag}
                   onChangeText={(text) => setTag(text)}
@@ -94,10 +61,7 @@ function Hashtag() {
                     setTag("");
                   }}
                   autoFocus={true}
-                  style={{
-                    minWidth: 20,
-                    color: "rgb(229 231 235)",
-                  }}
+                  style={styles.tagTextInput}
                 />
               </View>
             ) : null}
@@ -111,6 +75,9 @@ function Hashtag() {
 export default Hashtag;
 
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     width: "100%",
@@ -127,5 +94,44 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 24,
     fontWeight: "500",
+  },
+  confirmButtonText: {
+    color: "rgb(124 103 255)",
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  tagsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+    borderBottomWidth: 0.7,
+    borderBottomColor: "#ffffff0d",
+  },
+  tagBubble: {
+    flexDirection: "row",
+    backgroundColor: "rgb(62 62 65)",
+    padding: 10,
+    borderRadius: 6,
+    alignSelf: "flex-start",
+    alignItems: "center",
+  },
+  tagText: {
+    color: "white",
+  },
+  tagInputBubble: {
+    flexDirection: "row",
+    backgroundColor: "rgb(62 62 65)",
+    padding: 10,
+    borderRadius: 6,
+    alignSelf: "flex-start",
+  },
+  tagInputHash: {
+    color: "rgb(229 231 235)",
+  },
+  tagTextInput: {
+    minWidth: 20,
+    color: "rgb(229 231 235)",
   },
 });

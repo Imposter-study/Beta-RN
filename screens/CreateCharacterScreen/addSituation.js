@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -129,7 +130,7 @@ function AddSituation({ route }) {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.keyboardAvoidingView}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
@@ -145,10 +146,12 @@ function AddSituation({ route }) {
             </Text>
             <TouchableOpacity onPress={saveSituation}>
               <Text
-                style={{
-                  color:
-                    situation.length > 0 ? "rgb(124 103 255)" : "rgb(89 91 99)",
-                }}
+                style={[
+                  styles.saveButtonText,
+                  situation.length > 0
+                    ? styles.saveButtonTextActive
+                    : styles.saveButtonTextInactive,
+                ]}
               >
                 확인
               </Text>
@@ -156,38 +159,22 @@ function AddSituation({ route }) {
           </View>
 
           {/* 글자수 */}
-          <View
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              borderBottomColor: "#ffffff14",
-              borderBottomWidth: 1,
-            }}
-          >
+          <View style={styles.charCountContainer}>
             <Text
-              style={{
-                color: true ? "#ffffff80" : "rgb(240 68 56)",
-                padding: 10,
-              }}
+              style={[
+                styles.charCountText,
+                true ? styles.charCountTextNormal : styles.charCountTextError,
+              ]}
             >
               0/2,000자
             </Text>
           </View>
 
           {/* 상황예시 내용 */}
-          <ScrollView style={{ marginTop: 20, marginHorizontal: 15 }}>
+          <ScrollView style={styles.situationContentScroll}>
             {situation.map((item) =>
               item.role === "user" ? (
-                <View
-                  key={item.id}
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "flex-end",
-                    gap: 5,
-                    marginBottom: 20,
-                  }}
-                >
+                <View key={item.id} style={styles.userMessageContainer}>
                   {edit === item.id ? (
                     <TextInput
                       value={editMessage}
@@ -197,18 +184,7 @@ function AddSituation({ route }) {
                       onSelectionChange={({ nativeEvent: { selection } }) =>
                         setSelection(selection)
                       }
-                      style={{
-                        color: "white",
-                        fontSize: 18,
-                        padding: 10,
-                        backgroundColor: "black",
-                        borderRadius: 16,
-                        borderTopRightRadius: 0,
-                        alignSelf: "flex-start",
-                        maxWidth: "70%",
-                        borderWidth: 1,
-                        borderColor: "rgb(82 32 204)",
-                      }}
+                      style={styles.editTextInputUser}
                     />
                   ) : (
                     <>
@@ -218,11 +194,7 @@ function AddSituation({ route }) {
                           name="pen"
                           size={14}
                           color="#ffffff80"
-                          style={{
-                            padding: 10,
-                            backgroundColor: "rgb(82 84 87)",
-                            borderRadius: 100,
-                          }}
+                          style={styles.editDeleteButton}
                         />
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => deleteMessage(item.id)}>
@@ -231,25 +203,10 @@ function AddSituation({ route }) {
                           name="trash-2"
                           size={14}
                           color="#ffffff80"
-                          style={{
-                            padding: 10,
-                            backgroundColor: "rgb(82 84 87)",
-                            borderRadius: 100,
-                          }}
+                          style={styles.editDeleteButton}
                         />
                       </TouchableOpacity>
-                      <View
-                        style={{
-                          color: "white",
-                          fontSize: 18,
-                          padding: 10,
-                          backgroundColor: "rgb(124 103 255)",
-                          borderRadius: 16,
-                          borderTopRightRadius: 0,
-                          alignSelf: "flex-start",
-                          maxWidth: "70%",
-                        }}
-                      >
+                      <View style={styles.userMessageBubble}>
                         <Markdown rules={markdownRules}>
                           {item.message}
                         </Markdown>
@@ -258,30 +215,18 @@ function AddSituation({ route }) {
                   )}
                 </View>
               ) : (
-                <View
-                  key={item.id}
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 5,
-                    marginBottom: 20,
-                  }}
-                >
+                <View key={item.id} style={styles.aiMessageContainer}>
                   {character_image ? (
                     <Image
                       source={{ uri: character_image }}
-                      style={{ width: 36, height: 36, borderRadius: 100 }}
+                      style={styles.characterImage}
                     />
                   ) : (
                     <Feather
                       name="zap"
                       size={18}
                       color="#fff3"
-                      style={{
-                        borderRadius: 100,
-                        padding: 10,
-                        backgroundColor: "rgb(51 51 51)",
-                      }}
+                      style={styles.placeholderIcon}
                     />
                   )}
                   {/* 캐릭터(AI) 메세지 */}
@@ -294,33 +239,11 @@ function AddSituation({ route }) {
                       onSelectionChange={({ nativeEvent: { selection } }) =>
                         setSelection(selection)
                       }
-                      style={{
-                        color: "white",
-                        fontSize: 18,
-                        padding: 10,
-                        backgroundColor: "black",
-                        borderRadius: 16,
-                        borderTopLeftRadius: 0,
-                        alignSelf: "flex-start",
-                        maxWidth: "70%",
-                        borderWidth: 1,
-                        borderColor: "rgb(82 32 204)",
-                      }}
+                      style={styles.editTextInputAI}
                     />
                   ) : (
                     <>
-                      <View
-                        style={{
-                          color: "white",
-                          fontSize: 18,
-                          padding: 10,
-                          backgroundColor: "rgb(38 39 39)",
-                          borderRadius: 16,
-                          borderTopLeftRadius: 0,
-                          alignSelf: "flex-start",
-                          maxWidth: "70%",
-                        }}
-                      >
+                      <View style={styles.aiMessageBubble}>
                         <Markdown rules={markdownRules}>
                           {item.message}
                         </Markdown>
@@ -331,11 +254,7 @@ function AddSituation({ route }) {
                           name="pen"
                           size={14}
                           color="#ffffff80"
-                          style={{
-                            padding: 10,
-                            backgroundColor: "rgb(38 39 39)",
-                            borderRadius: 100,
-                          }}
+                          style={styles.editDeleteButtonAI}
                         />
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => deleteMessage(item.id)}>
@@ -344,11 +263,7 @@ function AddSituation({ route }) {
                           name="trash-2"
                           size={14}
                           color="#ffffff80"
-                          style={{
-                            padding: 10,
-                            backgroundColor: "rgb(38 39 39)",
-                            borderRadius: 100,
-                          }}
+                          style={styles.editDeleteButtonAI}
                         />
                       </TouchableOpacity>
                     </>
@@ -360,43 +275,27 @@ function AddSituation({ route }) {
 
           {/* 메세지 입력 */}
           {edit ? (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                marginHorizontal: 15,
-              }}
-            >
+            <View style={styles.editControlsContainer}>
               {/* 메세지 수정 시 입력 */}
               <TouchableOpacity onPress={cancelEdit}>
                 <Feather
                   name="x"
                   size={20}
                   color="white"
-                  style={{
-                    borderRadius: 100,
-                    padding: 7,
-                    backgroundColor: "rgb(51 51 51)",
-                  }}
+                  style={styles.cancelEditButton}
                 />
               </TouchableOpacity>
-              <Text style={{ color: "#ffffff80", fontSize: 16 }}>
+              <Text style={styles.editMessagePrompt}>
                 메세지를 수정해주세요
               </Text>
               {/* asterick, send */}
-              <View style={{ flexDirection: "row", gap: 10 }}>
+              <View style={styles.editActionButtonsContainer}>
                 <TouchableOpacity onPress={() => insertTextAtCursor("*", true)}>
                   <FontAwesome6
                     name="asterisk"
                     size={20}
                     color="white"
-                    style={{
-                      borderRadius: 100,
-                      paddingVertical: 7,
-                      paddingHorizontal: 10,
-                      backgroundColor: "rgb(51 51 51)",
-                    }}
+                    style={styles.asteriskButtonEdit}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => doneEdit(edit)}>
@@ -408,89 +307,58 @@ function AddSituation({ route }) {
                         ? "white"
                         : "rgb(115 120 131)"
                     }
-                    style={{
-                      backgroundColor:
-                        editMessage !== "" && editMessage !== message
-                          ? "rgb(82 32 204)"
-                          : "rgb(45 45 45)",
-                      padding: 7,
-                      borderRadius: 100,
-                    }}
+                    style={[
+                      styles.doneEditButton,
+                      editMessage !== "" && editMessage !== message
+                        ? styles.doneEditButtonActive
+                        : styles.doneEditButtonInactive,
+                    ]}
                   />
                 </TouchableOpacity>
               </View>
             </View>
           ) : (
-            <View
-              style={{
-                backgroundColor: "rgb(38, 39, 39)",
-                borderTopLeftRadius: 16,
-                borderTopRightRadius: 16,
-              }}
-            >
-              <View style={{ padding: 12 }}>
-                <View
-                  style={{
-                    borderBottomWidth: 1,
-                    borderBottomColor: "#ffffff0d",
-                  }}
-                >
-                  <View style={{ flexDirection: "row", gap: 10 }}>
-                    <TouchableOpacity
-                      onPress={() => setSender(name)}
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 5,
-                        paddingBottom: 12,
-                        borderBottomColor: sender === name && "white",
-                        borderBottomWidth: sender === name && 1.5,
-                      }}
-                    >
-                      {/* 이미지 자리 */}
-                      {character_image ? (
-                        <Image
-                          source={{ uri: character_image }}
-                          style={{ width: 24, height: 24, borderRadius: 100 }}
-                        />
-                      ) : (
-                        <Feather
-                          name="zap"
-                          size={14}
-                          color="#fff3"
-                          style={{
-                            borderRadius: 100,
-                            padding: 5,
-                            backgroundColor: "rgb(51 51 51)",
-                          }}
-                        />
-                      )}
-                      <Text style={{ color: "#ffffff80" }}>{name}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => setSender("user")}
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        gap: 5,
-                        paddingBottom: 12,
-                        borderBottomColor: sender === "user" && "white",
-                        borderBottomWidth: sender === "user" && 1.5,
-                      }}
-                    >
+            <View style={styles.messageInputContainer}>
+              <View style={styles.messageInputContent}>
+                <View style={styles.senderSelectionContainer}>
+                  <TouchableOpacity
+                    onPress={() => setSender(name)}
+                    style={[
+                      styles.senderOption,
+                      sender === name && styles.senderOptionActive,
+                    ]}
+                  >
+                    {/* 이미지 자리 */}
+                    {character_image ? (
+                      <Image
+                        source={{ uri: character_image }}
+                        style={styles.senderImage}
+                      />
+                    ) : (
                       <Feather
-                        name="eye"
+                        name="zap"
                         size={14}
                         color="#fff3"
-                        style={{
-                          borderRadius: 100,
-                          padding: 5,
-                          backgroundColor: "rgb(51 51 51)",
-                        }}
+                        style={styles.senderPlaceholderIcon}
                       />
-                      <Text style={{ color: "white" }}>유저</Text>
-                    </TouchableOpacity>
-                  </View>
+                    )}
+                    <Text style={styles.senderNameText}>{name}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setSender("user")}
+                    style={[
+                      styles.senderOption,
+                      sender === "user" && styles.senderOptionActive,
+                    ]}
+                  >
+                    <Feather
+                      name="eye"
+                      size={14}
+                      color="#fff3"
+                      style={styles.senderPlaceholderIcon}
+                    />
+                    <Text style={styles.senderUserText}>유저</Text>
+                  </TouchableOpacity>
                 </View>
                 <TextInput
                   value={message}
@@ -502,52 +370,24 @@ function AddSituation({ route }) {
                   onSelectionChange={({ nativeEvent: { selection } }) =>
                     setSelection(selection)
                   }
-                  style={{
-                    color: "white",
-                    fontSize: 16,
-                    fontWeight: "400",
-                    marginTop: 10,
-                    padding: 10,
-                    minHeight: 70,
-                    maxHeight: 124,
-                  }}
+                  style={styles.messageTextInput}
                 />
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                >
+                <View style={styles.messageActionContainer}>
                   <TouchableOpacity
                     onPress={() => insertTextAtCursor("{{user}}")}
                   >
-                    <Text
-                      style={{
-                        color: "white",
-                        backgroundColor: "rgb(62 62 65)",
-                        borderRadius: 18,
-                        paddingVertical: 7,
-                        paddingHorizontal: 10,
-                        alignSelf: "flex-start",
-                      }}
-                    >
+                    <Text style={styles.userTagButton}>
                       {"{{"}user{"}}"}
                     </Text>
                   </TouchableOpacity>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 10,
-                    }}
-                  >
+                  <View style={styles.messageSendButtons}>
                     {/* asterisk */}
                     <TouchableOpacity onPress={() => insertTextAtCursor("*")}>
                       <FontAwesome6
                         name="asterisk"
                         size={18}
                         color="#ffffff80"
-                        style={{ padding: 10 }}
+                        style={styles.asteriskButton}
                       />
                     </TouchableOpacity>
                     {/* 전송 버튼 */}
@@ -556,14 +396,12 @@ function AddSituation({ route }) {
                         name="arrow-up"
                         size={24}
                         color={message ? "white" : "rgb(115 120 131)"}
-                        style={{
-                          backgroundColor: message
-                            ? "rgb(82 32 204)"
-                            : "rgb(45 45 45)",
-                          paddingHorizontal: 10,
-                          paddingVertical: 5,
-                          borderRadius: 100,
-                        }}
+                        style={[
+                          styles.sendMessageButton,
+                          message
+                            ? styles.sendMessageButtonActive
+                            : styles.sendMessageButtonInactive,
+                        ]}
                       />
                     </TouchableOpacity>
                   </View>
@@ -580,6 +418,9 @@ function AddSituation({ route }) {
 export default AddSituation;
 
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     width: "100%",
@@ -598,5 +439,225 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 24,
     fontWeight: "500",
+  },
+  saveButtonText: {
+    fontSize: 16,
+  },
+  saveButtonTextActive: {
+    color: "rgb(124 103 255)",
+  },
+  saveButtonTextInactive: {
+    color: "rgb(89 91 99)",
+  },
+  charCountContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomColor: "#ffffff14",
+    borderBottomWidth: 1,
+  },
+  charCountText: {
+    padding: 10,
+  },
+  charCountTextNormal: {
+    color: "#ffffff80",
+  },
+  charCountTextError: {
+    color: "rgb(240 68 56)",
+  },
+  situationContentScroll: {
+    marginTop: 20,
+    marginHorizontal: 15,
+  },
+  userMessageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: 5,
+    marginBottom: 20,
+  },
+  editTextInputUser: {
+    color: "white",
+    fontSize: 18,
+    padding: 10,
+    backgroundColor: "black",
+    borderRadius: 16,
+    borderTopRightRadius: 0,
+    alignSelf: "flex-start",
+    maxWidth: "70%",
+    borderWidth: 1,
+    borderColor: "rgb(82 32 204)",
+  },
+  editDeleteButton: {
+    padding: 10,
+    backgroundColor: "rgb(82 84 87)",
+    borderRadius: 100,
+  },
+  userMessageBubble: {
+    color: "white",
+    fontSize: 18,
+    padding: 10,
+    backgroundColor: "rgb(124 103 255)",
+    borderRadius: 16,
+    borderTopRightRadius: 0,
+    alignSelf: "flex-start",
+    maxWidth: "70%",
+  },
+  aiMessageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    marginBottom: 20,
+  },
+  characterImage: {
+    width: 36,
+    height: 36,
+    borderRadius: 100,
+  },
+  placeholderIcon: {
+    borderRadius: 100,
+    padding: 10,
+    backgroundColor: "rgb(51 51 51)",
+  },
+  editTextInputAI: {
+    color: "white",
+    fontSize: 18,
+    padding: 10,
+    backgroundColor: "black",
+    borderRadius: 16,
+    borderTopLeftRadius: 0,
+    alignSelf: "flex-start",
+    maxWidth: "70%",
+    borderWidth: 1,
+    borderColor: "rgb(82 32 204)",
+  },
+  aiMessageBubble: {
+    color: "white",
+    fontSize: 18,
+    padding: 10,
+    backgroundColor: "rgb(38 39 39)",
+    borderRadius: 16,
+    borderTopLeftRadius: 0,
+    alignSelf: "flex-start",
+    maxWidth: "70%",
+  },
+  editDeleteButtonAI: {
+    padding: 10,
+    backgroundColor: "rgb(38 39 39)",
+    borderRadius: 100,
+  },
+  editControlsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: 15,
+  },
+  cancelEditButton: {
+    borderRadius: 100,
+    padding: 7,
+    backgroundColor: "rgb(51 51 51)",
+  },
+  editMessagePrompt: {
+    color: "#ffffff80",
+    fontSize: 16,
+  },
+  editActionButtonsContainer: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  asteriskButtonEdit: {
+    borderRadius: 100,
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    backgroundColor: "rgb(51 51 51)",
+  },
+  doneEditButton: {
+    padding: 7,
+    borderRadius: 100,
+  },
+  doneEditButtonActive: {
+    backgroundColor: "rgb(82 32 204)",
+  },
+  doneEditButtonInactive: {
+    backgroundColor: "rgb(45 45 45)",
+  },
+  messageInputContainer: {
+    backgroundColor: "rgb(38, 39, 39)",
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  messageInputContent: {
+    padding: 12,
+  },
+  senderSelectionContainer: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#ffffff0d",
+    flexDirection: "row",
+    gap: 10,
+  },
+  senderOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingBottom: 12,
+  },
+  senderOptionActive: {
+    borderBottomColor: "white",
+    borderBottomWidth: 1.5,
+  },
+  senderImage: {
+    width: 24,
+    height: 24,
+    borderRadius: 100,
+  },
+  senderPlaceholderIcon: {
+    borderRadius: 100,
+    padding: 5,
+    backgroundColor: "rgb(51 51 51)",
+  },
+  senderNameText: {
+    color: "#ffffff80",
+  },
+  senderUserText: {
+    color: "white",
+  },
+  messageTextInput: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "400",
+    marginTop: 10,
+    padding: 10,
+    minHeight: 70,
+    maxHeight: 124,
+  },
+  messageActionContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  userTagButton: {
+    color: "white",
+    backgroundColor: "rgb(62 62 65)",
+    borderRadius: 18,
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    alignSelf: "flex-start",
+  },
+  messageSendButtons: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  asteriskButton: {
+    padding: 10,
+  },
+  sendMessageButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 100,
+  },
+  sendMessageButtonActive: {
+    backgroundColor: "rgb(82 32 204)",
+  },
+  sendMessageButtonInactive: {
+    backgroundColor: "rgb(45 45 45)",
   },
 });
