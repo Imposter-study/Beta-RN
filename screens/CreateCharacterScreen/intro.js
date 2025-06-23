@@ -140,7 +140,7 @@ function Intro() {
             </Text>
           ) : (
             <View>
-              {intro.map((item) =>
+              {intro.map((item, idx) =>
                 item.role === "user" ? (
                   <View key={item.id} style={styles.userMessageContainer}>
                     {edit === item.id ? (
@@ -225,15 +225,19 @@ function Intro() {
                             style={styles.editDeleteButtonAI}
                           />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => deleteIntro(item.id)}>
-                          {/* 삭제 버튼 */}
-                          <Feather
-                            name="trash-2"
-                            size={14}
-                            color="#ffffff80"
-                            style={styles.editDeleteButtonAI}
-                          />
-                        </TouchableOpacity>
+                        {idx === 0 ? null : (
+                          <TouchableOpacity
+                            onPress={() => deleteIntro(item.id)}
+                          >
+                            {/* 삭제 버튼 */}
+                            <Feather
+                              name="trash-2"
+                              size={14}
+                              color="#ffffff80"
+                              style={styles.editDeleteButtonAI}
+                            />
+                          </TouchableOpacity>
+                        )}
                       </>
                     )}
                   </View>
