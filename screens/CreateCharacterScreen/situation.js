@@ -8,10 +8,13 @@ import {
 import useCharacterStore from "../../stores/useCharacterStore";
 import { useNavigation } from "@react-navigation/native";
 import SituationCard from "../../components/situationCard";
+import { useEffect } from "react";
 
 function Situation() {
   const navigation = useNavigation();
   const { name, example_situation } = useCharacterStore();
+
+  useEffect(() => {}, [example_situation]);
 
   return (
     <>
@@ -44,7 +47,11 @@ function Situation() {
 
         {/* 상황 예시 리스트 */}
         {example_situation.map((situation, index) => (
-          <SituationCard key={index} situation={situation} index={index} />
+          <SituationCard
+            key={situation.id}
+            situation={situation}
+            index={index}
+          />
         ))}
 
         {/* 상황예시 입력 버튼 */}

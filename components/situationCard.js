@@ -3,9 +3,10 @@ import useCharacterStore from "../stores/useCharacterStore";
 import { useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
 import Markdown from "react-native-markdown-display";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 function SituationCard({ situation, index }) {
-  const { character_image } = useCharacterStore();
+  const { character_image, deleteExampleSituation } = useCharacterStore();
   const [isOpen, setIsOpen] = useState(false);
 
   const markdownRules = {
@@ -48,26 +49,29 @@ function SituationCard({ situation, index }) {
       <View
         style={{
           flexDirection: "row",
-          paddingVertical: 20,
-          paddingHorizontal: 15,
           alignItems: "center",
           justifyContent: "space-between",
         }}
       >
         <TouchableOpacity
-          style={{ flex: 1 }}
+          style={{ flex: 1, paddingVertical: 20, paddingHorizontal: 15 }}
           onPress={() => setIsOpen((prev) => !prev)}
         >
           <Text style={{ color: "white", fontSize: 18 }}>
             상황 예시 {index + 1}
           </Text>
         </TouchableOpacity>
-        <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity>
-            <Text style={{ color: "white" }}>수정</Text>
+        <View
+          style={{ flexDirection: "row", alignItems: "center", marginRight: 5 }}
+        >
+          <TouchableOpacity style={{ padding: 10 }}>
+            <FontAwesome6 name="pen" size={16} color="#ffffff80" />
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={{ color: "white" }}>삭제</Text>
+          <TouchableOpacity
+            style={{ padding: 10 }}
+            onPress={() => deleteExampleSituation(index)}
+          >
+            <Feather name="trash-2" size={20} color="#ffffff80" />
           </TouchableOpacity>
         </View>
       </View>
@@ -76,7 +80,10 @@ function SituationCard({ situation, index }) {
       {isOpen
         ? situation.map((item) =>
             item.role === "user" ? (
-              <View style={{ alignItems: "flex-end", marginBottom: 10 }}>
+              <View
+                key={item.id}
+                style={{ alignItems: "flex-end", marginBottom: 10 }}
+              >
                 <View
                   key={item.id}
                   style={{
@@ -93,6 +100,7 @@ function SituationCard({ situation, index }) {
               </View>
             ) : (
               <View
+                key={item.id}
                 style={{
                   flexDirection: "row",
                   marginHorizontal: 20,
