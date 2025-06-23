@@ -13,11 +13,25 @@ function Situation() {
   const navigation = useNavigation();
   const { name, example_situation } = useCharacterStore();
 
+  // 글자수
+  const totalLength = example_situation
+    .flat() // 2차원 배열을 1차원으로 평탄화
+    .reduce((acc, curr) => acc + curr.message.length, 0); // message 길이 합산
+
   return (
     <>
       {/* 글자수 */}
       <View style={styles.charCountContainer}>
-        <Text style={styles.charCountText}>0/2,000자</Text>
+        <Text
+          style={[
+            styles.charCountText,
+            totalLength < 2000
+              ? styles.charCountTextNormal
+              : styles.charCountTextError,
+          ]}
+        >
+          {totalLength}/2,000자
+        </Text>
       </View>
 
       {/* 인트로 내용 */}
@@ -64,6 +78,12 @@ const styles = StyleSheet.create({
   charCountText: {
     color: "#ffffff80",
     padding: 10,
+  },
+  charCountTextNormal: {
+    color: "#ffffff80",
+  },
+  charCountTextError: {
+    color: "rgb(240 68 56)",
   },
   introContentContainer: {
     marginHorizontal: 15,

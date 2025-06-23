@@ -37,6 +37,18 @@ function AddSituation({ route }) {
   const [edit, setEdit] = useState(false);
   const [editMessage, setEditMessage] = useState("");
 
+  // 글자수
+  const baseLength =
+    // 기존에 작성된 상황예시
+    example_situation
+      .filter((_, idx) => idx !== index) // index 상황 제외
+      .flat() // 2차원 배열을 1차원으로 평탄화
+      .reduce((acc, curr) => acc + curr.message.length, 0) +
+    // 추가된 상황예시
+    situation.reduce((sum, item) => sum + item.message.length, 0);
+  const totalLength = baseLength + message.length; // message 길이 합산
+  const onEditingLength = baseLength - message.length + editMessage.length;
+
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
       const siblings = parent[0].children;
@@ -163,10 +175,12 @@ function AddSituation({ route }) {
             <Text
               style={[
                 styles.charCountText,
-                true ? styles.charCountTextNormal : styles.charCountTextError,
+                totalLength < 2000 && onEditingLength < 2000
+                  ? styles.charCountTextNormal
+                  : styles.charCountTextError,
               ]}
             >
-              0/2,000자
+              {!edit ? totalLength : onEditingLength}/2,000자
             </Text>
           </View>
 
