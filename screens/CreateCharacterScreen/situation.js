@@ -5,8 +5,13 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import useCharacterStore from "../../stores/useCharacterStore";
+import { useNavigation } from "@react-navigation/native";
 
 function Situation() {
+  const navigation = useNavigation();
+  const { name, example_situation } = useCharacterStore();
+
   return (
     <>
       {/* 글자수 */}
@@ -38,6 +43,7 @@ function Situation() {
 
         {/* 상황예시 입력 */}
         <TouchableOpacity
+          disabled={!name}
           style={{
             backgroundColor: "rgb(62, 62, 65)",
             borderRadius: 6,
@@ -45,17 +51,31 @@ function Situation() {
             justifyContent: "center",
             alignItems: "center",
           }}
+          onPress={() => navigation.navigate("AddSituation")}
         >
-          <Text
-            style={{
-              color: "white",
-              fontWeight: "500",
-              fontSize: 16,
-              padding: 12,
-            }}
-          >
-            + 상황 예시 추가
-          </Text>
+          {!name ? (
+            <Text
+              style={{
+                color: "rgb(115 120 131)",
+                fontWeight: "500",
+                fontSize: 16,
+                padding: 12,
+              }}
+            >
+              캐릭터 이름을 먼저 입력해주세요
+            </Text>
+          ) : (
+            <Text
+              style={{
+                color: "white",
+                fontWeight: "500",
+                fontSize: 16,
+                padding: 12,
+              }}
+            >
+              + 상황 예시 추가
+            </Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </>
