@@ -11,6 +11,7 @@ import useCharacterStore from "../../stores/useCharacterStore";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useState } from "react";
+import Markdown from "react-native-markdown-display";
 
 function Intro() {
   const { name, intro, setIntro, deleteIntro, editIntro, character_image } =
@@ -20,6 +21,34 @@ function Intro() {
   const [selection, setSelection] = useState({ start: 0, end: 0 });
   const [edit, setEdit] = useState(false);
   const [editMessage, setEditMessage] = useState("");
+
+  const markdownRules = {
+    paragraph: (node, children, parent, styles) => {
+      const siblings = parent[0].children;
+      const isLast = node.index === siblings[siblings.length - 1].index;
+
+      return (
+        <Text
+          key={node.key}
+          style={{ color: "white", marginBottom: isLast ? 0 : 16 }}
+        >
+          {children}
+        </Text>
+      );
+    },
+
+    em: (node, children, parent, styles) => (
+      <Text key={node.key} style={{ fontStyle: "italic", color: "#ffffff80" }}>
+        {children}
+      </Text>
+    ),
+
+    bold: (node, children, parent, styles) => (
+      <Text key={node.key} style={{ fontWeight: "bold", color: "white" }}>
+        {children}
+      </Text>
+    ),
+  };
 
   const addIntro = () => {
     const introMessage = { id: Date.now(), message, role: sender };
@@ -158,7 +187,7 @@ function Intro() {
                             }}
                           />
                         </TouchableOpacity>
-                        <Text
+                        <View
                           style={{
                             color: "white",
                             fontSize: 18,
@@ -170,8 +199,10 @@ function Intro() {
                             maxWidth: "70%",
                           }}
                         >
-                          {item.message}
-                        </Text>
+                          <Markdown rules={markdownRules}>
+                            {item.message}
+                          </Markdown>
+                        </View>
                       </>
                     )}
                   </View>
@@ -227,7 +258,7 @@ function Intro() {
                       />
                     ) : (
                       <>
-                        <Text
+                        <View
                           style={{
                             color: "white",
                             fontSize: 18,
@@ -239,8 +270,10 @@ function Intro() {
                             maxWidth: "70%",
                           }}
                         >
-                          {item.message}
-                        </Text>
+                          <Markdown rules={markdownRules}>
+                            {item.message}
+                          </Markdown>
+                        </View>
                         <TouchableOpacity onPress={() => onEdit(item)}>
                           {/* 수정 버튼 */}
                           <FontAwesome6
