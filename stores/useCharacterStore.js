@@ -10,8 +10,12 @@ const useCharacterStore = create((set) => ({
   example_situation: [], // 상황 예시
   presentation: "", // 소개글?
   hashtag: [], // 해시태그
-  // 크리에이터 코멘트
+  creator_comment: "", // 크리에이터 코멘트
+  is_character_public: true,
+  is_description_public: true,
+  is_example_public: true,
 
+  // 내용 설정
   setTitle: (newTitle) => set({ title: newTitle }),
   setDescription: (newDescription) => set({ description: newDescription }),
   setName: (newName) => set({ name: newName }),
@@ -20,6 +24,7 @@ const useCharacterStore = create((set) => ({
   setImage: (newImage) => set({ character_image: newImage }),
   setPresentation: (newPresentation) => set({ presentation: newPresentation }),
 
+  // 인트로 설정
   setIntro: (newIntro) =>
     set((state) => ({ intro: [...state.intro, newIntro] })),
   deleteIntro: (id) =>
@@ -33,13 +38,31 @@ const useCharacterStore = create((set) => ({
       ),
     })),
 
+  // 소개 설정
+  // 해시태그 설정
   setHashtag: (newHashtag) =>
     set((state) => ({ hashtag: [...state.hashtag, newHashtag] })),
   deleteHashtag: (idx) =>
     set((state) => ({
       hashtag: state.hashtag.filter((_, index) => idx !== index),
     })),
+  // 공개여부 설정
+  setCharacterPublic: () =>
+    set((state) => ({
+      is_character_public: !state.is_character_public,
+      is_description_public: !state.is_description_public,
+      is_example_public: !state.is_example_public,
+    })),
+  setDescriptionPublic: () =>
+    set((state) => ({
+      is_description_public: !state.is_description_public,
+    })),
+  setExamplePublic: () =>
+    set((state) => ({
+      is_example_public: !state.is_example_public,
+    })),
 
+  // 상황예시 설정
   setExampleSituation: (newSituation) =>
     set((state) => ({
       example_situation: [...state.example_situation, newSituation],

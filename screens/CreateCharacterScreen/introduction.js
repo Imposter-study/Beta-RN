@@ -14,8 +14,18 @@ import EvilIcons from "@expo/vector-icons/EvilIcons";
 
 function Introduction() {
   const navigation = useNavigation();
-  const { presentation, setPresentation, hashtag, deleteHashtag } =
-    useCharacterStore();
+  const {
+    presentation,
+    setPresentation,
+    hashtag,
+    deleteHashtag,
+    is_character_public,
+    setCharacterPublic,
+    is_description_public,
+    setDescriptionPublic,
+    is_example_public,
+    setExamplePublic,
+  } = useCharacterStore();
   const [creatorComment, setCreatorComment] = useState("");
 
   const tagCount = hashtag.length;
@@ -100,63 +110,77 @@ function Introduction() {
 
         {/* 공개 여부 */}
         <View style={styles.card}>
-          <View style={[styles.switchRow, styles.borderBottom]}>
+          <View style={styles.switchRow}>
             <View style={styles.switchTextContainer}>
               <Text style={styles.switchTitle}>다른 유저들에게 공개</Text>
               <Text style={styles.switchSubtitle}>
-                누구나 대화할 수 있어요 공개로 등록하면 다시 비공개로 바꿀 수
-                없어요
+                {is_character_public
+                  ? `누구나 대화할 수 있어요 공개로 등록하면 \n다시 비공개로 바꿀 수 없어요`
+                  : `나만 대화할 수 있어요`}
               </Text>
             </View>
             <Switch
+              value={is_character_public}
+              onChange={setCharacterPublic}
               trackColor={{
                 false: "rgb(89 91 99)",
                 true: "rgb(124, 103, 255)",
               }}
+              style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
             />
           </View>
-          <View
-            style={[
-              styles.switchRow,
-              styles.borderBottom,
-              styles.paddingVertical10,
-            ]}
-          >
-            <View style={styles.switchTextContainer}>
-              <Text style={styles.switchTitle}>상세 설명 공개</Text>
-              <Text style={styles.switchSubtitle}>
-                내용 탭의 상세 설명을 다른 유저가 볼 수 있어요
-              </Text>
-            </View>
-            <Switch
-              trackColor={{
-                false: "rgb(89 91 99)",
-                true: "rgb(124, 103, 255)",
-              }}
-            />
-          </View>
-          <View style={[styles.switchRow, styles.paddingTop10]}>
-            <View style={styles.switchTextContainer}>
-              <Text style={styles.switchTitle}>상황 예시 공개</Text>
-              <Text style={styles.switchSubtitle}>
-                상황 예시를 다른 유저가 볼 수 있어요
-              </Text>
-            </View>
-            <Switch
-              trackColor={{
-                false: "rgb(89 91 99)",
-                true: "rgb(124, 103, 255)",
-              }}
-            />
-          </View>
+          {is_character_public ? (
+            <>
+              <View
+                style={[
+                  styles.switchRow,
+                  styles.borderMiddle,
+                  styles.paddingVertical10,
+                ]}
+              >
+                <View style={styles.switchTextContainer}>
+                  <Text style={styles.switchTitle}>상세 설명 공개</Text>
+                  <Text style={styles.switchSubtitle}>
+                    내용 탭의 상세 설명을 다른 유저가 볼 수 있어요
+                  </Text>
+                </View>
+                <Switch
+                  value={is_description_public}
+                  onChange={setDescriptionPublic}
+                  trackColor={{
+                    false: "rgb(89 91 99)",
+                    true: "rgb(124, 103, 255)",
+                  }}
+                  style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+                />
+              </View>
+              <View style={[styles.switchRow, styles.paddingTop10]}>
+                <View style={styles.switchTextContainer}>
+                  <Text style={styles.switchTitle}>상황 예시 공개</Text>
+                  <Text style={styles.switchSubtitle}>
+                    상황 예시를 다른 유저가 볼 수 있어요
+                  </Text>
+                </View>
+                <Switch
+                  value={is_example_public}
+                  onChange={setExamplePublic}
+                  trackColor={{
+                    false: "rgb(89 91 99)",
+                    true: "rgb(124, 103, 255)",
+                  }}
+                  style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+                />
+              </View>
+            </>
+          ) : null}
         </View>
 
-        <View style={styles.card}>
+        {/* <View style={styles.card}>
           <View style={styles.switchRow}>
             <View style={styles.switchTextContainer}>
               <Text style={styles.switchTitle}>스냅샷 기능 사용</Text>
               <Text style={styles.switchSubtitle}>
-                캐릭토 프로필과 대화 내용을 바탕으로 이미지를 만들 수 있어요.
+                캐릭터 프로필과 대화 내용을 바탕으로 이미지를 만들 수 있어요.
               </Text>
             </View>
             <Switch
@@ -166,7 +190,7 @@ function Introduction() {
               }}
             />
           </View>
-        </View>
+        </View> */}
       </ScrollView>
     </>
   );
@@ -259,9 +283,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  borderBottom: {
+  borderMiddle: {
     borderBottomWidth: 1,
     borderBottomColor: "#ffffff0d",
+    borderTopWidth: 1,
+    borderTopColor: "#ffffff0d",
+    marginTop: 10,
   },
   paddingVertical10: {
     paddingVertical: 10,
