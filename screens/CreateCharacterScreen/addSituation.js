@@ -19,17 +19,20 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Markdown from "react-native-markdown-display";
 import { useNavigation } from "@react-navigation/native";
 
-function AddSituation() {
+function AddSituation({ route }) {
+  const index = route?.params?.index;
   const navigation = useNavigation();
-  const { name, character_image, example_situation, setExampleSituation } =
-    useCharacterStore();
+  const {
+    name,
+    character_image,
+    example_situation,
+    setExampleSituation,
+    updateExampleSituation,
+  } = useCharacterStore();
   const [sender, setSender] = useState(name);
   const [message, setMessage] = useState("");
   const [selection, setSelection] = useState({ start: 0, end: 0 });
-  const [situation, setSituation] = useState([
-    { id: 1, message: "test", role: "user" },
-    { id: 2, message: "message", role: "ai" },
-  ]);
+  const [situation, setSituation] = useState(example_situation[index] || []);
   const [edit, setEdit] = useState(false);
   const [editMessage, setEditMessage] = useState("");
 
@@ -114,6 +117,16 @@ function AddSituation() {
     setSituation((prev) => prev.filter((s) => s.id !== id));
   };
 
+  // 상황 예시 저장
+  const saveSituation = () => {
+    if (index >= 0) {
+      updateExampleSituation(index, situation);
+    } else {
+      setExampleSituation(situation);
+    }
+    navigation.goBack();
+  };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -128,14 +141,9 @@ function AddSituation() {
               <Ionicons name="close" size={28} color="white" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>
-              상황 예시 {example_situation.length + 1}
+              상황 예시 {index + 1 || example_situation.length + 1}
             </Text>
-            <TouchableOpacity
-              onPress={() => {
-                setExampleSituation(situation);
-                navigation.goBack();
-              }}
-            >
+            <TouchableOpacity onPress={saveSituation}>
               <Text
                 style={{
                   color:

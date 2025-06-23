@@ -47,11 +47,7 @@ function Situation() {
 
         {/* 상황 예시 리스트 */}
         {example_situation.map((situation, index) => (
-          <SituationCard
-            key={situation.id}
-            situation={situation}
-            index={index}
-          />
+          <SituationCard key={index} situation={situation} index={index} />
         ))}
 
         {/* 상황예시 입력 버튼 */}

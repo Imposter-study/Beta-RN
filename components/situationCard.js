@@ -4,8 +4,10 @@ import { useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
 import Markdown from "react-native-markdown-display";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { useNavigation } from "@react-navigation/native";
 
 function SituationCard({ situation, index }) {
+  const navigation = useNavigation();
   const { character_image, deleteExampleSituation } = useCharacterStore();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -64,7 +66,10 @@ function SituationCard({ situation, index }) {
         <View
           style={{ flexDirection: "row", alignItems: "center", marginRight: 5 }}
         >
-          <TouchableOpacity style={{ padding: 10 }}>
+          <TouchableOpacity
+            style={{ padding: 10 }}
+            onPress={() => navigation.navigate("AddSituation", { index })}
+          >
             <FontAwesome6 name="pen" size={16} color="#ffffff80" />
           </TouchableOpacity>
           <TouchableOpacity

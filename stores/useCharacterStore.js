@@ -7,16 +7,7 @@ const useCharacterStore = create((set) => ({
   name: "", // 이름
   character_info: "", // 설명
   intro: [], // 첫 상황
-  example_situation: [
-    [
-      { id: 1, message: "test", role: "user" },
-      { id: 2, message: "message", role: "ai" },
-    ],
-    [
-      { id: 1, message: "test", role: "user" },
-      { id: 2, message: "message", role: "ai" },
-    ],
-  ], // 상황 예시
+  example_situation: [], // 상황 예시
   presentation: "", // 소개글?
   hashtag: [], // 해시태그
   // 크리에이터 코멘트
@@ -57,6 +48,12 @@ const useCharacterStore = create((set) => ({
     set((state) => ({
       example_situation: state.example_situation.filter(
         (_, index) => index !== idx
+      ),
+    })),
+  updateExampleSituation: (idx, updatedSituation) =>
+    set((state) => ({
+      example_situation: state.example_situation.map((situation, index) =>
+        index === idx ? updatedSituation : situation
       ),
     })),
 
