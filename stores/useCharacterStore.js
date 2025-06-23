@@ -39,6 +39,12 @@ const useCharacterStore = create((set) => ({
     set((state) => ({
       hashtag: state.hashtag.filter((_, index) => idx !== index),
     })),
+
+  setExampleSituation: (newSituation) =>
+    set((state) => ({
+      example_situation: [...state.example_situation, newSituation],
+    })),
+
   // 내용 초기화 함수
   resetCharacter: () =>
     set({
