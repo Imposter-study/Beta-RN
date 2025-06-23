@@ -22,6 +22,14 @@ function Intro() {
   const [edit, setEdit] = useState(false);
   const [editMessage, setEditMessage] = useState("");
 
+  // 글자수
+  const totalLength =
+    intro.reduce((sum, item) => sum + item.message.length, 0) + message.length;
+  const onEditingLength =
+    intro.reduce((sum, item) => sum + item.message.length, 0) -
+    message.length +
+    editMessage.length;
+
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
       const siblings = parent[0].children;
@@ -103,7 +111,17 @@ function Intro() {
           borderBottomWidth: 1,
         }}
       >
-        <Text style={{ color: "#ffffff80", padding: 10 }}>0/1,500자</Text>
+        <Text
+          style={{
+            color:
+              totalLength < 1500 && onEditingLength < 1500
+                ? "#ffffff80"
+                : "rgb(240 68 56)",
+            padding: 10,
+          }}
+        >
+          {!edit ? totalLength : onEditingLength}/1,500자
+        </Text>
       </View>
 
       {/* 인트로 내용 */}
