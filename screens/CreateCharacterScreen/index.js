@@ -9,6 +9,7 @@ import {
   Platform,
   TouchableOpacity,
   Alert,
+  Modal,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -26,6 +27,8 @@ import { API_URL } from "../../config";
 function CreateCharacter() {
   const navigation = useNavigation();
   const [nowScreen, setNowScreen] = useState("content");
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   const { resetCharacter, title, name, intro, character_image } =
     useCharacterStore();
@@ -181,13 +184,57 @@ function CreateCharacter() {
               <Text style={styles.headerTitle}>제작</Text>
             </View>
             <View style={styles.headerRight}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setModalVisible((prev) => !prev)}
+              >
                 <Ionicons
                   name="ellipsis-horizontal-sharp"
                   size={20}
                   color="white"
                 />
               </TouchableOpacity>
+              <Modal transparent={true} visible={modalVisible}>
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    // backgroundColor: "rgba(0, 0, 0, 0.5)", // 배경 어둡게
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  activeOpacity={1}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <View
+                    style={{
+                      position: "absolute",
+                      borderRadius: 12,
+                      backgroundColor: "rgb(38 39 39)",
+                      borderWidth: 1,
+                      borderColor: "#ffffff14",
+                      top: 90,
+                      right: 100,
+                    }}
+                  >
+                    <TouchableOpacity>
+                      <Text
+                        style={{
+                          padding: 15,
+                          color: "white",
+                          borderBottomColor: "#ffffff14",
+                          borderBottomWidth: 1,
+                        }}
+                      >
+                        삭제
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      <Text style={{ padding: 15, color: "white" }}>
+                        명령어 안내
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              </Modal>
               <TouchableOpacity
                 style={styles.saveButton}
                 disabled={!isCharacterValid}
