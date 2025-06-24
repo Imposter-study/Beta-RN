@@ -20,6 +20,8 @@ import Introduction from "./introduction";
 import useCharacterStore from "../../stores/useCharacterStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
+import axios from "axios";
+import { API_URL } from "../../config";
 
 function CreateCharacter() {
   const navigation = useNavigation();
@@ -49,6 +51,7 @@ function CreateCharacter() {
     ]);
   };
 
+  // 캐릭터 임시저장
   const onSave = () => {
     const title = "작성 중인 내용을 저장할까요?";
     const message = `저장된 내용은\n마이페이지에서 확인할 수 있어요`;
@@ -110,6 +113,57 @@ function CreateCharacter() {
     ]);
   };
 
+  // 캐릭터 생성 완료
+  const onRegister = () => {
+    // 현재 상태 가져오가
+    const {
+      title,
+      description,
+      character_image,
+      name,
+      character_info,
+      intro,
+      example_situation,
+      presentation,
+      hashtag,
+      creator_comment,
+      is_character_public,
+      is_description_public,
+      is_example_public,
+    } = useCharacterStore.getState();
+
+    // axios
+    //   .post(API_URL + "characters/", {
+    //     title,
+    //     description,
+    //     character_image,
+    //     name,
+    //     character_info,
+    //     intro,
+    //     example_situation,
+    //     presentation,
+    //     hashtag,
+    //     creator_comment,
+    //     is_character_public,
+    //     is_description_public,
+    //     is_example_public,
+    //   })
+    //   .then((response) => {
+    //     console.log(response.data);
+    //     navigation.navigate("Home");
+    //   })
+    //   .catch((error) => {
+    //     console.error("캐릭터 생성에 실패하였습니다.", error);
+    //   });
+    navigation.navigate("Home");
+    Toast.show({
+      type: "success",
+      text1: "등록 되었어요",
+      position: "top",
+      visibilityTime: 3000,
+    });
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.keyboardAvoidingView}
@@ -155,8 +209,26 @@ function CreateCharacter() {
                   저장
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.registerButton}>
-                <Text style={styles.registerButtonText}>등록</Text>
+              <TouchableOpacity
+                disabled={!isCharacterValid}
+                onPress={onRegister}
+                style={styles.registerButton}
+              >
+                <Text
+                  style={
+                    isCharacterValid
+                      ? styles.registerButtonText
+                      : {
+                          color: "rgb(115 120 131)",
+                          backgroundColor: "rgb(62, 62, 65)",
+                          padding: 10,
+                          borderRadius: 6,
+                          fontSize: 16,
+                        }
+                  }
+                >
+                  등록
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
