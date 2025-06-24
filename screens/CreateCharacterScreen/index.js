@@ -216,7 +216,7 @@ function CreateCharacter() {
                   name="ellipsis-horizontal-sharp"
                   size={20}
                   color="white"
-                  style={{ padding: 10 }}
+                  style={styles.headerMenuIcon}
                 />
               </TouchableOpacity>
               <TouchableOpacity
@@ -228,13 +228,7 @@ function CreateCharacter() {
                   style={
                     isCharacterValid
                       ? styles.saveButtonText
-                      : {
-                          color: "rgb(115 120 131)",
-                          backgroundColor: "rgb(62, 62, 65)",
-                          padding: 10,
-                          borderRadius: 6,
-                          fontSize: 16,
-                        }
+                      : styles.saveButtonTextDisabled
                   }
                 >
                   저장
@@ -249,13 +243,7 @@ function CreateCharacter() {
                   style={
                     isCharacterValid
                       ? styles.registerButtonText
-                      : {
-                          color: "rgb(115 120 131)",
-                          backgroundColor: "rgb(62, 62, 65)",
-                          padding: 10,
-                          borderRadius: 6,
-                          fontSize: 16,
-                        }
+                      : styles.registerButtonTextDisabled
                   }
                 >
                   등록
@@ -361,7 +349,7 @@ function CreateCharacter() {
         onBackdropPress={() => setModalVisible(false)}
         animationIn="fadeIn" // 페이드인 애니메이션
         animationOut="fadeOut" // 페이드아웃 애니메이션
-        backdropOpacity={0} // 배경 오버레이 투명도
+        backdropOpacity={0.7} // 배경 오버레이 투명도
         style={styles.menuModal} // 모달 스타일 적용
         onModalHide={() => {
           // 기존 모달 닫히고 나서 실행
@@ -395,14 +383,7 @@ function CreateCharacter() {
               setModalVisible(false); // 메뉴 닫기
             }}
           >
-            <Text
-              style={{
-                color: "white",
-                textAlign: "center",
-              }}
-            >
-              삭제
-            </Text>
+            <Text style={styles.menuItemText}>삭제</Text>
           </TouchableOpacity>
           <View style={styles.menuDivider} />
           <TouchableOpacity
@@ -412,9 +393,7 @@ function CreateCharacter() {
               setPendingModal("commandGuide");
             }}
           >
-            <Text style={{ color: "white", textAlign: "center" }}>
-              명령어 안내
-            </Text>
+            <Text style={styles.menuItemText}>명령어 안내</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -426,18 +405,35 @@ function CreateCharacter() {
           setShowCommandGuide(false);
         }}
         animationIn="slideInUp"
-        style={{ justifyContent: "flex-end", margin: 0 }}
+        animationOut="slideOutDown" // 닫힐 때도 애니메이션 추가
+        backdropColor="rgba(0,0,0,0.7)" // 배경색을 검정색으로, 투명도를 0.7로 설정하여 보이게 함
+        backdropOpacity={0.7} // 투명도도 0.7로 설정
+        style={styles.commandGuideModal}
       >
-        <View
-          style={{
-            backgroundColor: "rgb(38,38,39)",
-            flex: 0.45,
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 12,
-            padding: 20, // 내부 패딩 추가
-          }}
-        >
-          <Text style={styles.commandGuideTitle}>작성 팁</Text>
+        <View style={styles.commandGuideModalContent}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={styles.commandGuideTitle}>작성 팁</Text>
+            {/* 닫기 버튼 */}
+            <TouchableOpacity
+              onPress={() => {
+                setShowCommandGuide(false);
+              }}
+              style={styles.commandGuideCloseButton}
+            >
+              <Ionicons
+                name="close-circle-outline"
+                size={30}
+                color="#ffffff80"
+              />
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.commandGuideSection}>
             <Text style={styles.commandGuideText}>*상황, 행동, 생각*</Text>
             <Text style={styles.commandGuideDescription}>
@@ -453,66 +449,19 @@ function CreateCharacter() {
             </Text>
           </View>
           <View>
-            <View
-              style={{ backgroundColor: "rgb(26 27 27)", borderRadius: 16 }}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  padding: 20,
-                }}
-              >
-                <Text style={{ color: "#ffffff80" }}>예시</Text>
-                <Text
-                  style={{
-                    color: "#ffffff80",
-                    backgroundColor: "rgb(124 103 255)",
-                    fontSize: 18,
-                    padding: 10,
-                    alignSelf: "flex-end",
-                    borderRadius: 16,
-                    borderTopRightRadius: 0,
-                  }}
-                >
+            <View style={styles.exampleContainer}>
+              <View style={styles.exampleHeader}>
+                <Text style={styles.exampleLabel}>예시</Text>
+                <Text style={styles.exampleChatBubble}>
                   그녀는 이석을 짝사랑하고 있다
                 </Text>
               </View>
-              <View
-                style={{ borderBottomWidth: 1, borderBottomColor: "#ffffff0d" }}
-              />
-              <View
-                style={{
-                  flexDirection: "row",
-                  gap: 10,
-                  padding: 20,
-                }}
-              >
-                <Text
-                  style={{
-                    flex: 1,
-                    color: "rgb(229 231 235)",
-                    backgroundColor: "#ffffff14",
-                    borderRadius: 40,
-                    padding: 10,
-                    fontStyle: "italic",
-                  }}
-                >
+              <View style={styles.exampleDivider} />
+              <View style={styles.exampleInputRow}>
+                <Text style={styles.exampleInputText}>
                   *그녀는 {"{{"}user{"}}"}을 짝사랑하고 있다*
                 </Text>
-                <Text
-                  style={{
-                    color: "#fff3",
-                    backgroundColor: "#ffffff14",
-                    fontSize: 18,
-                    paddingVertical: 10,
-                    paddingHorizontal: 15,
-                    alignSelf: "flex-end",
-                    borderRadius: 100,
-                  }}
-                >
-                  ↑
-                </Text>
+                <Text style={styles.exampleArrow}>↑</Text>
               </View>
             </View>
           </View>
@@ -555,11 +504,21 @@ const styles = StyleSheet.create({
     gap: 7,
     alignItems: "center",
   },
+  headerMenuIcon: {
+    padding: 10,
+  },
   saveButton: {
     // No specific style needed here if text has styles
   },
   saveButtonText: {
     color: "white",
+    backgroundColor: "rgb(62, 62, 65)",
+    padding: 10,
+    borderRadius: 6,
+    fontSize: 16,
+  },
+  saveButtonTextDisabled: {
+    color: "rgb(115 120 131)",
     backgroundColor: "rgb(62, 62, 65)",
     padding: 10,
     borderRadius: 6,
@@ -571,6 +530,13 @@ const styles = StyleSheet.create({
   registerButtonText: {
     color: "white",
     backgroundColor: "rgb(82, 32, 204)",
+    padding: 10,
+    borderRadius: 6,
+    fontSize: 16,
+  },
+  registerButtonTextDisabled: {
+    color: "rgb(115 120 131)",
+    backgroundColor: "rgb(62, 62, 65)",
     padding: 10,
     borderRadius: 6,
     fontSize: 16,
@@ -631,11 +597,30 @@ const styles = StyleSheet.create({
   menuItem: {
     padding: 15,
   },
+  menuItemText: {
+    color: "white",
+    textAlign: "center",
+  },
   menuDivider: {
     height: 1,
     backgroundColor: "#ffffff14",
   },
   // 명령어 안내 모달 스타일
+  commandGuideModal: {
+    justifyContent: "flex-end",
+    margin: 0,
+  },
+  commandGuideModalContent: {
+    backgroundColor: "rgb(38,38,39)",
+    flex: 0.45, // 이 값을 유지
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    padding: 20,
+  },
+  commandGuideCloseButton: {
+    alignSelf: "flex-end",
+    marginBottom: 10,
+  },
   commandGuideTitle: {
     color: "white",
     fontSize: 18,
@@ -654,5 +639,52 @@ const styles = StyleSheet.create({
   commandGuideDescription: {
     color: "#ffffffb3",
     fontSize: 14,
+  },
+  exampleContainer: {
+    backgroundColor: "rgb(26 27 27)",
+    borderRadius: 16,
+  },
+  exampleHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 20,
+  },
+  exampleLabel: {
+    color: "#ffffff80",
+  },
+  exampleChatBubble: {
+    color: "#ffffff80", // 이미지에서는 흰색 글씨로 보임
+    backgroundColor: "rgb(124 103 255)",
+    fontSize: 18,
+    padding: 10,
+    alignSelf: "flex-end",
+    borderRadius: 16,
+    borderTopRightRadius: 0,
+  },
+  exampleDivider: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#ffffff0d",
+  },
+  exampleInputRow: {
+    flexDirection: "row",
+    gap: 10,
+    padding: 20,
+  },
+  exampleInputText: {
+    flex: 1,
+    color: "rgb(229 231 235)",
+    backgroundColor: "#ffffff14",
+    borderRadius: 40,
+    padding: 10,
+    fontStyle: "italic",
+  },
+  exampleArrow: {
+    color: "#fff3", // 이 색상이 이미지와 일치하는지 확인 필요 (투명도가 높음)
+    backgroundColor: "#ffffff14",
+    fontSize: 18,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    alignSelf: "flex-end",
+    borderRadius: 100,
   },
 });
