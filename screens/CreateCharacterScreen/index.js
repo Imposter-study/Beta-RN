@@ -18,12 +18,21 @@ import Intro from "./intro";
 import Situation from "./situation";
 import Introduction from "./introduction";
 import useCharacterStore from "../../stores/useCharacterStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 function CreateCharacter() {
   const navigation = useNavigation();
   const [nowScreen, setNowScreen] = useState("content");
 
-  const { resetCharacter } = useCharacterStore();
+  const { resetCharacter, title, name, intro, character_image } =
+    useCharacterStore();
+  const isCharacterValid = !!(
+    title &&
+    name &&
+    intro.length > 0 &&
+    character_image
+  );
 
   const onClose = () => {
     const title = "지금 나가면 수정한 내용이 삭제돼요";
@@ -35,6 +44,67 @@ function CreateCharacter() {
         onPress: () => {
           resetCharacter();
           navigation.goBack();
+        },
+      },
+    ]);
+  };
+
+  const onSave = () => {
+    const title = "작성 중인 내용을 저장할까요?";
+    const message = `저장된 내용은\n마이페이지에서 확인할 수 있어요`;
+    Alert.alert(title, message, [
+      { text: "취소" },
+      {
+        text: "임시 저장",
+        onPress: async () => {
+          try {
+            // 현재 상태 가져오가
+            const {
+              title,
+              description,
+              character_image,
+              name,
+              character_info,
+              intro,
+              example_situation,
+              presentation,
+              hashtag,
+              creator_comment,
+              is_character_public,
+              is_description_public,
+              is_example_public,
+            } = useCharacterStore.getState();
+
+            // AsyncStorage에 저장
+            await AsyncStorage.setItem(
+              title,
+              JSON.stringify({
+                title,
+                description,
+                character_image,
+                name,
+                character_info,
+                intro,
+                example_situation,
+                presentation,
+                hashtag,
+                creator_comment,
+                is_character_public,
+                is_description_public,
+                is_example_public,
+              })
+            );
+
+            Toast.show({
+              type: "info",
+              text1: "작성한 내용이 저장되었어요",
+              text2: "다른 유저들에게 공개하려면 등록해 주세요",
+              position: "top",
+              visibilityTime: 3000,
+            });
+          } catch (error) {
+            console.log("저장 실패", error);
+          }
         },
       },
     ]);
@@ -64,8 +134,26 @@ function CreateCharacter() {
                   color="white"
                 />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>저장</Text>
+              <TouchableOpacity
+                style={styles.saveButton}
+                disabled={!isCharacterValid}
+                onPress={onSave}
+              >
+                <Text
+                  style={
+                    isCharacterValid
+                      ? styles.saveButtonText
+                      : {
+                          color: "rgb(115 120 131)",
+                          backgroundColor: "rgb(62, 62, 65)",
+                          padding: 10,
+                          borderRadius: 6,
+                          fontSize: 16,
+                        }
+                  }
+                >
+                  저장
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.registerButton}>
                 <Text style={styles.registerButtonText}>등록</Text>
