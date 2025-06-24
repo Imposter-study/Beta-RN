@@ -81,25 +81,25 @@ function CreateCharacter() {
               is_example_public,
             } = useCharacterStore.getState();
 
-            // AsyncStorage에 저장
-            await AsyncStorage.setItem(
-              title,
-              JSON.stringify({
-                title,
-                description,
-                character_image,
-                name,
-                character_info,
-                intro,
-                example_situation,
-                presentation,
-                hashtag,
-                creator_comment,
-                is_character_public,
-                is_description_public,
-                is_example_public,
-              })
-            );
+            // // AsyncStorage에 저장
+            // await AsyncStorage.setItem(
+            //   title,
+            //   JSON.stringify({
+            //     title,
+            //     description,
+            //     character_image,
+            //     name,
+            //     character_info,
+            //     intro,
+            //     example_situation,
+            //     presentation,
+            //     hashtag,
+            //     creator_comment,
+            //     is_character_public,
+            //     is_description_public,
+            //     is_example_public,
+            //   })
+            // );
 
             Toast.show({
               type: "info",
