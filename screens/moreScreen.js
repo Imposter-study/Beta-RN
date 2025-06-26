@@ -6,9 +6,32 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { API_URL } from "../../config";
+import { useState, useEffect } from "react";
+import * as SecureStore from "expo-secure-store";
 
 function MoreScreen() {
+  const navigation = useNavigation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      const token = await SecureStore.getItemAsync("access_token");
+      setIsLoggedIn(!!token); // 토큰 존재 여부로 로그인 상태 결정
+    };
+
+    checkLogin();
+  }, []);
+
+  const handleSignOut = async () => {
+    // axios.post(API_URL)
+    await SecureStore.deleteItemAsync("access_token");
+    await SecureStore.deleteItemAsync("refresh_token");
+    navigation.navigate("Home");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -65,139 +88,153 @@ function MoreScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* 알림・마케팅 */}
-        <View style={{ marginBottom: 30 }}>
-          <Text
-            style={{
-              color: "#ffffff80",
-              paddingVertical: 5,
-              borderBottomColor: "#ffffff14",
-              borderBottomWidth: 1,
-            }}
-          >
-            알림・마케팅
-          </Text>
-          <TouchableOpacity
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={{ color: "white", fontSize: 18, paddingVertical: 10 }}>
-              마케팅 수신 동의
-            </Text>
-            <Ionicons
-              name="chevron-forward-sharp"
-              size={18}
-              color="#ffffff80"
-            />
-          </TouchableOpacity>
-        </View>
+        {isLoggedIn ? (
+          <>
+            {/* 알림・마케팅 */}
+            <View style={{ marginBottom: 30 }}>
+              <Text
+                style={{
+                  color: "#ffffff80",
+                  paddingVertical: 5,
+                  borderBottomColor: "#ffffff14",
+                  borderBottomWidth: 1,
+                }}
+              >
+                알림・마케팅
+              </Text>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text
+                  style={{ color: "white", fontSize: 18, paddingVertical: 10 }}
+                >
+                  마케팅 수신 동의
+                </Text>
+                <Ionicons
+                  name="chevron-forward-sharp"
+                  size={18}
+                  color="#ffffff80"
+                />
+              </TouchableOpacity>
+            </View>
 
-        {/* 내 계정 관리 */}
-        <View style={{ marginBottom: 30 }}>
-          <Text
-            style={{
-              color: "#ffffff80",
-              paddingVertical: 5,
-              borderBottomColor: "#ffffff14",
-              borderBottomWidth: 1,
-            }}
-          >
-            계정 정보
-          </Text>
-          <TouchableOpacity
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={{ color: "white", fontSize: 18, paddingVertical: 10 }}>
-              계정 정보
-            </Text>
-            <Ionicons
-              name="chevron-forward-sharp"
-              size={18}
-              color="#ffffff80"
-            />
-          </TouchableOpacity>
-        </View>
+            {/* 내 계정 관리 */}
+            <View style={{ marginBottom: 30 }}>
+              <Text
+                style={{
+                  color: "#ffffff80",
+                  paddingVertical: 5,
+                  borderBottomColor: "#ffffff14",
+                  borderBottomWidth: 1,
+                }}
+              >
+                계정 정보
+              </Text>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text
+                  style={{ color: "white", fontSize: 18, paddingVertical: 10 }}
+                >
+                  계정 정보
+                </Text>
+                <Ionicons
+                  name="chevron-forward-sharp"
+                  size={18}
+                  color="#ffffff80"
+                />
+              </TouchableOpacity>
+            </View>
 
-        {/* 차단 관리 */}
-        <View style={{ marginBottom: 30 }}>
-          <Text
-            style={{
-              color: "#ffffff80",
-              paddingVertical: 5,
-              borderBottomColor: "#ffffff14",
-              borderBottomWidth: 1,
-            }}
-          >
-            차단 관리
-          </Text>
-          <TouchableOpacity
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={{ color: "white", fontSize: 18, paddingVertical: 10 }}>
-              차단한 크리에이터
-            </Text>
-            <Ionicons
-              name="chevron-forward-sharp"
-              size={18}
-              color="#ffffff80"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={{ color: "white", fontSize: 18, paddingVertical: 10 }}>
-              차단한 캐릭터
-            </Text>
-            <Ionicons
-              name="chevron-forward-sharp"
-              size={18}
-              color="#ffffff80"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={{ color: "white", fontSize: 18, paddingVertical: 10 }}>
-              차단한 해시태그
-            </Text>
-            <Ionicons
-              name="chevron-forward-sharp"
-              size={18}
-              color="#ffffff80"
-            />
-          </TouchableOpacity>
-        </View>
+            {/* 차단 관리 */}
+            <View style={{ marginBottom: 30 }}>
+              <Text
+                style={{
+                  color: "#ffffff80",
+                  paddingVertical: 5,
+                  borderBottomColor: "#ffffff14",
+                  borderBottomWidth: 1,
+                }}
+              >
+                차단 관리
+              </Text>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text
+                  style={{ color: "white", fontSize: 18, paddingVertical: 10 }}
+                >
+                  차단한 크리에이터
+                </Text>
+                <Ionicons
+                  name="chevron-forward-sharp"
+                  size={18}
+                  color="#ffffff80"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text
+                  style={{ color: "white", fontSize: 18, paddingVertical: 10 }}
+                >
+                  차단한 캐릭터
+                </Text>
+                <Ionicons
+                  name="chevron-forward-sharp"
+                  size={18}
+                  color="#ffffff80"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text
+                  style={{ color: "white", fontSize: 18, paddingVertical: 10 }}
+                >
+                  차단한 해시태그
+                </Text>
+                <Ionicons
+                  name="chevron-forward-sharp"
+                  size={18}
+                  color="#ffffff80"
+                />
+              </TouchableOpacity>
+            </View>
 
-        <View
-          style={{
-            borderColor: "#ffffff0d",
-            borderWidth: 2,
-            marginBottom: 20,
-          }}
-        />
+            <View
+              style={{
+                borderColor: "#ffffff0d",
+                borderWidth: 2,
+                marginBottom: 20,
+              }}
+            />
 
-        <TouchableOpacity>
-          <Text style={{ color: "#ffffff80", fontSize: 16 }}>로그아웃</Text>
-        </TouchableOpacity>
+            <TouchableOpacity onPress={handleSignOut}>
+              <Text style={{ color: "#ffffff80", fontSize: 16 }}>로그아웃</Text>
+            </TouchableOpacity>
+          </>
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );
