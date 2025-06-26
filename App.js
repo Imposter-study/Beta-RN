@@ -11,6 +11,10 @@ import SignUpScreen from "./screens/SignUpScreen/index";
 import SignInScreen from "./screens/signInScreen";
 import EditProfileScreen from "./screens/EditProfile/index";
 import ChatScreen from "./screens/chatScreen";
+import CreateCharacter from "./screens/CreateCharacterScreen/index";
+import Hashtag from "./screens/CreateCharacterScreen/hashtag";
+import AddSituation from "./screens/CreateCharacterScreen/addSituation";
+import Toast from "react-native-toast-message";
 import KakaoLoginScreen from "./components/kakaoLoginScreen";
 import MoreScreen from "./screens/moreScreen";
 
@@ -39,6 +43,12 @@ export default function App() {
             name="CharacterDetail"
             component={CharacterDetailScreen}
           />
+          {/* 캐릭터 제작 페이지 */}
+          <Stack.Screen name="CreateCharacter" component={CreateCharacter} />
+          {/* 캐릭터 제작 - 해시태그 페이지 */}
+          <Stack.Screen name="Hashtag" component={Hashtag} />
+          {/* 캐릭터 제작 - 상황 예시 추가 페이지 */}
+          <Stack.Screen name="AddSituation" component={AddSituation} />
           {/* 마이페이지 스크린 */}
           <Stack.Screen name="Mypage" component={MyPageScreen} />
           {/* 더보기 스크린 */}
@@ -50,6 +60,7 @@ export default function App() {
         </Stack.Navigator>
         <StatusBar style="light" backgroundColor="#1a1b1b" />
       </NavigationContainer>
+      <Toast />
     </SafeAreaProvider>
   );
 }
