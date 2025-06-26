@@ -13,10 +13,21 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import SignInButton from "../components/signInButtons";
+import { useState, useEffect } from "react";
+import * as SecureStore from "expo-secure-store";
 
 function MyPageScreen() {
   const navigation = useNavigation();
-  const isLoggedIn = true;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      const token = await SecureStore.getItemAsync("access_token");
+      setIsLoggedIn(!!token); // 토큰 존재 여부로 로그인 상태 결정
+    };
+
+    checkLogin();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
