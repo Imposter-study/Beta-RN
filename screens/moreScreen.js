@@ -8,7 +8,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { API_URL } from "../../config";
+import { API_URL } from "../config";
 import { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 
