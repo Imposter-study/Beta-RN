@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import qs from "qs";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as SecureStore from "expo-secure-store";
 
 export default function KakaoLoginScreen() {
   const navigation = useNavigation();
@@ -45,14 +46,17 @@ export default function KakaoLoginScreen() {
 
         const loginRes = await axios.post(BACKEND_LOGIN_URL, { access_token });
         console.log("백엔드 응답:", loginRes.data);
-
-        navigation.replace("Home");
+        const { key } = loginRes.data;
+        // 토큰을 저장
+        await SecureStore.setItemAsync("access_token", key);
       }
     } catch (error) {
       console.error("로그인 에러:", error?.response?.data || error.message);
       // WebView를 새로고침하여 로그인 재시도 유도
       setWebviewKey((prev) => prev + 1);
       setUsedCode(null);
+    } finally {
+      navigation.replace("Home");
     }
   };
 
