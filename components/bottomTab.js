@@ -5,7 +5,7 @@ function BottomTab({ activeTab = "home", onTabPress }) {
   const tabs = [
     { name: "Home", icon: "home", label: "홈" },
     { name: "ChatList", icon: "message-circle", label: "대화" },
-    { name: "create", icon: "plus", label: "제작" },
+    { name: "CreateCharacter", icon: "plus", label: "제작" },
     { name: "Mypage", icon: "user", label: "마이페이지" },
   ];
 
