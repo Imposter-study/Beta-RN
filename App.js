@@ -12,6 +12,7 @@ import SignInScreen from "./screens/signInScreen";
 import EditProfileScreen from "./screens/EditProfile/index";
 import ChatScreen from "./screens/chatScreen";
 import KakaoLoginScreen from "./components/kakaoLoginScreen";
+import MoreScreen from "./screens/moreScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -40,6 +41,8 @@ export default function App() {
           />
           {/* 마이페이지 스크린 */}
           <Stack.Screen name="Mypage" component={MyPageScreen} />
+          {/* 더보기 스크린 */}
+          <Stack.Screen name="More" component={MoreScreen} />
           {/* 프로필 편집 스크린 */}
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           {/* 카카오 로그인 */}

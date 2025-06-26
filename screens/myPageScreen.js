@@ -33,7 +33,9 @@ function MyPageScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>마이페이지</Text>
-        <Ionicons name="menu" size={24} color="white" />
+        <TouchableOpacity onPress={() => navigation.navigate("More")}>
+          <Ionicons name="menu" size={24} color="white" />
+        </TouchableOpacity>
       </View>
 
       {!isLoggedIn ? (
