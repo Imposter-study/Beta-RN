@@ -49,14 +49,14 @@ export default function KakaoLoginScreen() {
         const { key } = loginRes.data;
         // 토큰을 저장
         await SecureStore.setItemAsync("access_token", key);
+        // 로그인 성공 시 홈으로 이동
+        navigation.replace("Home");
       }
     } catch (error) {
       console.error("로그인 에러:", error?.response?.data || error.message);
       // WebView를 새로고침하여 로그인 재시도 유도
       setWebviewKey((prev) => prev + 1);
       setUsedCode(null);
-    } finally {
-      navigation.replace("Home");
     }
   };
 
