@@ -13,21 +13,28 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import useSignupStore from "../../stores/useSignupStore";
 
 function SignUpStep1() {
   const navigation = useNavigation();
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const {
+    username,
+    password,
+    password_confirm,
+    setUsername,
+    setPassword,
+    setPasswordConfirm,
+  } = useSignupStore();
+
   const [focused, setFocused] = useState("");
 
   // 아이디와 패스워드가 모두 입력됐는지 확인
   const isFormFilled =
-    username.length > 0 && password.length > 0 && passwordConfirm.length > 0;
+    username.length > 0 && password.length > 0 && password_confirm.length > 0;
 
   // 패스워드가 일치하는지 확인
-  const isMissmatched = password.length > 0 && password !== passwordConfirm;
+  const isMissmatched = password.length > 0 && password !== password_confirm;
 
   return (
     <KeyboardAvoidingView
@@ -92,7 +99,7 @@ function SignUpStep1() {
                   placeholder="패스워드 확인"
                   placeholderTextColor="rgba(225, 225,225, 0.5)"
                   secureTextEntry={true}
-                  value={passwordConfirm}
+                  value={password_confirm}
                   onChangeText={(text) => setPasswordConfirm(text)}
                   onFocus={() => setFocused("passwordConfirm")}
                   onBlur={() => setFocused("")}
