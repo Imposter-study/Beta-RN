@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { API_URL } from "../config";
+import * as SecureStore from "expo-secure-store";
 
 function SignInScreen() {
   const navigation = useNavigation();
@@ -34,8 +35,11 @@ function SignInScreen() {
         username,
         password,
       })
-      .then((response) => {
+      .then(async (response) => {
         console.log("로그인 성공", response.data);
+        const { access, refresh } = response.data;
+        await SecureStore.setItemAsync("access", access);
+        await SecureStore.setItemAsync("refresh", refresh);
       })
       .catch((error) => {
         console.log("로그인 실패", error);
