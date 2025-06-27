@@ -17,6 +17,7 @@ import { useState } from "react";
 import useSignupStore from "../../stores/useSignupStore";
 import { API_URL } from "../../config";
 import axios from "axios";
+import Toast from "react-native-toast-message";
 
 function SignUpStep3() {
   const navigation = useNavigation();
@@ -44,6 +45,12 @@ function SignUpStep3() {
         console.log(response.data);
         setClear();
         navigation.navigate("Home");
+        Toast.show({
+          type: "success",
+          text1: "회원가입에 성공하였습니다.",
+          position: "top",
+          visibilityTime: 3000,
+        });
       })
       .catch((error) => {
         console.log("회원가입 실패", error.response.data);
@@ -54,8 +61,8 @@ function SignUpStep3() {
           .join("\n");
         // console.log("에러메세지", errorMessage);
         Alert.alert(
-          title = "회원가입에 실패하였습니다.",
-          message = errorMessage,
+          (title = "회원가입에 실패하였습니다."),
+          (message = errorMessage),
           { text: "확인" }
         );
       });
