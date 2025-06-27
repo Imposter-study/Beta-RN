@@ -8,6 +8,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -30,8 +31,6 @@ function SignUpStep3() {
     birthday.date.length > 0 &&
     gender !== "O";
 
-  // console.log(birthday);
-
   const handleSignup = () => {
     const birthDate =
       birthday.year + "-" + birthday.month + "-" + birthday.date;
@@ -47,7 +46,18 @@ function SignUpStep3() {
         navigation.navigate("Home");
       })
       .catch((error) => {
-        console.log("회원가입 실패", error.response);
+        console.log("회원가입 실패", error.response.data);
+        const errorResponse = error.response.data;
+        const errorKeys = Object.keys(errorResponse);
+        const errorMessage = errorKeys
+          .map((key) => `${key}: ${errorResponse[key][0]}`)
+          .join("\n");
+        // console.log("에러메세지", errorMessage);
+        Alert.alert(
+          title = "회원가입에 실패하였습니다.",
+          message = errorMessage,
+          { text: "확인" }
+        );
       });
   };
 

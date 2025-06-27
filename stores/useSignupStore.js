@@ -5,7 +5,7 @@ const useSignupStore = create((set) => ({
   password: "",
   password_confirm: "",
   birth_date: "",
-  gender: "",
+  gender: "O",
   introduce: "",
 
   setUsername: (newUsername) => set({ username: newUsername }),
@@ -21,7 +21,7 @@ const useSignupStore = create((set) => ({
       password: "",
       password_confirm: "",
       birth_date: "",
-      gender: "",
+      gender: "O",
       introduce: "",
     }),
 }));

@@ -36,6 +36,9 @@ function SignUpStep1() {
   // 패스워드가 일치하는지 확인
   const isMissmatched = password.length > 0 && password !== password_confirm;
 
+  // 패스워드가 8자 이상인지 확인
+  const isOverEight = password.length >= 8;
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -123,6 +126,20 @@ function SignUpStep1() {
                   </Text>
                 </View>
               ) : null}
+
+              {/* 패스워드 8자 이상 경고 */}
+              {!isOverEight && password.length > 0 ? (
+                <View style={styles.warningContainer}>
+                  <Ionicons
+                    name="information-circle-outline"
+                    size={24}
+                    color="rgb(103, 40, 225)"
+                  />
+                  <Text style={styles.warningText}>
+                    패스워드는 최소 8자 이상이어야 합니다.
+                  </Text>
+                </View>
+              ) : null}
             </View>
           </View>
 
@@ -130,13 +147,13 @@ function SignUpStep1() {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.nextButtonWrapper}
-              disabled={!isFormFilled && !isMissmatched}
+              disabled={!isFormFilled && !isMissmatched && !isOverEight}
               onPress={() => navigation.navigate("SignUpStep2")}
             >
               <Text
                 style={[
                   styles.nextButton,
-                  isFormFilled && !isMissmatched
+                  isFormFilled && !isMissmatched && isOverEight
                     ? styles.nextButtonActive
                     : styles.nextButtonDisabled,
                 ]}
