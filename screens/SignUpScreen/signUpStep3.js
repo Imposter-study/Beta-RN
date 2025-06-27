@@ -14,7 +14,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import useSignupStore from "../../stores/useSignupStore";
+import useSignupStore, {
+  useSocialSignupStroe,
+} from "../../stores/useSignupStore";
 import { API_URL } from "../../config";
 import axios from "axios";
 import Toast from "react-native-toast-message";
@@ -24,6 +26,7 @@ function SignUpStep3() {
 
   const [birthday, setBirthday] = useState({ year: "", month: "", date: "" });
   const { setBirthDate, gender, setGender, setClear } = useSignupStore();
+  const { nickname } = useSocialSignupStroe();
   const [focused, setFocused] = useState(false);
 
   const isFormFilled =
@@ -36,36 +39,82 @@ function SignUpStep3() {
     const birthDate =
       birthday.year + "-" + birthday.month + "-" + birthday.date;
     setBirthDate(birthDate);
-    const { username, password, password_confirm, birth_date, gender } =
-      useSignupStore.getState();
-    const data = { username, password, password_confirm, birth_date, gender };
-    axios
-      .post(API_URL + "accounts/signup/", data)
-      .then((response) => {
-        console.log(response.data);
-        setClear();
-        navigation.navigate("Home");
-        Toast.show({
-          type: "success",
-          text1: "회원가입에 성공하였습니다.",
-          position: "top",
-          visibilityTime: 3000,
+    if (!nickname) {
+      const { username, password, password_confirm, birth_date, gender } =
+        useSignupStore.getState();
+      const data = { username, password, password_confirm, birth_date, gender };
+      axios
+        .post(API_URL + "accounts/signup/", data)
+        .then((response) => {
+          console.log(response.data);
+          setClear();
+          navigation.navigate("Home");
+          Toast.show({
+            type: "success",
+            text1: "회원가입에 성공하였습니다.",
+            position: "top",
+            visibilityTime: 3000,
+          });
+        })
+        .catch((error) => {
+          console.log("회원가입 실패", error.response.data);
+          const errorResponse = error.response.data;
+          const errorKeys = Object.keys(errorResponse);
+          const errorMessage = errorKeys
+            .map((key) => `${key}: ${errorResponse[key][0]}`)
+            .join("\n");
+          // console.log("에러메세지", errorMessage);
+          Alert.alert(
+            (title = "회원가입에 실패하였습니다."),
+            (message = errorMessage),
+            { text: "확인" }
+          );
         });
-      })
-      .catch((error) => {
-        console.log("회원가입 실패", error.response.data);
-        const errorResponse = error.response.data;
-        const errorKeys = Object.keys(errorResponse);
-        const errorMessage = errorKeys
-          .map((key) => `${key}: ${errorResponse[key][0]}`)
-          .join("\n");
-        // console.log("에러메세지", errorMessage);
-        Alert.alert(
-          (title = "회원가입에 실패하였습니다."),
-          (message = errorMessage),
-          { text: "확인" }
-        );
-      });
+    } else {
+      const { birth_date, gender } = useSignupStore.getState();
+      const { key } = useSocialSignupStroe.getState();
+      // console.log("\n\n\nkey : ", key);
+
+      const formData = new FormData();
+      formData.append("birth_date", birth_date);
+      formData.append("gender", gender);
+
+      axios
+        .put(API_URL + `accounts/${nickname}/`, formData, {
+          headers: {
+            Authorization: `Token ${key}`,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setClear();
+          navigation.navigate("Home");
+          Toast.show({
+            type: "success",
+            text1: "회원가입에 성공하였습니다.",
+            position: "top",
+            visibilityTime: 3000,
+          });
+        })
+        .catch((error) => {
+          console.log(
+            "회원가입 실패",
+            error.response.data,
+            error.response.status
+          );
+          const errorResponse = error.response.data;
+          const errorKeys = Object.keys(errorResponse);
+          const errorMessage = errorKeys
+            .map((key) => `${key}: ${errorResponse[key][0]}`)
+            .join("\n");
+          // console.log("에러메세지", errorMessage);
+          Alert.alert(
+            (title = "회원가입에 실패하였습니다."),
+            (message = errorMessage),
+            { text: "확인" }
+          );
+        });
+    }
   };
 
   return (
