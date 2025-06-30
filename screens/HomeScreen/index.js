@@ -75,7 +75,13 @@ function HomeScreen() {
         {/* 하단 메뉴 */}
         <BottomTab
           activeTab="Home"
-          onTabPress={(tabName) => navigation.navigate(tabName)}
+          onTabPress={(tabName) => {
+            if (!isLoggedIn && tabName === "CreateCharacter") {
+              setIsModalVisible(true);
+            } else {
+              navigation.navigate(tabName);
+            }
+          }}
         />
       </View>
 
