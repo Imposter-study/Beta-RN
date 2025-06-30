@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
@@ -9,15 +9,25 @@ import Recommend from "./recommend";
 import Ranking from "./ranking";
 import Modal from "react-native-modal";
 import SignInButton from "../../components/signInButtons";
+import * as SecureStore from "expo-secure-store";
 
 function HomeScreen() {
   const navigation = useNavigation();
   const [topTab, setTopTab] = useState("home");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const isLoggedIn = false;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // 모달 상태 변경 함수
   const toggleModal = () => setIsModalVisible((prev) => !prev);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      const token = await SecureStore.getItemAsync("access_token");
+      setIsLoggedIn(!!token); // 토큰 존재 여부로 로그인 상태 결정
+    };
+
+    checkLogin();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>

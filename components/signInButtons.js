@@ -37,13 +37,19 @@ function SignInButton({ togglwModal = () => {} }) {
       </TouchableOpacity>
 
       {/* 카카오 로그인 버튼 */}
-      <View style={styles.loginButton}>
+      <TouchableOpacity
+        onPress={() => {
+          togglwModal();
+          navigation.navigate("KakaoLogin");
+        }}
+        style={styles.loginButton}
+      >
         <Image
           source={require("../assets/kakao-symbol.png")}
           style={styles.loginIcon}
         />
         <Text style={styles.loginButtonText}>카카오 계정으로 계속하기</Text>
-      </View>
+      </TouchableOpacity>
 
       {/* 구글 로그인 버튼 */}
       <View style={styles.loginButton}>

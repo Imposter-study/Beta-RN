@@ -15,6 +15,7 @@ import CreateCharacter from "./screens/CreateCharacterScreen/index";
 import Hashtag from "./screens/CreateCharacterScreen/hashtag";
 import AddSituation from "./screens/CreateCharacterScreen/addSituation";
 import Toast from "react-native-toast-message";
+import KakaoLoginScreen from "./components/kakaoLoginScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +52,8 @@ export default function App() {
           <Stack.Screen name="Mypage" component={MyPageScreen} />
           {/* 프로필 편집 스크린 */}
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+          {/* 카카오 로그인 */}
+          <Stack.Screen name="KakaoLogin" component={KakaoLoginScreen} />
         </Stack.Navigator>
         <StatusBar style="light" backgroundColor="#1a1b1b" />
       </NavigationContainer>
