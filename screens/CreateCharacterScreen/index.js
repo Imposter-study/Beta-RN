@@ -24,6 +24,7 @@ import Toast from "react-native-toast-message";
 import axios from "axios";
 import { API_URL } from "../../config";
 import Modal from "react-native-modal";
+import * as SecureStore from "expo-secure-store";
 
 const { width, height } = Dimensions.get("window"); // 화면 크기 가져오기
 
@@ -45,6 +46,24 @@ function CreateCharacter() {
     intro.length > 0 &&
     character_image
   );
+
+  const getFileInfoFromUri = (uri) => {
+    const uriParts = uri.split("/");
+    const fileName = uriParts[uriParts.length - 1];
+
+    const extension = fileName.split(".").pop()?.toLowerCase();
+    let mimeType = "image/jpeg"; // 기본값
+
+    if (extension === "png") mimeType = "image/png";
+    else if (extension === "jpg" || extension === "jpeg")
+      mimeType = "image/jpeg";
+    else if (extension === "webp") mimeType = "image/webp";
+
+    return {
+      name: fileName,
+      type: mimeType,
+    };
+  };
 
   const onClose = () => {
     const title = "지금 나가면 수정한 내용이 삭제돼요";
@@ -123,9 +142,9 @@ function CreateCharacter() {
     ]);
   };
 
-  // 캐릭터 생성 완료
-  const onRegister = () => {
-    // 현재 상태 가져오가
+  // 캐릭터 생성
+  const onRegister = async () => {
+    const access = await SecureStore.getItemAsync("access");
     const {
       title,
       description,
@@ -142,37 +161,72 @@ function CreateCharacter() {
       is_example_public,
     } = useCharacterStore.getState();
 
-    // axios
-    //   .post(API_URL + "characters/", {
-    //     title,
-    //     description,
-    //     character_image,
-    //     name,
-    //     character_info,
-    //     intro,
-    //     example_situation,
-    //     presentation,
-    //     hashtag,
-    //     creator_comment,
-    //     is_character_public,
-    //     is_description_public,
-    //     is_example_public,
-    //   })
-    //   .then((response) => {
-    //     console.log(response.data);
-    //     navigation.navigate("Home");
-    //   })
-    //   .catch((error) => {
-    //     console.error("캐릭터 생성에 실패하였습니다.", error);
-    //   });
-    resetCharacter();
-    navigation.navigate("Home");
-    Toast.show({
-      type: "success",
-      text1: "등록 되었어요",
-      position: "top",
-      visibilityTime: 3000,
-    });
+    const data = {
+      title,
+      description,
+      name,
+      character_info,
+      intro,
+      example_situation,
+      presentation,
+      hashtag,
+      creator_comment,
+      is_character_public,
+      is_description_public,
+      is_example_public,
+    };
+
+    try {
+      // 1. 캐릭터 생성
+      const res = await axios.post(API_URL + "characters/", data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access}`,
+        },
+      });
+
+      const characterId = res.data.id || 4;
+      console.log("✅ 캐릭터 생성 성공:", characterId);
+
+      // 2. 이미지가 있는 경우, PUT 요청으로 이미지 업데이트
+      if (character_image && characterId) {
+        const formData = new FormData();
+        const { name, type } = getFileInfoFromUri(character_image);
+        formData.append("character_image", {
+          uri: character_image,
+          name,
+          type,
+        });
+
+        await axios.put(`${API_URL}characters/${characterId}/`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${access}`,
+          },
+        });
+
+        console.log("🖼️ 이미지 업로드 성공");
+      }
+
+      // 3. 완료 후 홈으로 이동 + 토스트
+      resetCharacter();
+      navigation.navigate("Home");
+      Toast.show({
+        type: "success",
+        text1: "등록 되었어요",
+        position: "top",
+        visibilityTime: 3000,
+      });
+    } catch (error) {
+      console.error("❌ 캐릭터 생성에 실패하였습니다.", error.response);
+      Toast.show({
+        type: "error",
+        text1: "등록에 실패했어요",
+        text2: error.response?.data?.detail || "다시 시도해주세요.",
+        position: "top",
+        visibilityTime: 3000,
+      });
+    }
   };
 
   const handleOpenMenu = () => {
