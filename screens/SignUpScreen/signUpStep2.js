@@ -17,7 +17,7 @@ import { useState } from "react";
 function SignUpStep2() {
   const navigation = useNavigation();
 
-  const [nickname, setNickname] = useState("");
+  const [chatNickname, setChatNickname] = useState("");
   const [focused, setFocused] = useState(false);
 
   return (
@@ -57,8 +57,8 @@ function SignUpStep2() {
               <TextInput
                 placeholder="캐릭터가 날 이렇게 부를거에요"
                 placeholderTextColor="rgba(225, 225,225, 0.5)"
-                value={nickname}
-                onChangeText={(text) => setNickname(text)}
+                value={chatNickname}
+                onChangeText={(text) => setChatNickname(text)}
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
                 style={[styles.textInput, focused && styles.textInputFocused]}
@@ -70,13 +70,13 @@ function SignUpStep2() {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.buttonWrapper}
-              disabled={!nickname}
+              disabled={!chatNickname}
               onPress={() => navigation.navigate("SignUpStep3")}
             >
               <Text
                 style={[
                   styles.nextButton,
-                  nickname
+                  chatNickname
                     ? styles.nextButtonActive
                     : styles.nextButtonInactive,
                 ]}

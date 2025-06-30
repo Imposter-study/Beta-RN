@@ -8,20 +8,65 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
+import useSignupStore from "../../stores/useSignupStore";
+import { API_URL } from "../../config";
+import axios from "axios";
+import Toast from "react-native-toast-message";
 
 function SignUpStep3() {
   const navigation = useNavigation();
 
-  const [age, setAge] = useState(0);
-  const [gender, setGender] = useState("O");
+  const [birthday, setBirthday] = useState({ year: "", month: "", date: "" });
+  const { setBirthDate, gender, setGender, setClear } = useSignupStore();
   const [focused, setFocused] = useState(false);
 
-  const isFormFilled = age > 0 && gender !== "O";
+  const isFormFilled =
+    birthday.year.length === 4 &&
+    birthday.month.length > 0 &&
+    birthday.date.length > 0 &&
+    gender !== "O";
+
+  const handleSignup = () => {
+    const birthDate =
+      birthday.year + "-" + birthday.month + "-" + birthday.date;
+    setBirthDate(birthDate);
+    const { username, password, password_confirm, birth_date, gender } =
+      useSignupStore.getState();
+    const data = { username, password, password_confirm, birth_date, gender };
+    axios
+      .post(API_URL + "accounts/signup/", data)
+      .then((response) => {
+        console.log(response.data);
+        setClear();
+        navigation.navigate("Home");
+        Toast.show({
+          type: "success",
+          text1: "회원가입에 성공하였습니다.",
+          position: "top",
+          visibilityTime: 3000,
+        });
+      })
+      .catch((error) => {
+        console.log("회원가입 실패", error.response.data);
+        const errorResponse = error.response.data;
+        const errorKeys = Object.keys(errorResponse);
+        const errorMessage = errorKeys
+          .map((key) => `${key}: ${errorResponse[key][0]}`)
+          .join("\n");
+        // console.log("에러메세지", errorMessage);
+        Alert.alert(
+          (title = "회원가입에 실패하였습니다."),
+          (message = errorMessage),
+          { text: "확인" }
+        );
+      });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -60,7 +105,7 @@ function SignUpStep3() {
             <View style={styles.section}>
               <Text style={styles.label}>생년월일</Text>
               <View style={styles.inputRow}>
-                {["year", "month", "day"].map((field, index) => (
+                {["year", "month", "date"].map((field, index) => (
                   <TextInput
                     key={field}
                     placeholder={
@@ -71,8 +116,10 @@ function SignUpStep3() {
                         : "일"
                     }
                     placeholderTextColor="rgba(225, 225,225, 0.5)"
-                    value={age}
-                    onChangeText={(text) => setAge(text)}
+                    value={birthday.field}
+                    onChangeText={(text) =>
+                      setBirthday((prev) => ({ ...prev, [field]: text }))
+                    }
                     onFocus={() => setFocused(field)}
                     onBlur={() => setFocused("")}
                     keyboardType="number-pad"
@@ -80,31 +127,10 @@ function SignUpStep3() {
                       styles.input,
                       focused === field && styles.inputFocused,
                       field === "year" && { flex: 0.5 },
-                      (field === "month" || field === "day") && { flex: 0.25 },
+                      (field === "month" || field === "date") && { flex: 0.25 },
                     ]}
                   />
                 ))}
-              </View>
-            </View>
-
-            {/* 나이 입력 */}
-            <View style={styles.section}>
-              <Text style={styles.label}>나이</Text>
-              <View style={styles.inputRow}>
-                <TextInput
-                  placeholder="나이"
-                  placeholderTextColor="rgba(225, 225,225, 0.5)"
-                  value={age}
-                  onChangeText={(text) => setAge(text)}
-                  onFocus={() => setFocused("age")}
-                  onBlur={() => setFocused("")}
-                  keyboardType="number-pad"
-                  style={[
-                    styles.input,
-                    focused === "age" && styles.inputFocused,
-                    { flex: 1 },
-                  ]}
-                />
               </View>
             </View>
 
@@ -145,7 +171,7 @@ function SignUpStep3() {
             <TouchableOpacity
               style={{ alignItems: "center" }}
               disabled={!isFormFilled}
-              onPress={() => navigation.navigate("Home")}
+              onPress={handleSignup}
             >
               <Text
                 style={[
