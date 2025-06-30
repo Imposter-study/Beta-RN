@@ -22,7 +22,7 @@ function HomeScreen() {
 
   useEffect(() => {
     const checkLogin = async () => {
-      const token = await SecureStore.getItemAsync("access_token");
+      const token = await SecureStore.getItemAsync("access");
       setIsLoggedIn(!!token); // 토큰 존재 여부로 로그인 상태 결정
     };
 
