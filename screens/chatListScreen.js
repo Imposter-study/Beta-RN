@@ -1,11 +1,41 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomTab from "../components/bottomTab";
+import { useEffect, useState } from "react";
+import * as SecureStore from "expo-secure-store";
+import axios from "axios";
+import { API_URL } from "../config";
 
 function ChatListScreen() {
   const navigation = useNavigation();
+  const [chatRooms, setChatRooms] = useState([]);
+
+  const getChatRooms = async () => {
+    const access = await SecureStore.getItemAsync("access");
+    axios
+      .get(API_URL + "rooms/", {
+        headers: { Authorization: `Bearer ${access}` },
+      })
+      .then((response) => {
+        // console.log(response.data);
+        setChatRooms(response.data);
+      })
+      .catch((error) => {
+        console.log("채팅 목록 조회 실패", error?.response);
+      });
+  };
+
+  useEffect(() => {
+    getChatRooms();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
@@ -34,11 +64,51 @@ function ChatListScreen() {
         {/* 대화 목록 */}
         <View style={styles.chatSection}>
           <Text style={styles.chatSort}>최신순/오래된순</Text>
-          <View style={styles.emptyChatBox}>
-            <Text style={styles.emptyChatText}>
-              아직 대화한 캐릭터가 없어요
-            </Text>
-          </View>
+          {chatRooms.length === 0 ? (
+            <View style={styles.emptyChatBox}>
+              <Text style={styles.emptyChatText}>
+                아직 대화한 캐릭터가 없어요
+              </Text>
+            </View>
+          ) : (
+            <ScrollView>
+              {chatRooms.map((room) => (
+                <TouchableOpacity
+                  key={room.room_id}
+                  onPress={null}
+                  style={{
+                    flexDirection: "row",
+                    marginTop: 15,
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <Image
+                    source={{ uri: room.character_image || "대체이미지" }}
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 100,
+                    }}
+                  />
+                  <View>
+                    <Text
+                      style={{
+                        color: "rgb(249, 250, 251)",
+                        fontSize: 16,
+                        fontWeight: "500",
+                      }}
+                    >
+                      {room.character_title}
+                    </Text>
+                    <Text style={{ color: "rgb(133, 141, 155)" }}>
+                      {room.last_message}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
         </View>
 
         {/* 하단메뉴 */}
