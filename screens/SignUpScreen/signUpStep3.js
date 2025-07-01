@@ -20,13 +20,14 @@ import useSignupStore, {
 import { API_URL } from "../../config";
 import axios from "axios";
 import Toast from "react-native-toast-message";
+import * as SecureStore from "expo-secure-store";
 
 function SignUpStep3() {
   const navigation = useNavigation();
 
   const [birthday, setBirthday] = useState({ year: "", month: "", date: "" });
   const { setBirthDate, gender, setGender, setClear } = useSignupStore();
-  const { nickname } = useSocialSignupStroe();
+  const { nickname, setSocialStoreClear } = useSocialSignupStroe();
   const [focused, setFocused] = useState(false);
 
   const isFormFilled =
@@ -72,7 +73,7 @@ function SignUpStep3() {
         });
     } else {
       const { birth_date, gender } = useSignupStore.getState();
-      const { key } = useSocialSignupStroe.getState();
+      const { access, refresh } = useSocialSignupStroe.getState();
       // console.log("\n\n\nkey : ", key);
 
       const formData = new FormData();
@@ -82,12 +83,15 @@ function SignUpStep3() {
       axios
         .put(API_URL + `accounts/${nickname}/`, formData, {
           headers: {
-            Authorization: `Token ${key}`,
+            Authorization: `Bearer ${access}`,
           },
         })
-        .then((response) => {
+        .then(async (response) => {
           console.log(response.data);
           setClear();
+          await SecureStore.setItemAsync("access", access);
+          await SecureStore.setItemAsync("refresh", refresh);
+          setSocialStoreClear();
           navigation.navigate("Home");
           Toast.show({
             type: "success",
