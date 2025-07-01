@@ -23,7 +23,7 @@ function Home() {
     axios
       .get(API_URL + "characters/")
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         setCharacters(response.data);
       })
       .catch((error) => {

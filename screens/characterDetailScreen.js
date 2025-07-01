@@ -113,6 +113,13 @@ function CharacterDetailScreen({ route }) {
         <>
           {character.example_situation.map((example, index) => (
             <View key={index}>
+              <View
+                style={{
+                  borderColor: "#ffffff0d",
+                  borderWidth: 1,
+                  marginVertical: 20,
+                }}
+              />
               <Text style={styles.sectionTitle}>상황예시 {index + 1}</Text>
               {example.map((item) => {
                 if (item.role === "user") {
