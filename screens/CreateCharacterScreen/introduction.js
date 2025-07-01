@@ -17,7 +17,7 @@ function Introduction() {
   const {
     presentation,
     setPresentation,
-    hashtag,
+    hashtags,
     deleteHashtag,
     is_character_public,
     setCharacterPublic,
@@ -28,7 +28,7 @@ function Introduction() {
   } = useCharacterStore();
   const [creatorComment, setCreatorComment] = useState("");
 
-  const tagCount = hashtag.length;
+  const tagCount = hashtags.length;
 
   return (
     <>
@@ -68,13 +68,13 @@ function Introduction() {
               </Text>
             </View>
             <View style={styles.hashtagContainer}>
-              {hashtag.map((t, idx) => (
+              {hashtags.map((t, idx) => (
                 <TouchableOpacity
                   key={idx}
                   style={styles.hashtagBubble}
                   onPress={() => deleteHashtag(idx)}
                 >
-                  <Text style={styles.hashtagText}>#{t}</Text>
+                  <Text style={styles.hashtagText}>#{t.tag_name}</Text>
                   <EvilIcons name="close" size={14} color="#ffffff80" />
                 </TouchableOpacity>
               ))}
