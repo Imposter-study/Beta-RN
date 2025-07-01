@@ -8,8 +8,6 @@ import {
   Keyboard,
   Platform,
   TouchableOpacity,
-  Alert,
-  Dimensions, // Dimensions import
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -25,8 +23,6 @@ import axios from "axios";
 import { API_URL } from "../../config";
 import Modal from "react-native-modal";
 import * as SecureStore from "expo-secure-store";
-
-const { width, height } = Dimensions.get("window"); // 화면 크기 가져오기
 
 function CreateCharacter() {
   const navigation = useNavigation();
@@ -100,7 +96,7 @@ function CreateCharacter() {
               intro,
               example_situation,
               presentation,
-              hashtag,
+              hashtags,
               creator_comment,
               is_character_public,
               is_description_public,
@@ -142,9 +138,9 @@ function CreateCharacter() {
     ]);
   };
 
-  // 캐릭터 생성
+  // 캐릭터 생성 완료
   const onRegister = async () => {
-    const access = await SecureStore.getItemAsync("access");
+    // 현재 상태 가져오가
     const {
       title,
       description,
@@ -154,7 +150,7 @@ function CreateCharacter() {
       intro,
       example_situation,
       presentation,
-      hashtag,
+      hashtags,
       creator_comment,
       is_character_public,
       is_description_public,
@@ -169,12 +165,14 @@ function CreateCharacter() {
       intro,
       example_situation,
       presentation,
-      hashtag,
+      hashtags,
       creator_comment,
       is_character_public,
       is_description_public,
       is_example_public,
     };
+
+    const access = await SecureStore.getItemAsync("access");
 
     try {
       // 1. 캐릭터 생성
@@ -185,7 +183,7 @@ function CreateCharacter() {
         },
       });
 
-      const characterId = res.data.id || 4;
+      const characterId = res.data.character; // 추후에 character_id로 수정 예정
       console.log("✅ 캐릭터 생성 성공:", characterId);
 
       // 2. 이미지가 있는 경우, PUT 요청으로 이미지 업데이트
@@ -218,7 +216,7 @@ function CreateCharacter() {
         visibilityTime: 3000,
       });
     } catch (error) {
-      console.error("❌ 캐릭터 생성에 실패하였습니다.", error.response);
+      console.error("❌ 캐릭터 생성에 실패하였습니다.", error?.response);
       Toast.show({
         type: "error",
         text1: "등록에 실패했어요",

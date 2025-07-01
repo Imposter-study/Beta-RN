@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -10,18 +11,17 @@ import {
   Dimensions,
 } from "react-native";
 import { API_URL } from "../../config";
-import axios from "axios";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.45;
 
 function Home() {
   const navigation = useNavigation();
-  const [characters, setCharacters] = useState([]);
+  const [characters, setCharacters] = useState();
 
   const getCharacters = () => {
     axios
-      .get(API_URL + `characters/`)
+      .get(API_URL + "characters/")
       .then((response) => {
         console.log(response.data);
         setCharacters(response.data);
@@ -30,6 +30,10 @@ function Home() {
         console.log("캐릭터 조회 실패", error?.response);
       });
   };
+
+  useEffect(() => {
+    getCharacters();
+  }, []);
 
   const renderItem = ({ index }) => {
     return (
@@ -43,16 +47,20 @@ function Home() {
       >
         <Image
           source={{
-            uri:
-              characters[index].character_image ||
-              "https://mblogthumb-phinf.pstatic.net/20160817_259/retspe_14714118890125sC2j_PNG/%C7%C7%C4%AB%C3%F2_%281%29.png?type=w800",
+            uri: characters[index].character_image,
           }}
           style={styles.image}
         />
         <View>
-          <Text style={styles.name}>{characters[index].name}</Text>
+          <Text style={styles.name}>{characters[index].title}</Text>
           <Text style={styles.intro}>{characters[index].presentation}</Text>
-          <Text style={styles.tag}>#해시태그</Text>
+          <View style={{ flexDirection: "row", gap: 5 }}>
+            {characters[index].hashtags.map((item, index) => (
+              <Text key={index} style={styles.tag}>
+                #{item.tag_name}
+              </Text>
+            ))}
+          </View>
         </View>
       </TouchableOpacity>
     );
