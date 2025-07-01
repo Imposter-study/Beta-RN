@@ -17,7 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Markdown from "react-native-markdown-display";
-import { API_URL } from "../config";
+import { API_URL, DOMAIN } from "../config";
 import * as SecureStore from "expo-secure-store";
 
 function ChatScreen({ route }) {
