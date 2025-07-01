@@ -9,7 +9,7 @@ const useCharacterStore = create((set) => ({
   intro: [], // 첫 상황
   example_situation: [], // 상황 예시
   presentation: "", // 소개글?
-  hashtag: [], // 해시태그
+  hashtags: [], // 해시태그
   creator_comment: "", // 크리에이터 코멘트
   is_character_public: true,
   is_description_public: true,
@@ -41,10 +41,10 @@ const useCharacterStore = create((set) => ({
   // 소개 설정
   // 해시태그 설정
   setHashtag: (newHashtag) =>
-    set((state) => ({ hashtag: [...state.hashtag, newHashtag] })),
+    set((state) => ({ hashtags: [...state.hashtags, newHashtag] })),
   deleteHashtag: (idx) =>
     set((state) => ({
-      hashtag: state.hashtag.filter((_, index) => idx !== index),
+      hashtags: state.hashtags.filter((_, index) => idx !== index),
     })),
   // 공개여부 설정
   setCharacterPublic: () =>
