@@ -13,7 +13,7 @@ export default function KakaoLoginScreen() {
   const webviewRef = useRef(null);
   const [webviewKey, setWebviewKey] = useState(0);
   const [usedCode, setUsedCode] = useState(null); // 중복 요청 방지
-  const { setNickname, setKey } = useSocialSignupStroe();
+  const { setNickname, setAccess, setRefresh } = useSocialSignupStroe();
 
   const authUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(
     REDIRECT_URI
@@ -51,24 +51,17 @@ export default function KakaoLoginScreen() {
 
         const { is_signup } = loginRes.data; // 소셜로그인으로 회원가입이 완료된 유저인지 확인
         if (is_signup) {
-          const { key } = loginRes.data;
-          console.log(key);
+          const { access, refresh } = loginRes.data;
           // 토큰을 저장
-          await SecureStore.setItemAsync("access", key);
+          await SecureStore.setItemAsync("access", access);
+          await SecureStore.setItemAsync("refresh", refresh);
           // 로그인 성공 시 홈으로 이동
           navigation.replace("Home");
         } else {
-          const { kakao_id, nickname, token } = loginRes.data;
-          console.log(
-            "kakao_id :",
-            kakao_id,
-            "\nnickname :",
-            nickname,
-            "\ntoken :",
-            token
-          );
+          const { kakao_id, nickname, access, refresh } = loginRes.data;
           setNickname(nickname);
-          setKey(token);
+          setAccess(access);
+          setRefresh(refresh);
           navigation.navigate("SignUp", {
             screen: "SignUpStep2",
           });
