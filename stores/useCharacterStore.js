@@ -93,8 +93,8 @@ const useCharacterStore = create((set) => ({
       intro: [], // 첫 상황
       example_situation: [], // 상황 예시
       presentation: "", // 소개글?
-      // 해시태그
-      // 크리에이터 코멘트
+      hashtags: [], // 해시태그
+      creator_comment: "", // 크리에이터 코멘트
     }),
 }));
 
