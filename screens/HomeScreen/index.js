@@ -22,7 +22,7 @@ function HomeScreen() {
 
   useEffect(() => {
     const checkLogin = async () => {
-      const token = await SecureStore.getItemAsync("access_token");
+      const token = await SecureStore.getItemAsync("access");
       setIsLoggedIn(!!token); // 토큰 존재 여부로 로그인 상태 결정
     };
 
@@ -85,7 +85,13 @@ function HomeScreen() {
         {/* 하단 메뉴 */}
         <BottomTab
           activeTab="Home"
-          onTabPress={(tabName) => navigation.navigate(tabName)}
+          onTabPress={(tabName) => {
+            if (!isLoggedIn && tabName === "CreateCharacter") {
+              setIsModalVisible(true);
+            } else {
+              navigation.navigate(tabName);
+            }
+          }}
         />
       </View>
 

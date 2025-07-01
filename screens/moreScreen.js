@@ -11,6 +11,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { API_URL } from "../config";
 import { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
+import axios from "axios";
 
 function MoreScreen() {
   const navigation = useNavigation();
@@ -18,18 +19,29 @@ function MoreScreen() {
 
   useEffect(() => {
     const checkLogin = async () => {
-      const token = await SecureStore.getItemAsync("access_token");
+      const token = SecureStore.getItemAsync("access");
       setIsLoggedIn(!!token); // 토큰 존재 여부로 로그인 상태 결정
     };
 
     checkLogin();
   }, []);
 
-  const handleSignOut = async () => {
-    // axios.post(API_URL)
-    await SecureStore.deleteItemAsync("access_token");
-    await SecureStore.deleteItemAsync("refresh_token");
-    navigation.navigate("Home");
+  const handleSignOut = () => {
+    const refresh = SecureStore.getItemAsync("refresh");
+    axios
+      .post(API_URL + "accounts/signout/", { refresh })
+      .then(async (response) => {
+        console.log(response.data);
+        await SecureStore.deleteItemAsync("access");
+        await SecureStore.deleteItemAsync("refresh");
+        navigation.navigate("Home");
+      })
+      .catch(async (error) => {
+        console.log("로그아웃 실패", error.response);
+        await SecureStore.deleteItemAsync("access");
+        await SecureStore.deleteItemAsync("refresh");
+        navigation.navigate("Home");
+      });
   };
 
   return (
