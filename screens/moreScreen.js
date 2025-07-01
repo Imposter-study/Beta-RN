@@ -26,10 +26,16 @@ function MoreScreen() {
     checkLogin();
   }, []);
 
-  const handleSignOut = () => {
-    const refresh = SecureStore.getItemAsync("refresh");
+  const handleSignOut = async () => {
+    const refresh = await SecureStore.getItemAsync("refresh");
+    const access = await SecureStore.getItemAsync("access");
+    console.log("access :", access, "\nrefresh :", refresh);
     axios
-      .post(API_URL + "accounts/signout/", { refresh })
+      .post(
+        API_URL + "accounts/signout/",
+        { refresh },
+        { headers: { Authorization: `Bearer ${access}` } }
+      )
       .then(async (response) => {
         console.log(response.data);
         await SecureStore.deleteItemAsync("access");
