@@ -19,6 +19,8 @@ function Introduction() {
     setPresentation,
     hashtags,
     deleteHashtag,
+    creator_comment,
+    setCreatorComment,
     is_character_public,
     setCharacterPublic,
     is_description_public,
@@ -26,7 +28,6 @@ function Introduction() {
     is_example_public,
     setExamplePublic,
   } = useCharacterStore();
-  const [creatorComment, setCreatorComment] = useState("");
 
   const tagCount = hashtags.length;
 
@@ -93,7 +94,7 @@ function Introduction() {
             <Text style={styles.inputLabel}>크리에이터 코멘트</Text>
             <View>
               <TextInput
-                value={creatorComment}
+                value={creator_comment}
                 onChangeText={(text) => setCreatorComment(text)}
                 maxLength={150}
                 placeholder={`유저들에게 하고 싶은 말을 써주세요\n상세 페이지에서 보여 드려요\nex. 대화 많이 해주셔서 감사해요`}
@@ -102,7 +103,7 @@ function Introduction() {
                 style={[styles.textInput, styles.multilineCreatorCommentInput]}
               />
               <Text style={styles.charCountOverlay}>
-                {creatorComment.length}/150
+                {creator_comment.length}/150
               </Text>
             </View>
           </View>

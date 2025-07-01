@@ -46,6 +46,8 @@ const useCharacterStore = create((set) => ({
     set((state) => ({
       hashtags: state.hashtags.filter((_, index) => idx !== index),
     })),
+  // 크리에이터 코멘트
+  setCreatorComment: (newComment) => set({ creator_comment: newComment }),
   // 공개여부 설정
   setCharacterPublic: () =>
     set((state) => ({
