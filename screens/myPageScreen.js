@@ -15,15 +15,36 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import SignInButton from "../components/signInButtons";
 import { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
+import accountAPI from "../apis/accountAPI";
 
 function MyPageScreen() {
   const navigation = useNavigation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState({});
+
+  const getUserProfile = async () => {
+    const nickname = await SecureStore.getItemAsync("nickname");
+    accountAPI
+      .get(`${nickname}/`)
+      .then((response) => {
+        console.log(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("유저 조회 실패", error?.response);
+      });
+  };
 
   useEffect(() => {
     const checkLogin = async () => {
       const token = await SecureStore.getItemAsync("access");
-      setIsLoggedIn(!!token); // 토큰 존재 여부로 로그인 상태 결정
+      const loggedIn = !!token;
+      setIsLoggedIn(loggedIn); // 토큰 존재 여부로 로그인 상태 결정
+
+      if (loggedIn) {
+        getUserProfile();
+      }
     };
 
     checkLogin();
