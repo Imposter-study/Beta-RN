@@ -12,6 +12,9 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Markdown from "react-native-markdown-display";
+import axios from "axios";
+import { API_URL } from "../config";
+import * as SecureStore from "expo-secure-store";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.9;
@@ -46,6 +49,27 @@ function CharacterDetailScreen({ route }) {
         {children}
       </Text>
     ),
+  };
+
+  const createChatRoom = async () => {
+    console.log(character);
+    const character_id = character.character;
+    const access = await SecureStore.getItemAsync("access");
+
+    axios
+      .post(
+        API_URL + "rooms/",
+        { character_id },
+        { headers: { Authorization: `Bearer ${access}` } }
+      )
+      .then((response) => {
+        console.log(response.data);
+        // const { room_id } = response.data;
+        navigation.navigate("Chat", { character: response.data });
+      })
+      .catch((error) => {
+        console.log("채팅방 생성 실패", error?.response);
+      });
   };
 
   return (
@@ -193,7 +217,9 @@ function CharacterDetailScreen({ route }) {
       <View style={styles.bottomContainer}>
         <TouchableOpacity
           style={styles.chatButton}
-          onPress={() => navigation.navigate("Chat")}
+          onPress={() => {
+            createChatRoom();
+          }}
         >
           <Text style={styles.chatButtonText}>대화 시작하기</Text>
         </TouchableOpacity>

@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
@@ -12,7 +13,7 @@ import BottomTab from "../components/bottomTab";
 import { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
-import { API_URL } from "../config";
+import { API_URL, DOMAIN } from "../config";
 
 function ChatListScreen() {
   const navigation = useNavigation();
@@ -31,6 +32,10 @@ function ChatListScreen() {
       .catch((error) => {
         console.log("채팅 목록 조회 실패", error?.response);
       });
+  };
+
+  const moveChatRoom = (room) => {
+    navigation.navigate("Chat", { character: room });
   };
 
   useEffect(() => {
@@ -75,7 +80,9 @@ function ChatListScreen() {
               {chatRooms.map((room) => (
                 <TouchableOpacity
                   key={room.room_id}
-                  onPress={null}
+                  onPress={() => {
+                    moveChatRoom(room);
+                  }}
                   style={{
                     flexDirection: "row",
                     marginTop: 15,
@@ -84,7 +91,11 @@ function ChatListScreen() {
                   }}
                 >
                   <Image
-                    source={{ uri: room.character_image || "대체이미지" }}
+                    source={{
+                      uri:
+                        `http://${DOMAIN}` + room.character_image ||
+                        "대체이미지",
+                    }}
                     style={{
                       width: 50,
                       height: 50,

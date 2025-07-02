@@ -17,14 +17,16 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Markdown from "react-native-markdown-display";
-import { API_URL } from "../config";
+import { API_URL, DOMAIN } from "../config";
+import * as SecureStore from "expo-secure-store";
 
-function ChatScreen() {
+function ChatScreen({ route }) {
   const navigation = useNavigation();
   const scrollViewRef = useRef();
+  const { character } = route.params;
+  const { room_id, character_id, intro } = character;
 
   const [chats, setChats] = useState([]);
-  const [characterId, setCharacterId] = useState("");
   const [message, setMessage] = useState("");
   const [selection, setSelection] = useState({ start: 0, end: 0 });
 
@@ -56,29 +58,44 @@ function ChatScreen() {
     ),
   };
 
-  const character = {
-    id: 1,
-    imageUri:
-      "https://mblogthumb-phinf.pstatic.net/20160817_259/retspe_14714118890125sC2j_PNG/%C7%C7%C4%AB%C3%F2_%281%29.png?type=w800",
-    name: "캐릭터 이름",
-    intro: "캐릭터 인트로 소개글",
-    tag: "#해시태그",
-    creator: "@creator",
+  const getCharacterInfo = async () => {
+    const access = await SecureStore.getItemAsync("access");
+    axios
+      .get(API_URL + `characters/${character_id}/`, {
+        headers: {
+          Authorization: `Bearer ${access}`,
+        },
+      })
+      .then((response) => {
+        // console.log(response.data);
+        setChats(response.data.intro);
+      })
+      .catch((error) => {
+        console.log("캐릭터 정보 가져오기 실패", error?.response);
+      });
   };
 
-  const getChat = () => {
+  const getChat = async () => {
+    const access = await SecureStore.getItemAsync("access");
+
     axios
-      .get(API_URL + "room/1/")
+      .get(API_URL + `rooms/${room_id}/`, {
+        headers: {
+          Authorization: `Bearer ${access}`,
+        },
+      })
       .then((response) => {
-        setChats(response.data.chats);
-        setCharacterId(response.data.character_id);
+        // console.log(response.data.chats);
+        setChats((prev) => [...prev, ...response.data.chats]);
       })
       .catch((error) => {
         console.log("채팅 내역 가져오기 실패", error);
       });
   };
 
-  const sendChat = () => {
+  const sendChat = async () => {
+    const access = await SecureStore.getItemAsync("access");
+
     if (message.trim() !== "") {
       const userMessage = message;
 
@@ -91,10 +108,17 @@ function ChatScreen() {
       scrollViewRef.current?.scrollToEnd({ animated: true });
 
       axios
-        .post(API_URL + "room/", {
-          character_id: characterId,
-          message: userMessage,
-        })
+        .post(
+          API_URL + `rooms/${room_id}/messages/`,
+          {
+            message: userMessage,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${access}`,
+            },
+          }
+        )
         .then((response) => {
           console.log("메세지 전송 완료");
           setChats((prev) => [
@@ -107,7 +131,7 @@ function ChatScreen() {
           ]);
         })
         .catch((error) => {
-          console.log("메세지 전송 실패", error);
+          console.log("메세지 전송 실패", error.response);
         });
     }
   };
@@ -124,6 +148,9 @@ function ChatScreen() {
   };
 
   useEffect(() => {
+    if (!intro) {
+      getCharacterInfo();
+    }
     getChat();
   }, []);
 
@@ -139,7 +166,9 @@ function ChatScreen() {
               <Ionicons name="chevron-back-sharp" size={24} color="white" />
             </TouchableOpacity>
             <View style={styles.headerCenter}>
-              <Text style={styles.headerTitle}>캐릭터 이름</Text>
+              <Text style={styles.headerTitle}>
+                {character.character_title}
+              </Text>
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate("CharacterDetail", { character })
@@ -174,22 +203,30 @@ function ChatScreen() {
             </View>
 
             {chats.map((chat, index) =>
-              chat.role === "user" ? (
+              (chat.name || chat.role) !== character.character_name ? (
                 <View key={index} style={styles.userChatContainer}>
                   <View style={styles.userChatBox}>
-                    <Markdown rules={markdownRules}>{chat.content}</Markdown>
+                    <Markdown rules={markdownRules}>
+                      {chat.content || chat.message}
+                    </Markdown>
                   </View>
                 </View>
               ) : (
                 <View key={index} style={styles.aiChatContainer}>
                   <Image
-                    source={{ uri: character.imageUri }}
+                    source={{
+                      uri: `http://${DOMAIN}` + character.character_image,
+                    }}
                     style={styles.aiImage}
                   />
                   <View style={styles.aiChatContent}>
-                    <Text style={styles.aiName}>캐릭터 이름</Text>
+                    <Text style={styles.aiName}>
+                      {character.character_name}
+                    </Text>
                     <View style={styles.aiChatBox}>
-                      <Markdown rules={markdownRules}>{chat.content}</Markdown>
+                      <Markdown rules={markdownRules}>
+                        {chat.content || chat.message}
+                      </Markdown>
                     </View>
                   </View>
                 </View>
