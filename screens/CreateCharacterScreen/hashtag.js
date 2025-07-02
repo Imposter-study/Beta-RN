@@ -17,10 +17,10 @@ import useCharacterStore from "../../stores/useCharacterStore";
 
 function Hashtag() {
   const navigation = useNavigation();
-  const { hashtag, setHashtag, deleteHashtag } = useCharacterStore();
+  const { hashtags, setHashtag, deleteHashtag } = useCharacterStore();
   const [tag, setTag] = useState("");
 
-  const tagCount = hashtag.length;
+  const tagCount = hashtags.length;
 
   return (
     <KeyboardAvoidingView
@@ -39,13 +39,13 @@ function Hashtag() {
             </TouchableOpacity>
           </View>
           <View style={styles.tagsContainer}>
-            {hashtag.map((t, idx) => (
+            {hashtags.map((t, idx) => (
               <TouchableOpacity
                 key={idx}
                 style={styles.tagBubble}
                 onPress={() => deleteHashtag(idx)}
               >
-                <Text style={styles.tagText}>#{t}</Text>
+                <Text style={styles.tagText}>#{t.tag_name}</Text>
                 <EvilIcons name="close" size={14} color="#ffffff80" />
               </TouchableOpacity>
             ))}
@@ -57,7 +57,7 @@ function Hashtag() {
                   onChangeText={(text) => setTag(text)}
                   returnKeyType="done"
                   onSubmitEditing={() => {
-                    setHashtag(tag);
+                    setHashtag({ tag_name: tag });
                     setTag("");
                   }}
                   autoFocus={true}
