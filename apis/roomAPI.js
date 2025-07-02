@@ -48,7 +48,7 @@ roomAPI.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${access}`;
 
         // 원래 요청 재시도
-        return characterAPI(originalRequest);
+        return roomAPI(originalRequest);
       } catch (refreshError) {
         console.error("토큰 재발급 실패", refreshError);
         await SecureStore.deleteItemAsync("access");
