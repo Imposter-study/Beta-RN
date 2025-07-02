@@ -8,6 +8,7 @@ import {
   Keyboard,
   Platform,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -19,10 +20,9 @@ import Introduction from "./introduction";
 import useCharacterStore from "../../stores/useCharacterStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
-import axios from "axios";
-import { API_URL } from "../../config";
 import Modal from "react-native-modal";
 import * as SecureStore from "expo-secure-store";
+import characterAPI from "../../apis/characterAPI";
 
 function CreateCharacter() {
   const navigation = useNavigation();
@@ -176,14 +176,14 @@ function CreateCharacter() {
 
     try {
       // 1. 캐릭터 생성
-      const res = await axios.post(API_URL + "characters/", data, {
+      const res = await characterAPI.post("", data, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${access}`,
         },
       });
 
-      const characterId = res.data.character; // 추후에 character_id로 수정 예정
+      const characterId = res.data.character_id; // 추후에 character_id로 수정 예정
       console.log("✅ 캐릭터 생성 성공:", characterId);
 
       // 2. 이미지가 있는 경우, PUT 요청으로 이미지 업데이트
@@ -196,7 +196,7 @@ function CreateCharacter() {
           type,
         });
 
-        await axios.put(`${API_URL}characters/${characterId}/`, formData, {
+        await characterAPI.put(`${characterId}/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${access}`,
