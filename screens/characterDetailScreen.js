@@ -12,11 +12,9 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Markdown from "react-native-markdown-display";
-import axios from "axios";
-import { API_URL } from "../config";
-import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import characterAPI from "../apis/characterAPI";
+import roomAPI from "../apis/roomAPI";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.9;
@@ -69,18 +67,11 @@ function CharacterDetailScreen({ route }) {
   };
 
   const createChatRoom = async () => {
-    // console.log(character);
-    // const character_id = character.character;
     const { room_number } = character;
-    const access = await SecureStore.getItemAsync("access");
 
     if (!room_number) {
-      axios
-        .post(
-          API_URL + "rooms/",
-          { character_id },
-          { headers: { Authorization: `Bearer ${access}` } }
-        )
+      roomAPI
+        .post("", { character_id })
         .then((response) => {
           console.log(response.data);
           // const { room_id } = response.data;

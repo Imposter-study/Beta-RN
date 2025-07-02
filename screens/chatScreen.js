@@ -15,10 +15,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
 import Markdown from "react-native-markdown-display";
-import { API_URL, DOMAIN } from "../config";
 import * as SecureStore from "expo-secure-store";
+import characterAPI from "../apis/characterAPI";
+import roomAPI from "../apis/roomAPI";
 
 function ChatScreen({ route }) {
   const navigation = useNavigation();
@@ -60,13 +60,8 @@ function ChatScreen({ route }) {
   };
 
   const getCharacterInfo = async () => {
-    const access = await SecureStore.getItemAsync("access");
-    axios
-      .get(API_URL + `characters/${character_id}/`, {
-        headers: {
-          Authorization: `Bearer ${access}`,
-        },
-      })
+    characterAPI
+      .get(`${character_id}/`)
       .then((response) => {
         console.log("chat response :\n", response.data);
         setCharacter(response.data);
@@ -79,14 +74,8 @@ function ChatScreen({ route }) {
   };
 
   const getChat = async () => {
-    const access = await SecureStore.getItemAsync("access");
-
-    axios
-      .get(API_URL + `rooms/${room_id}/`, {
-        headers: {
-          Authorization: `Bearer ${access}`,
-        },
-      })
+    roomAPI
+      .get(`${room_id}/`)
       .then((response) => {
         // console.log(response.data.chats);
         setChats((prev) => [...prev, ...response.data.chats]);
@@ -111,18 +100,10 @@ function ChatScreen({ route }) {
       setMessage("");
       scrollViewRef.current?.scrollToEnd({ animated: true });
 
-      axios
-        .post(
-          API_URL + `rooms/${room_id}/messages/`,
-          {
-            message: userMessage,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${access}`,
-            },
-          }
-        )
+      roomAPI
+        .post(`${room_id}/messages/`, {
+          message: userMessage,
+        })
         .then((response) => {
           console.log("메세지 전송 완료");
           setChats((prev) => [
