@@ -23,9 +23,10 @@ import * as SecureStore from "expo-secure-store";
 function ChatScreen({ route }) {
   const navigation = useNavigation();
   const scrollViewRef = useRef();
-  const { character } = route.params;
-  const { room_id, character_id, intro } = character;
+  const { room_id, character_id } = route.params.character;
 
+  const [loading, setLoading] = useState(true);
+  const [character, setCharacter] = useState({});
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
   const [selection, setSelection] = useState({ start: 0, end: 0 });
@@ -67,8 +68,10 @@ function ChatScreen({ route }) {
         },
       })
       .then((response) => {
-        // console.log(response.data);
+        console.log("chat response :\n", response.data);
+        setCharacter(response.data);
         setChats(response.data.intro);
+        getChat();
       })
       .catch((error) => {
         console.log("캐릭터 정보 가져오기 실패", error?.response);
@@ -87,6 +90,7 @@ function ChatScreen({ route }) {
       .then((response) => {
         // console.log(response.data.chats);
         setChats((prev) => [...prev, ...response.data.chats]);
+        setLoading(false);
       })
       .catch((error) => {
         console.log("채팅 내역 가져오기 실패", error);
@@ -126,7 +130,7 @@ function ChatScreen({ route }) {
             {
               chat_id: prev.length,
               content: response.data.ai_response,
-              role: "ai",
+              role: character.name,
             },
           ]);
         })
@@ -148,10 +152,7 @@ function ChatScreen({ route }) {
   };
 
   useEffect(() => {
-    if (!intro) {
-      getCharacterInfo();
-    }
-    getChat();
+    getCharacterInfo();
   }, []);
 
   return (
@@ -161,135 +162,147 @@ function ChatScreen({ route }) {
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <SafeAreaView style={styles.container}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="chevron-back-sharp" size={24} color="white" />
-            </TouchableOpacity>
-            <View style={styles.headerCenter}>
-              <Text style={styles.headerTitle}>
-                {character.character_title}
-              </Text>
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("CharacterDetail", { character })
-                }
-              >
-                <Ionicons
-                  name="chevron-forward-sharp"
-                  size={18}
-                  color="#ffffff80"
-                />
-              </TouchableOpacity>
-            </View>
-            <Ionicons name="menu" size={24} color="white" />
-          </View>
-
-          <ScrollView
-            ref={scrollViewRef}
-            onContentSizeChange={() =>
-              scrollViewRef.current.scrollToEnd({ animated: true })
-            }
-            keyboardShouldPersistTaps="handled"
-          >
-            <View style={styles.infoContainer}>
-              <Ionicons
-                name="alert-circle-outline"
-                size={18}
-                color="#ffffffb3"
-              />
-              <Text style={styles.infoText}>
-                캐릭터가 보내는 메세지는 모두 생성된 내용이에요
-              </Text>
-            </View>
-
-            {chats.map((chat, index) =>
-              (chat.name || chat.role) !== character.character_name ? (
-                <View key={index} style={styles.userChatContainer}>
-                  <View style={styles.userChatBox}>
-                    <Markdown rules={markdownRules}>
-                      {chat.content || chat.message}
-                    </Markdown>
-                  </View>
-                </View>
-              ) : (
-                <View key={index} style={styles.aiChatContainer}>
-                  <Image
-                    source={{
-                      uri: `http://${DOMAIN}` + character.character_image,
-                    }}
-                    style={styles.aiImage}
-                  />
-                  <View style={styles.aiChatContent}>
-                    <Text style={styles.aiName}>
-                      {character.character_name}
-                    </Text>
-                    <View style={styles.aiChatBox}>
-                      <Markdown rules={markdownRules}>
-                        {chat.content || chat.message}
-                      </Markdown>
-                    </View>
-                  </View>
-                </View>
-              )
-            )}
-          </ScrollView>
-
-          <View style={styles.inputContainer}>
-            <View>
-              <Ionicons
-                name="flash"
-                size={18}
-                color="white"
-                style={styles.flashButton}
-              />
-            </View>
-            <TextInput
-              placeholder="메시지 보내기"
-              value={message}
-              onChangeText={setMessage}
-              multiline={true}
-              selection={selection}
-              onSelectionChange={({ nativeEvent: { selection } }) =>
-                setSelection(selection)
-              }
-              onFocus={() =>
-                scrollViewRef.current?.scrollToEnd({ animated: true })
-              }
-              style={styles.input}
-              placeholderTextColor="#ffffff80"
-            />
-            <TouchableOpacity
-              style={styles.asteriskButton}
-              onPress={pressAsterisk}
+          {loading ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              <Ionicons
-                name="medical-sharp"
-                size={12}
-                color="white"
-                style={{ padding: 10 }}
-              />
-            </TouchableOpacity>
+              <Text style={{ color: "white" }}>로딩중...</Text>
+            </View>
+          ) : (
+            <>
+              <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <Ionicons name="chevron-back-sharp" size={24} color="white" />
+                </TouchableOpacity>
+                <View style={styles.headerCenter}>
+                  <Text style={styles.headerTitle}>{character.title}</Text>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("CharacterDetail", {
+                        character_id: character.character_id,
+                      })
+                    }
+                  >
+                    <Ionicons
+                      name="chevron-forward-sharp"
+                      size={18}
+                      color="#ffffff80"
+                    />
+                  </TouchableOpacity>
+                </View>
+                <Ionicons name="menu" size={24} color="white" />
+              </View>
 
-            <TouchableOpacity>
-              {message === "" ? (
-                <Ionicons
-                  name="play"
-                  size={18}
-                  color="white"
-                  style={styles.sendButton}
-                />
-              ) : (
-                <TouchableOpacity onPress={sendChat}>
+              <ScrollView
+                ref={scrollViewRef}
+                onContentSizeChange={() =>
+                  scrollViewRef.current.scrollToEnd({ animated: true })
+                }
+                keyboardShouldPersistTaps="handled"
+              >
+                <View style={styles.infoContainer}>
                   <Ionicons
-                    name="arrow-up-sharp"
+                    name="alert-circle-outline"
+                    size={18}
+                    color="#ffffffb3"
+                  />
+                  <Text style={styles.infoText}>
+                    캐릭터가 보내는 메세지는 모두 생성된 내용이에요
+                  </Text>
+                </View>
+
+                {chats.map((chat, index) =>
+                  (chat.name || chat.role) !== character.name ? (
+                    <View key={index} style={styles.userChatContainer}>
+                      <View style={styles.userChatBox}>
+                        <Markdown rules={markdownRules}>
+                          {chat.content || chat.message}
+                        </Markdown>
+                      </View>
+                    </View>
+                  ) : (
+                    <View key={index} style={styles.aiChatContainer}>
+                      <Image
+                        source={{
+                          uri: character.character_image,
+                        }}
+                        style={styles.aiImage}
+                      />
+                      <View style={styles.aiChatContent}>
+                        <Text style={styles.aiName}>{character.name}</Text>
+                        <View style={styles.aiChatBox}>
+                          <Markdown rules={markdownRules}>
+                            {chat.content || chat.message}
+                          </Markdown>
+                        </View>
+                      </View>
+                    </View>
+                  )
+                )}
+              </ScrollView>
+
+              <View style={styles.inputContainer}>
+                <View>
+                  <Ionicons
+                    name="flash"
                     size={18}
                     color="white"
-                    style={styles.sendButton}
+                    style={styles.flashButton}
+                  />
+                </View>
+                <TextInput
+                  placeholder="메시지 보내기"
+                  value={message}
+                  onChangeText={setMessage}
+                  multiline={true}
+                  selection={selection}
+                  onSelectionChange={({ nativeEvent: { selection } }) =>
+                    setSelection(selection)
+                  }
+                  onFocus={() =>
+                    scrollViewRef.current?.scrollToEnd({ animated: true })
+                  }
+                  style={styles.input}
+                  placeholderTextColor="#ffffff80"
+                />
+                <TouchableOpacity
+                  style={styles.asteriskButton}
+                  onPress={pressAsterisk}
+                >
+                  <Ionicons
+                    name="medical-sharp"
+                    size={12}
+                    color="white"
+                    style={{ padding: 10 }}
                   />
                 </TouchableOpacity>
-              )}
-            </TouchableOpacity>
-          </View>
+
+                <TouchableOpacity>
+                  {message === "" ? (
+                    <Ionicons
+                      name="play"
+                      size={18}
+                      color="white"
+                      style={styles.sendButton}
+                    />
+                  ) : (
+                    <TouchableOpacity onPress={sendChat}>
+                      <Ionicons
+                        name="arrow-up-sharp"
+                        size={18}
+                        color="white"
+                        style={styles.sendButton}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
         </SafeAreaView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

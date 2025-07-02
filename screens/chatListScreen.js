@@ -26,7 +26,7 @@ function ChatListScreen() {
         headers: { Authorization: `Bearer ${access}` },
       })
       .then((response) => {
-        // console.log(response.data);
+        console.log("chat list response :\n", response.data);
         setChatRooms(response.data);
       })
       .catch((error) => {
@@ -35,7 +35,12 @@ function ChatListScreen() {
   };
 
   const moveChatRoom = (room) => {
-    navigation.navigate("Chat", { character: room });
+    navigation.navigate("Chat", {
+      character: {
+        character_id: room.character_id,
+        room_id: room.room_id,
+      },
+    });
   };
 
   useEffect(() => {
