@@ -39,6 +39,7 @@ function SignInScreen() {
         const { access, refresh } = response.data;
         await SecureStore.setItemAsync("access", access);
         await SecureStore.setItemAsync("refresh", refresh);
+        navigation.navigate("Home");
       })
       .catch((error) => {
         console.log("로그인 실패", error);
@@ -114,7 +115,6 @@ function SignInScreen() {
               disabled={!isFormFilled}
               onPress={() => {
                 requestSignin();
-                navigation.navigate("Home");
               }}
             >
               <Text
