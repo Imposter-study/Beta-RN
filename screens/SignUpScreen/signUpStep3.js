@@ -17,10 +17,9 @@ import { useState } from "react";
 import useSignupStore, {
   useSocialSignupStroe,
 } from "../../stores/useSignupStore";
-import { API_URL } from "../../config";
-import axios from "axios";
 import Toast from "react-native-toast-message";
 import * as SecureStore from "expo-secure-store";
+import accountAPI from "../../apis/accountAPI";
 
 function SignUpStep3() {
   const navigation = useNavigation();
@@ -44,8 +43,8 @@ function SignUpStep3() {
       const { username, password, password_confirm, birth_date, gender } =
         useSignupStore.getState();
       const data = { username, password, password_confirm, birth_date, gender };
-      axios
-        .post(API_URL + "accounts/signup/", data)
+      accountAPI
+        .post("signup/", data)
         .then((response) => {
           console.log(response.data);
           setClear();
@@ -80,8 +79,8 @@ function SignUpStep3() {
       formData.append("birth_date", birth_date);
       formData.append("gender", gender);
 
-      axios
-        .put(API_URL + `accounts/${nickname}/`, formData, {
+      accountAPI
+        .put(`${nickname}/`, formData, {
           headers: {
             Authorization: `Bearer ${access}`,
           },
