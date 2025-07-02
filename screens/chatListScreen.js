@@ -56,6 +56,25 @@ function ChatListScreen() {
       });
   };
 
+  const handleLeaveChatroom = () => {
+    roomAPI
+      .delete(`${selectedChatroom.room_id}/`)
+      .then((response) => {
+        console.log(response);
+
+        // 채팅방 목록 업데이트
+        const updatedChatRooms = chatRooms.filter(
+          (room) => room.room_id !== selectedChatroom.room_id
+        );
+
+        setChatRooms(updatedChatRooms);
+        setModalVisible(false);
+      })
+      .catch((error) => {
+        console.log("채팅방 삭제 실패", error?.response);
+      });
+  };
+
   useEffect(() => {
     getChatRooms();
   }, []);
@@ -220,6 +239,7 @@ function ChatListScreen() {
             )}
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={handleLeaveChatroom}
             style={{
               flexDirection: "row",
               alignItems: "center",
