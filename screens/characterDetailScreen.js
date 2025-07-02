@@ -21,31 +21,32 @@ function CharacterDetailScreen({ route }) {
   const navigation = useNavigation();
 
   const markdownRules = {
-    // 이탈릭체(기울임꼴)
+    paragraph: (node, children, parent, styles) => {
+      const siblings = parent[0].children;
+      const isLast = node.index === siblings[siblings.length - 1].index;
+
+      return (
+        <Text
+          key={node.key}
+          style={{ color: "white", marginBottom: isLast ? 0 : 16 }}
+        >
+          {children}
+        </Text>
+      );
+    },
+
     em: (node, children, parent, styles) => (
       <Text key={node.key} style={{ fontStyle: "italic", color: "#ffffff80" }}>
         {children}
       </Text>
     ),
-    // 단락
-    paragraph: (node, children, parent, styles) => (
-      <Text key={node.key} style={{ color: "white", marginBottom: 16 }}>
+
+    bold: (node, children, parent, styles) => (
+      <Text key={node.key} style={{ fontWeight: "bold", color: "white" }}>
         {children}
       </Text>
     ),
   };
-
-  const markdownContent = `
-*아직 해가 뜨지 않은 새벽. 촉촉한 풀잎 위를 톡톡 튀듯 뛰어오던 노란색 꼬리가 당신을 발견하자 폴짝 멈춘다.*
-
-피이이~카! 피카피카!  
-
-*두 손을 꼭 쥔 채, 까만 눈을 반짝이며 당신을 향해 씩 웃는다. 꼬리가 살랑살랑 흔들린다.*
-
-피카~! (…친구야?)
-
-*아직 경계하는 듯하지만, 궁금함이 더 커 보인다.*
-`;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -57,27 +58,126 @@ function CharacterDetailScreen({ route }) {
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: character.imageUri }}
+            source={{ uri: character.character_image }}
             style={styles.characterImage}
           />
         </View>
         <View style={styles.characterInfo}>
-          <Text style={styles.characterName}>{character.name}</Text>
-          <Text style={styles.characterIntro}>{character.intro}</Text>
-          <Text style={styles.characterTag}>{character.tag}</Text>
+          <Text style={styles.characterName}>{character.title}</Text>
+          <Text style={styles.characterIntro}>{character.presentation}</Text>
+          <Text style={styles.characterTag}>{character.hashtag}</Text>
         </View>
-        <View style={styles.messageContainer}>
-          <Image
-            source={{ uri: character.imageUri }}
-            style={styles.messageImage}
-          />
-          <View style={styles.messageBubble}>
-            <Markdown rules={markdownRules}>{markdownContent}</Markdown>
-          </View>
-        </View>
+        <>
+          <Text style={styles.sectionTitle}>인트로</Text>
+          {character.intro.map((item) => {
+            if (item.role === "user") {
+              return (
+                <View
+                  key={item.id}
+                  style={{
+                    flexDirection: "row",
+                    padding: 10,
+                    gap: 3,
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <View
+                    style={{
+                      maxWidth: "60%",
+                      padding: 10,
+                      borderRadius: 12,
+                      marginVertical: 4,
+                      backgroundColor: "rgb(124, 103, 255)",
+                      borderTopRightRadius: 0,
+                    }}
+                  >
+                    <Markdown rules={markdownRules}>{item.message}</Markdown>
+                  </View>
+                </View>
+              );
+            } else {
+              return (
+                <View key={item.id} style={styles.messageContainer}>
+                  <Image
+                    source={{ uri: character.character_image }}
+                    style={styles.messageImage}
+                  />
+                  <View style={styles.messageBubble}>
+                    <Markdown rules={markdownRules}>{item.message}</Markdown>
+                  </View>
+                </View>
+              );
+            }
+          })}
+        </>
+        <>
+          {character.example_situation.map((example, index) => (
+            <View key={index}>
+              <View
+                style={{
+                  borderColor: "#ffffff0d",
+                  borderWidth: 1,
+                  marginVertical: 20,
+                }}
+              />
+              <Text style={styles.sectionTitle}>상황예시 {index + 1}</Text>
+              {example.map((item) => {
+                if (item.role === "user") {
+                  return (
+                    <View
+                      key={item.id}
+                      style={{
+                        flexDirection: "row",
+                        padding: 10,
+                        gap: 3,
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <View
+                        style={{
+                          maxWidth: "75%",
+                          padding: 10,
+                          borderRadius: 12,
+                          marginVertical: 4,
+                          backgroundColor: "rgb(124, 103, 255)",
+                          borderTopRightRadius: 0,
+                        }}
+                      >
+                        <Markdown rules={markdownRules}>
+                          {item.message}
+                        </Markdown>
+                      </View>
+                    </View>
+                  );
+                } else {
+                  return (
+                    <View key={item.id} style={styles.messageContainer}>
+                      <Image
+                        source={{ uri: character.character_image }}
+                        style={styles.messageImage}
+                      />
+                      <View style={styles.messageBubble}>
+                        <Markdown rules={markdownRules}>
+                          {item.message}
+                        </Markdown>
+                      </View>
+                    </View>
+                  );
+                }
+              })}
+            </View>
+          ))}
+        </>
+
         <View style={styles.detailBox}>
           <Text style={styles.sectionTitle}>상세설명</Text>
-          <Text style={styles.sectionContent}>상세설명 내용</Text>
+          <Text style={styles.sectionContent}>{character.description}</Text>
+          <Text
+            style={{ color: "white", marginVertical: 7, fontWeight: "bold" }}
+          >
+            • {character.name}{" "}
+          </Text>
+          <Text style={styles.sectionContent}>{character.character_info}</Text>
         </View>
         <View style={styles.creatorBox}>
           <Text style={styles.sectionTitle}>크리에이터</Text>
@@ -154,7 +254,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
   messageBubble: {
-    maxWidth: "60%",
+    maxWidth: "75%",
     padding: 10,
     borderRadius: 12,
     marginVertical: 4,

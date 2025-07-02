@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,52 +10,71 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
+import { API_URL } from "../../config";
 
-const data = Array(20).fill(null);
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.45;
 
 function Home() {
   const navigation = useNavigation();
+  const [characters, setCharacters] = useState();
 
-  const topCharacters = {
-    id: 1,
-    imageUri:
-      "https://mblogthumb-phinf.pstatic.net/20160817_259/retspe_14714118890125sC2j_PNG/%C7%C7%C4%AB%C3%F2_%281%29.png?type=w800",
-    name: "캐릭터 이름",
-    intro: "캐릭터 인트로 소개글",
-    tag: "#해시태그",
-    creator: "@creator",
+  const getCharacters = () => {
+    axios
+      .get(API_URL + "characters/")
+      .then((response) => {
+        // console.log(response.data);
+        setCharacters(response.data);
+      })
+      .catch((error) => {
+        console.log("캐릭터 조회 실패", error?.response);
+      });
   };
+
+  useEffect(() => {
+    getCharacters();
+  }, []);
 
   const renderItem = ({ index }) => {
     return (
       <TouchableOpacity
         style={styles.card}
         onPress={() =>
-          navigation.navigate("CharacterDetail", { character: topCharacters })
+          navigation.navigate("CharacterDetail", {
+            character: characters[index],
+          })
         }
       >
         <Image
           source={{
-            uri: "https://mblogthumb-phinf.pstatic.net/20160817_259/retspe_14714118890125sC2j_PNG/%C7%C7%C4%AB%C3%F2_%281%29.png?type=w800",
+            uri: characters[index].character_image,
           }}
           style={styles.image}
         />
         <View>
-          <Text style={styles.name}>캐릭터 이름 {index + 1}</Text>
-          <Text style={styles.intro}>캐릭터 인트로 소개글</Text>
-          <Text style={styles.tag}>#해시태그</Text>
+          <Text style={styles.name}>{characters[index].title}</Text>
+          <Text style={styles.intro}>{characters[index].presentation}</Text>
+          <View style={{ flexDirection: "row", gap: 5 }}>
+            {characters[index].hashtags.map((item, index) => (
+              <Text key={index} style={styles.tag}>
+                #{item.tag_name}
+              </Text>
+            ))}
+          </View>
         </View>
       </TouchableOpacity>
     );
   };
 
+  useEffect(() => {
+    getCharacters();
+  }, []);
+
   return (
     <View style={styles.container}>
       {/* 캐릭터 리스트 */}
       <FlatList
-        data={data}
+        data={characters}
         keyExtractor={(_, index) => index.toString()}
         renderItem={renderItem}
         numColumns={2}
