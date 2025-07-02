@@ -15,13 +15,17 @@ import Markdown from "react-native-markdown-display";
 import axios from "axios";
 import { API_URL } from "../config";
 import * as SecureStore from "expo-secure-store";
+import { useEffect, useState } from "react";
+import characterAPI from "../apis/characterAPI";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.9;
 
 function CharacterDetailScreen({ route }) {
-  const { character } = route.params;
+  const { character_id } = route.params;
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(true);
+  const [character, setCharacter] = useState();
 
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
@@ -51,101 +55,79 @@ function CharacterDetailScreen({ route }) {
     ),
   };
 
-  const createChatRoom = async () => {
-    console.log(character);
-    const character_id = character.character;
-    const access = await SecureStore.getItemAsync("access");
-
-    axios
-      .post(
-        API_URL + "rooms/",
-        { character_id },
-        { headers: { Authorization: `Bearer ${access}` } }
-      )
+  const getCharacterDetail = () => {
+    characterAPI
+      .get(`${character_id}/`)
       .then((response) => {
         console.log(response.data);
-        // const { room_id } = response.data;
-        navigation.navigate("Chat", { character: response.data });
+        setCharacter(response.data);
+        setLoading(false);
       })
       .catch((error) => {
-        console.log("채팅방 생성 실패", error?.response);
+        console.log("캐릭터 정보 가져오기 실패\n", error?.response);
       });
   };
 
+  const createChatRoom = async () => {
+    // console.log(character);
+    // const character_id = character.character;
+    const { room_number } = character;
+    const access = await SecureStore.getItemAsync("access");
+
+    if (!room_number) {
+      axios
+        .post(
+          API_URL + "rooms/",
+          { character_id },
+          { headers: { Authorization: `Bearer ${access}` } }
+        )
+        .then((response) => {
+          console.log(response.data);
+          // const { room_id } = response.data;
+          navigation.navigate("Chat", { character: response.data });
+        })
+        .catch((error) => {
+          console.log("채팅방 생성 실패", error?.response);
+        });
+    } else {
+      navigation.navigate("Chat", {
+        character: { room_id: room_number, character_id },
+      });
+    }
+  };
+
+  useEffect(() => {
+    getCharacterDetail();
+  }, [character_id]);
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back-sharp" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: character.character_image }}
-            style={styles.characterImage}
-          />
-        </View>
-        <View style={styles.characterInfo}>
-          <Text style={styles.characterName}>{character.title}</Text>
-          <Text style={styles.characterIntro}>{character.presentation}</Text>
-          <Text style={styles.characterTag}>{character.hashtag}</Text>
-        </View>
+      {loading ? (
+        <Text>캐릭터 정보를 가져오는 중입니다</Text>
+      ) : (
         <>
-          <Text style={styles.sectionTitle}>인트로</Text>
-          {character.intro.map((item) => {
-            if (item.role === "user") {
-              return (
-                <View
-                  key={item.id}
-                  style={{
-                    flexDirection: "row",
-                    padding: 10,
-                    gap: 3,
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <View
-                    style={{
-                      maxWidth: "60%",
-                      padding: 10,
-                      borderRadius: 12,
-                      marginVertical: 4,
-                      backgroundColor: "rgb(124, 103, 255)",
-                      borderTopRightRadius: 0,
-                    }}
-                  >
-                    <Markdown rules={markdownRules}>{item.message}</Markdown>
-                  </View>
-                </View>
-              );
-            } else {
-              return (
-                <View key={item.id} style={styles.messageContainer}>
-                  <Image
-                    source={{ uri: character.character_image }}
-                    style={styles.messageImage}
-                  />
-                  <View style={styles.messageBubble}>
-                    <Markdown rules={markdownRules}>{item.message}</Markdown>
-                  </View>
-                </View>
-              );
-            }
-          })}
-        </>
-        <>
-          {character.example_situation.map((example, index) => (
-            <View key={index}>
-              <View
-                style={{
-                  borderColor: "#ffffff0d",
-                  borderWidth: 1,
-                  marginVertical: 20,
-                }}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons name="chevron-back-sharp" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
+          <ScrollView style={styles.scrollContainer}>
+            <View style={styles.imageContainer}>
+              <Image
+                source={{ uri: character.character_image || "대체이미지" }}
+                style={styles.characterImage}
               />
-              <Text style={styles.sectionTitle}>상황예시 {index + 1}</Text>
-              {example.map((item) => {
+            </View>
+            <View style={styles.characterInfo}>
+              <Text style={styles.characterName}>{character.title}</Text>
+              <Text style={styles.characterIntro}>
+                {character.presentation}
+              </Text>
+              <Text style={styles.characterTag}>{character.hashtag}</Text>
+            </View>
+            <>
+              <Text style={styles.sectionTitle}>인트로</Text>
+              {character.intro.map((item) => {
                 if (item.role === "user") {
                   return (
                     <View
@@ -159,7 +141,7 @@ function CharacterDetailScreen({ route }) {
                     >
                       <View
                         style={{
-                          maxWidth: "75%",
+                          maxWidth: "60%",
                           padding: 10,
                           borderRadius: 12,
                           marginVertical: 4,
@@ -177,7 +159,9 @@ function CharacterDetailScreen({ route }) {
                   return (
                     <View key={item.id} style={styles.messageContainer}>
                       <Image
-                        source={{ uri: character.character_image }}
+                        source={{
+                          uri: character.character_image || "대체이미지",
+                        }}
                         style={styles.messageImage}
                       />
                       <View style={styles.messageBubble}>
@@ -189,41 +173,107 @@ function CharacterDetailScreen({ route }) {
                   );
                 }
               })}
-            </View>
-          ))}
-        </>
+            </>
+            <>
+              {character.example_situation.map((example, index) => (
+                <View key={index}>
+                  <View
+                    style={{
+                      borderColor: "#ffffff0d",
+                      borderWidth: 1,
+                      marginVertical: 20,
+                    }}
+                  />
+                  <Text style={styles.sectionTitle}>상황예시 {index + 1}</Text>
+                  {example.map((item) => {
+                    if (item.role === "user") {
+                      return (
+                        <View
+                          key={item.id}
+                          style={{
+                            flexDirection: "row",
+                            padding: 10,
+                            gap: 3,
+                            justifyContent: "flex-end",
+                          }}
+                        >
+                          <View
+                            style={{
+                              maxWidth: "75%",
+                              padding: 10,
+                              borderRadius: 12,
+                              marginVertical: 4,
+                              backgroundColor: "rgb(124, 103, 255)",
+                              borderTopRightRadius: 0,
+                            }}
+                          >
+                            <Markdown rules={markdownRules}>
+                              {item.message}
+                            </Markdown>
+                          </View>
+                        </View>
+                      );
+                    } else {
+                      return (
+                        <View key={item.id} style={styles.messageContainer}>
+                          <Image
+                            source={{
+                              uri: character.character_image || "대체이미지",
+                            }}
+                            style={styles.messageImage}
+                          />
+                          <View style={styles.messageBubble}>
+                            <Markdown rules={markdownRules}>
+                              {item.message}
+                            </Markdown>
+                          </View>
+                        </View>
+                      );
+                    }
+                  })}
+                </View>
+              ))}
+            </>
 
-        <View style={styles.detailBox}>
-          <Text style={styles.sectionTitle}>상세설명</Text>
-          <Text style={styles.sectionContent}>{character.description}</Text>
-          <Text
-            style={{ color: "white", marginVertical: 7, fontWeight: "bold" }}
-          >
-            • {character.name}{" "}
-          </Text>
-          <Text style={styles.sectionContent}>{character.character_info}</Text>
-        </View>
-        <View style={styles.creatorBox}>
-          <Text style={styles.sectionTitle}>크리에이터</Text>
-          <View style={styles.creatorInfo}>
-            <FontAwesome name="user-circle-o" size={24} color="gray" />
-            <View>
-              <Text style={styles.creatorName}>닉네임</Text>
-              <Text style={styles.creatorId}>{character.creator}</Text>
+            <View style={styles.detailBox}>
+              <Text style={styles.sectionTitle}>상세설명</Text>
+              <Text style={styles.sectionContent}>{character.description}</Text>
+              <Text
+                style={{
+                  color: "white",
+                  marginVertical: 7,
+                  fontWeight: "bold",
+                }}
+              >
+                • {character.name}{" "}
+              </Text>
+              <Text style={styles.sectionContent}>
+                {character.character_info}
+              </Text>
             </View>
+            <View style={styles.creatorBox}>
+              <Text style={styles.sectionTitle}>크리에이터</Text>
+              <View style={styles.creatorInfo}>
+                <FontAwesome name="user-circle-o" size={24} color="gray" />
+                <View>
+                  <Text style={styles.creatorName}>닉네임</Text>
+                  <Text style={styles.creatorId}>{character.creator}</Text>
+                </View>
+              </View>
+            </View>
+          </ScrollView>
+          <View style={styles.bottomContainer}>
+            <TouchableOpacity
+              style={styles.chatButton}
+              onPress={() => {
+                createChatRoom();
+              }}
+            >
+              <Text style={styles.chatButtonText}>대화 시작하기</Text>
+            </TouchableOpacity>
           </View>
-        </View>
-      </ScrollView>
-      <View style={styles.bottomContainer}>
-        <TouchableOpacity
-          style={styles.chatButton}
-          onPress={() => {
-            createChatRoom();
-          }}
-        >
-          <Text style={styles.chatButtonText}>대화 시작하기</Text>
-        </TouchableOpacity>
-      </View>
+        </>
+      )}
     </SafeAreaView>
   );
 }

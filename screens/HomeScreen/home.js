@@ -40,7 +40,7 @@ function Home() {
         style={styles.card}
         onPress={() =>
           navigation.navigate("CharacterDetail", {
-            character: characters[index],
+            character_id: characters[index].character_id,
           })
         }
       >
