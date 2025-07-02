@@ -20,6 +20,7 @@ function ChatListScreen() {
   const navigation = useNavigation();
   const [chatRooms, setChatRooms] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedChatroom, setSelectedChatroom] = useState({});
 
   const getChatRooms = async () => {
     roomAPI
@@ -40,6 +41,19 @@ function ChatListScreen() {
         room_id: room.room_id,
       },
     });
+  };
+
+  const handleFixation = () => {
+    roomAPI
+      .patch(`${selectedChatroom.room_id}/`)
+      .then((response) => {
+        console.log(response.data);
+        getChatRooms();
+        setModalVisible(false);
+      })
+      .catch((error) => {
+        console.log("채팅방 고정 상태 변경 실패", error?.response);
+      });
   };
 
   useEffect(() => {
@@ -87,7 +101,10 @@ function ChatListScreen() {
                   onPress={() => {
                     moveChatRoom(room);
                   }}
-                  onLongPress={() => setModalVisible(true)}
+                  onLongPress={() => {
+                    setModalVisible(true);
+                    setSelectedChatroom(room);
+                  }}
                   style={{
                     flexDirection: "row",
                     marginTop: 15,
@@ -108,15 +125,30 @@ function ChatListScreen() {
                     }}
                   />
                   <View>
-                    <Text
+                    <View
                       style={{
-                        color: "rgb(249, 250, 251)",
-                        fontSize: 16,
-                        fontWeight: "500",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 3,
                       }}
                     >
-                      {room.character_title}
-                    </Text>
+                      <Text
+                        style={{
+                          color: "rgb(249, 250, 251)",
+                          fontSize: 16,
+                          fontWeight: "500",
+                        }}
+                      >
+                        {room.character_title}
+                      </Text>
+                      {room.fixation ? (
+                        <MaterialCommunityIcons
+                          name="pin"
+                          size={14}
+                          color="#ffffff80"
+                        />
+                      ) : null}
+                    </View>
                     <Text style={{ color: "rgb(133, 141, 155)" }}>
                       {room.last_message}
                     </Text>
@@ -133,7 +165,7 @@ function ChatListScreen() {
           onTabPress={(tabName) => navigation.navigate(tabName)}
         />
       </View>
-      
+
       {/* 채팅방 고정 및 나가기 */}
       <Modal
         isVisible={modalVisible}
@@ -161,6 +193,7 @@ function ChatListScreen() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={() => handleFixation()}
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -170,12 +203,21 @@ function ChatListScreen() {
               gap: 7,
             }}
           >
-            <MaterialCommunityIcons
-              name="pin-outline"
-              size={20}
-              color="white"
-            />
-            <Text style={{ color: "white", fontSize: 16 }}>고정</Text>
+            {selectedChatroom.fixation ? (
+              <>
+                <MaterialCommunityIcons name="pin" size={14} color="white" />
+                <Text style={{ color: "white", fontSize: 16 }}>고정 해제</Text>
+              </>
+            ) : (
+              <>
+                <MaterialCommunityIcons
+                  name="pin-outline"
+                  size={20}
+                  color="white"
+                />
+                <Text style={{ color: "white", fontSize: 16 }}>고정</Text>
+              </>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             style={{
