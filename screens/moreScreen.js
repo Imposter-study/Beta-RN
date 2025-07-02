@@ -25,8 +25,10 @@ function MoreScreen() {
     checkLogin();
   }, []);
 
-  const handleSignOut = () => {
-    const refresh = SecureStore.getItemAsync("refresh");
+  const handleSignOut = async () => {
+    const refresh = await SecureStore.getItemAsync("refresh");
+    // const access = await SecureStore.getItemAsync("access");
+    // console.log("access :", access, "\nrefresh :", refresh);
     accountAPI
       .post("signout/", { refresh })
       .then(async (response) => {

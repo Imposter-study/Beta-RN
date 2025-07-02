@@ -26,4 +26,21 @@ const useSignupStore = create((set) => ({
     }),
 }));
 
+export const useSocialSignupStroe = create((set) => ({
+  nickname: "",
+  access: "",
+  refresh: "",
+
+  setNickname: (newNickname) => set({ nickname: newNickname }),
+  setAccess: (newAccess) => set({ access: newAccess }),
+  setRefresh: (newRefresh) => set({ refresh: newRefresh }),
+
+  setSocialStoreClear: () =>
+    set({
+      nickname: "",
+      access: "",
+      refresh: "",
+    }),
+}));
+
 export default useSignupStore;
