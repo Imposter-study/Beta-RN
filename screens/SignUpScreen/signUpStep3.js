@@ -15,9 +15,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import useSignupStore from "../../stores/useSignupStore";
-import { API_URL } from "../../config";
-import axios from "axios";
 import Toast from "react-native-toast-message";
+import accountAPI from "../../apis/accountAPI";
 
 function SignUpStep3() {
   const navigation = useNavigation();
@@ -39,8 +38,8 @@ function SignUpStep3() {
     const { username, password, password_confirm, birth_date, gender } =
       useSignupStore.getState();
     const data = { username, password, password_confirm, birth_date, gender };
-    axios
-      .post(API_URL + "accounts/signup/", data)
+    accountAPI
+      .post("signup/", data)
       .then((response) => {
         console.log(response.data);
         setClear();
