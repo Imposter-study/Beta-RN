@@ -51,10 +51,11 @@ export default function KakaoLoginScreen() {
 
         const { is_signup } = loginRes.data; // 소셜로그인으로 회원가입이 완료된 유저인지 확인
         if (is_signup) {
-          const { access, refresh } = loginRes.data;
+          const { access, refresh, nickname } = loginRes.data;
           // 토큰을 저장
           await SecureStore.setItemAsync("access", access);
           await SecureStore.setItemAsync("refresh", refresh);
+          await SecureStore.setItemAsync("nickname", nickname);
           // 로그인 성공 시 홈으로 이동
           navigation.replace("Home");
         } else {
