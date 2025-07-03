@@ -50,12 +50,16 @@ function EditProfileScreen({ route }) {
 
     // 프로필 이미지
     const profileImage = editUser.profileImage;
-    const { name, type } = getFileInfoFromUri(profileImage);
-    formData.append("profile_picture", {
-      uri: profileImage,
-      name,
-      type,
-    });
+    if (profileImage === null) {
+      formData.append("profile_picture", "");
+    } else if (profileImage !== user.profile_picture) {
+      const { name, type } = getFileInfoFromUri(profileImage);
+      formData.append("profile_picture", {
+        uri: profileImage,
+        name,
+        type,
+      });
+    }
 
     accountAPI
       .put(`${user.nickname}/`, formData, {
