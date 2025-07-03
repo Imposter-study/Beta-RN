@@ -130,7 +130,14 @@ function MyPageScreen() {
         <ScrollView>
           {/* 회원 정보 */}
           <View style={styles.userInfoContainer}>
-            <FontAwesome name="user-circle-o" size={70} color="gray" />
+            {user.profile_picture ? (
+              <Image
+                source={{ uri: `http://${DOMAIN}` + user.profile_picture }}
+                style={{ width: 70, height: 70, borderRadius: 100 }}
+              />
+            ) : (
+              <FontAwesome name="user-circle-o" size={70} color="gray" />
+            )}
             <View style={styles.userTextContainer}>
               <Text style={styles.nickname}>{user.nickname}</Text>
               <Text style={styles.userId}>@{user.username}</Text>
@@ -156,7 +163,7 @@ function MyPageScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.profileButton}
-              onPress={() => navigation.navigate("EditProfile")}
+              onPress={() => navigation.navigate("EditProfile", { user })}
             >
               <Text style={styles.profileButtonText}>프로필 편집</Text>
             </TouchableOpacity>
