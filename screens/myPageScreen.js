@@ -16,6 +16,9 @@ import SignInButton from "../components/signInButtons";
 import { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import accountAPI from "../apis/accountAPI";
+import { DOMAIN } from "../config";
+import characterAPI from "../apis/characterAPI";
+import useCharacterStore from "../stores/useCharacterStore";
 
 function MyPageScreen() {
   const navigation = useNavigation();
@@ -29,10 +32,59 @@ function MyPageScreen() {
       .get(`${nickname}/`)
       .then((response) => {
         console.log(response.data);
+        setUser(response.data);
         setLoading(false);
       })
       .catch((error) => {
         console.log("유저 조회 실패", error?.response);
+      });
+  };
+
+  const {
+    setTitle,
+    setDescription,
+    setName,
+    setCharacterInfo,
+    setImage,
+    setPresentation,
+    setCreatorComment,
+  } = useCharacterStore();
+
+  const handleEditCharacter = (characterID) => {
+    characterAPI
+      .get(`${characterID}/`)
+      .then((response) => {
+        const {
+          character_id,
+          name,
+          character_image,
+          title,
+          intro,
+          description,
+          character_info,
+          example_situation,
+          presentation,
+          creator_comment,
+          hashtags,
+          is_character_public,
+          is_description_public,
+          is_example_public,
+        } = response.data;
+        setTitle(title);
+        setDescription(description);
+        setName(name);
+        setCharacterInfo(character_info);
+        setImage(character_image);
+        setPresentation(presentation);
+        setCreatorComment(creator_comment);
+
+        navigation.navigate("CreateCharacter", {
+          character_id: character_id,
+          isEdit: true,
+        });
+      })
+      .catch((error) => {
+        console.log("캐릭터 정보 가져오기 실패", error?.response);
       });
   };
 
@@ -70,14 +122,18 @@ function MyPageScreen() {
 
           <SignInButton />
         </View>
+      ) : loading ? (
+        <View>
+          <Text>회원 정보를 가져오는 중입니다</Text>
+        </View>
       ) : (
         <ScrollView>
           {/* 회원 정보 */}
           <View style={styles.userInfoContainer}>
             <FontAwesome name="user-circle-o" size={70} color="gray" />
             <View style={styles.userTextContainer}>
-              <Text style={styles.nickname}>닉네임</Text>
-              <Text style={styles.userId}>@아이디</Text>
+              <Text style={styles.nickname}>{user.nickname}</Text>
+              <Text style={styles.userId}>@{user.username}</Text>
             </View>
           </View>
 
@@ -136,22 +192,86 @@ function MyPageScreen() {
           {/* 캐릭터 관리 */}
           <View style={styles.characterContainer}>
             <Text style={styles.characterTitle}>캐릭터 관리</Text>
-            <View style={styles.characterEmpty}>
-              <Text style={styles.characterEmptyText}>
-                아직 제작한 캐릭터가 없어요
-              </Text>
-              <Text style={styles.characterGuide}>
-                내가 원하는 캐릭터를 직접 제작해볼까요?
-              </Text>
-              <TouchableOpacity style={styles.createCharacterButton}>
-                <Text style={styles.createCharacterButtonText}>
-                  캐릭터 제작하기
+            {user.characters.length === 0 ? (
+              <View style={styles.characterEmpty}>
+                <Text style={styles.characterEmptyText}>
+                  아직 제작한 캐릭터가 없어요
                 </Text>
-              </TouchableOpacity>
-            </View>
+                <Text style={styles.characterGuide}>
+                  내가 원하는 캐릭터를 직접 제작해볼까요?
+                </Text>
+                <TouchableOpacity style={styles.createCharacterButton}>
+                  <Text style={styles.createCharacterButtonText}>
+                    캐릭터 제작하기
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              user.characters.map((character) => (
+                <View
+                  key={character.character_id}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    borderWidth: 1,
+                    borderColor: "#ffffff0d",
+                    borderRadius: 16,
+                    backgroundColor: "rgb(38 39 39)",
+                    padding: 10,
+                    marginVertical: 5,
+                  }}
+                >
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 10,
+                    }}
+                  >
+                    <Image
+                      source={{
+                        uri: `http://${DOMAIN}` + character.character_image,
+                      }}
+                      style={{ width: 50, height: 50, borderRadius: 100 }}
+                    />
+                    <View>
+                      <Text
+                        style={{
+                          color: "white",
+                          fontSize: 16,
+                          fontWeight: "500",
+                        }}
+                      >
+                        {character.name}
+                      </Text>
+                    </View>
+                  </View>
+                  <View>
+                    <TouchableOpacity
+                      onPress={() =>
+                        handleEditCharacter(character.character_id)
+                      }
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          backgroundColor: "rgb(62, 62, 65)",
+                          padding: 10,
+                          borderRadius: 6,
+                        }}
+                      >
+                        수정
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))
+            )}
           </View>
         </ScrollView>
       )}
+
       <BottomTab
         activeTab="Mypage"
         onTabPress={(tabName) => navigation.navigate(tabName)}
