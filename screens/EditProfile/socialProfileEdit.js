@@ -1,12 +1,49 @@
-import { StyleSheet, View, Text, TextInput, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import * as ImagePicker from "expo-image-picker";
+import { DOMAIN } from "../../config";
 
-function SocialEdit() {
-  const [nickname, setNickname] = useState();
-  const [username, setUsername] = useState("");
-  const [intro, setIntro] = useState("");
+function SocialEdit({
+  nickname: originalNiokname,
+  username: originalUsername,
+  profile_picture,
+  introduce,
+  onChange,
+}) {
+  const [nickname, setNickname] = useState(originalNiokname);
+  const [username, setUsername] = useState(originalUsername);
+  const [intro, setIntro] = useState(introduce);
+  const [profileImage, setProfileImage] = useState(
+    profile_picture !== null ? `http://${DOMAIN}` + profile_picture : null
+  );
   const [focused, setFocused] = useState("");
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setProfileImage(result.assets[0].uri);
+    }
+  };
+
+  useEffect(() => {
+    if (onChange) {
+      onChange({ nickname, username, intro, profileImage });
+    }
+  }, [nickname, username, intro, profileImage]);
 
   return (
     <ScrollView
@@ -16,10 +53,32 @@ function SocialEdit() {
       {/* 프로필 */}
       <>
         <View style={styles.profileContainer}>
-          <FontAwesome name="user-circle-o" size={70} color="gray" />
+          <TouchableOpacity onPress={pickImage}>
+            {profileImage ? (
+              <Image
+                source={{ uri: profileImage }}
+                style={{ width: 70, height: 70, borderRadius: 100 }}
+              />
+            ) : (
+              <FontAwesome name="user-circle-o" size={70} color="gray" />
+            )}
+            <FontAwesome
+              name="pencil"
+              size={12}
+              color="white"
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                backgroundColor: "rgb(103 40 255)",
+                padding: 5,
+                borderRadius: 100,
+              }}
+            />
+          </TouchableOpacity>
           <View style={styles.profileTextContainer}>
-            <Text style={styles.profileNickname}>닉네임</Text>
-            <Text style={styles.profileUsername}>@아이디</Text>
+            <Text style={styles.profileNickname}>{nickname}</Text>
+            <Text style={styles.profileUsername}>@{username}</Text>
           </View>
         </View>
 
