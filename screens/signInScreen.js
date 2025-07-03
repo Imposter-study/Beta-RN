@@ -14,9 +14,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
-import { API_URL } from "../config";
 import * as SecureStore from "expo-secure-store";
+import accountAPI from "../apis/accountAPI";
 
 function SignInScreen() {
   const navigation = useNavigation();
@@ -30,8 +29,8 @@ function SignInScreen() {
 
   // 로그인 요청 함수
   const requestSignin = () => {
-    axios
-      .post(API_URL + "accounts/signin/", {
+    accountAPI
+      .post("signin/", {
         username,
         password,
       })
@@ -40,6 +39,7 @@ function SignInScreen() {
         const { access, refresh } = response.data;
         await SecureStore.setItemAsync("access", access);
         await SecureStore.setItemAsync("refresh", refresh);
+        navigation.navigate("Home");
       })
       .catch((error) => {
         console.log("로그인 실패", error);
@@ -115,7 +115,6 @@ function SignInScreen() {
               disabled={!isFormFilled}
               onPress={() => {
                 requestSignin();
-                navigation.navigate("Home");
               }}
             >
               <Text

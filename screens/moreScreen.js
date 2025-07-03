@@ -8,10 +8,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { API_URL } from "../config";
 import { useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
-import axios from "axios";
+import accountAPI from "../apis/accountAPI";
 
 function MoreScreen() {
   const navigation = useNavigation();
@@ -28,14 +27,10 @@ function MoreScreen() {
 
   const handleSignOut = async () => {
     const refresh = await SecureStore.getItemAsync("refresh");
-    const access = await SecureStore.getItemAsync("access");
-    console.log("access :", access, "\nrefresh :", refresh);
-    axios
-      .post(
-        API_URL + "accounts/signout/",
-        { refresh },
-        { headers: { Authorization: `Bearer ${access}` } }
-      )
+    // const access = await SecureStore.getItemAsync("access");
+    // console.log("access :", access, "\nrefresh :", refresh);
+    accountAPI
+      .post("signout/", { refresh })
       .then(async (response) => {
         console.log(response.data);
         await SecureStore.deleteItemAsync("access");

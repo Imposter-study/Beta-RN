@@ -1,5 +1,4 @@
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -10,7 +9,7 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
-import { API_URL } from "../../config";
+import characterAPI from "../../apis/characterAPI";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.45;
@@ -20,8 +19,8 @@ function Home() {
   const [characters, setCharacters] = useState();
 
   const getCharacters = () => {
-    axios
-      .get(API_URL + "characters/")
+    characterAPI
+      .get("")
       .then((response) => {
         // console.log(response.data);
         setCharacters(response.data);
@@ -41,7 +40,7 @@ function Home() {
         style={styles.card}
         onPress={() =>
           navigation.navigate("CharacterDetail", {
-            character: characters[index],
+            character_id: characters[index].character_id,
           })
         }
       >
