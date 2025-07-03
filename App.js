@@ -17,6 +17,7 @@ import AddSituation from "./screens/CreateCharacterScreen/addSituation";
 import Toast from "react-native-toast-message";
 import KakaoLoginScreen from "./components/kakaoLoginScreen";
 import MoreScreen from "./screens/moreScreen";
+import ProfileScreen from "./screens/profileScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -53,6 +54,8 @@ export default function App() {
           <Stack.Screen name="Mypage" component={MyPageScreen} />
           {/* 더보기 스크린 */}
           <Stack.Screen name="More" component={MoreScreen} />
+          {/* 프로필 스크린 */}
+          <Stack.Screen name="Profile" component={ProfileScreen} />
           {/* 프로필 편집 스크린 */}
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           {/* 카카오 로그인 */}
