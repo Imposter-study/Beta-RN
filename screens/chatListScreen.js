@@ -87,6 +87,7 @@ function ChatListScreen() {
             <ScrollView horizontal style={{ marginHorizontal: 20 }}>
               {scrapped.map((item) => (
                 <TouchableOpacity
+                  key={item.character_id}
                   onPress={() =>
                     navigation.navigate("CharacterDetail", {
                       character_id: item.character_id,
@@ -96,6 +97,7 @@ function ChatListScreen() {
                     justifyContent: "center",
                     alignItems: "center",
                     gap: 5,
+                    marginHorizontal: 5,
                   }}
                 >
                   <Image
