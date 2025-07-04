@@ -13,10 +13,12 @@ import BottomTab from "../components/bottomTab";
 import { useEffect, useState } from "react";
 import { DOMAIN } from "../config";
 import roomAPI from "../apis/roomAPI";
+import characterAPI from "../apis/characterAPI";
 
 function ChatListScreen() {
   const navigation = useNavigation();
   const [chatRooms, setChatRooms] = useState([]);
+  const [scrapped, setIsScrapped] = useState([]);
 
   const getChatRooms = async () => {
     roomAPI
@@ -39,8 +41,21 @@ function ChatListScreen() {
     });
   };
 
+  const getScrappedCharacter = () => {
+    characterAPI
+      .get("my_scrap_characters/")
+      .then((response) => {
+        console.log("\n스크랩한 캐릭터 :\n", response.data);
+        setIsScrapped(response.data);
+      })
+      .catch((error) => {
+        console.log("스크랩한 캐릭터 가져오기 실패", error?.response);
+      });
+  };
+
   useEffect(() => {
     getChatRooms();
+    getScrappedCharacter();
   }, []);
 
   return (
@@ -62,9 +77,36 @@ function ChatListScreen() {
         {/* 스크랩한 캐릭터 */}
         <View style={styles.scrapSection}>
           <Text style={styles.scrapTitle}>스크랩한 캐릭터</Text>
-          <View style={styles.scrapBox}>
-            <Text style={styles.scrapText}>아직 스크랩한 캐릭터가 없어요</Text>
-          </View>
+          {scrapped.length === 0 ? (
+            <View style={styles.scrapBox}>
+              <Text style={styles.scrapText}>
+                아직 스크랩한 캐릭터가 없어요
+              </Text>
+            </View>
+          ) : (
+            <ScrollView horizontal style={{ marginHorizontal: 20 }}>
+              {scrapped.map((item) => (
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("CharacterDetail", {
+                      character_id: item.character_id,
+                    })
+                  }
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 5,
+                  }}
+                >
+                  <Image
+                    source={{ uri: item.character_image }}
+                    style={{ width: 50, height: 50, borderRadius: 100 }}
+                  />
+                  <Text style={{ color: "white" }}>{item.title}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
         </View>
 
         {/* 대화 목록 */}
