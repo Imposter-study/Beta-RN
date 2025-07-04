@@ -82,6 +82,12 @@ const useCharacterStore = create((set) => ({
       ),
     })),
 
+  // 캐릭터 수정
+  editIntro: (originalIntro) => set({ intro: originalIntro }),
+  editExampleSituation: (originalSituation) =>
+    set({ example_situation: originalSituation }),
+  editHashtags: (originalHashtags) => set({ hashtags: originalHashtags }),
+
   // 내용 초기화 함수
   resetCharacter: () =>
     set({
