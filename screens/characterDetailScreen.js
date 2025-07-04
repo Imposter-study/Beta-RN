@@ -15,6 +15,7 @@ import Markdown from "react-native-markdown-display";
 import { useEffect, useState } from "react";
 import characterAPI from "../apis/characterAPI";
 import roomAPI from "../apis/roomAPI";
+import Toast from "react-native-toast-message";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.9;
@@ -24,6 +25,7 @@ function CharacterDetailScreen({ route }) {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(true);
   const [character, setCharacter] = useState();
+  const [isScrapped, setIsScrapped] = useState(false);
 
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
@@ -59,6 +61,7 @@ function CharacterDetailScreen({ route }) {
       .then((response) => {
         console.log(response.data);
         setCharacter(response.data);
+        setIsScrapped(response.data.is_scrapped);
         setLoading(false);
       })
       .catch((error) => {
@@ -85,6 +88,26 @@ function CharacterDetailScreen({ route }) {
         character: { room_id: room_number, character_id },
       });
     }
+  };
+
+  const handleScrap = () => {
+    characterAPI
+      .post(`scrap/${character_id}/`)
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.detail === "스크랩 완료!") {
+          setIsScrapped(true);
+        } else {
+          setIsScrapped(false);
+        }
+        Toast.show({
+          type: "info",
+          text1: response.data.detail,
+        });
+      })
+      .catch((error) => {
+        console.log("캐릭터 스크랩 상태 변경 실패", error?.response);
+      });
   };
 
   useEffect(() => {
@@ -254,7 +277,9 @@ function CharacterDetailScreen({ route }) {
               >
                 <FontAwesome name="user-circle-o" size={24} color="gray" />
                 <View>
-                  <Text style={styles.creatorName}>{character.creator_nickname}</Text>
+                  <Text style={styles.creatorName}>
+                    {character.creator_nickname}
+                  </Text>
                   <Text style={styles.creatorId}>
                     {character.creator_nickname}
                   </Text>
@@ -263,8 +288,15 @@ function CharacterDetailScreen({ route }) {
             </View>
           </ScrollView>
           <View style={styles.bottomContainer}>
+            <TouchableOpacity onPress={handleScrap} style={styles.chatButton}>
+              {isScrapped ? (
+                <Ionicons name="bookmark" size={24} color="white" />
+              ) : (
+                <Ionicons name="bookmark-outline" size={24} color="white" />
+              )}
+            </TouchableOpacity>
             <TouchableOpacity
-              style={styles.chatButton}
+              style={{ ...styles.chatButton, flex: 1 }}
               onPress={() => {
                 createChatRoom();
               }}
@@ -370,13 +402,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   bottomContainer: {
+    flexDirection: "row",
     backgroundColor: "rgb(26, 27, 27)",
     borderTopColor: "#ffffff14",
     borderTopWidth: 0.3,
+    paddingHorizontal: 20,
+    gap: 10,
   },
   chatButton: {
     backgroundColor: "rgb(82, 32, 204)",
-    marginHorizontal: 20,
     marginVertical: 10,
     padding: 10,
     alignItems: "center",

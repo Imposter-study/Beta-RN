@@ -5,22 +5,26 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  RefreshControl,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomTab from "../components/bottomTab";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { DOMAIN } from "../config";
 import roomAPI from "../apis/roomAPI";
 import Modal from "react-native-modal";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import characterAPI from "../apis/characterAPI";
 
 function ChatListScreen() {
   const navigation = useNavigation();
   const [chatRooms, setChatRooms] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedChatroom, setSelectedChatroom] = useState({});
+  const [scrapped, setIsScrapped] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getChatRooms = async () => {
     roomAPI
@@ -75,13 +79,36 @@ function ChatListScreen() {
       });
   };
 
+  const getScrappedCharacter = () => {
+    characterAPI
+      .get("my_scrap_characters/")
+      .then((response) => {
+        console.log("\n스크랩한 캐릭터 :\n", response.data);
+        setIsScrapped(response.data);
+      })
+      .catch((error) => {
+        console.log("스크랩한 캐릭터 가져오기 실패", error?.response);
+      });
+  };
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([getChatRooms(), getScrappedCharacter()]);
+    setRefreshing(false);
+  }, []);
+
   useEffect(() => {
-    getChatRooms();
+    onRefresh(); // 처음 진입 시 로딩
   }, []);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-      <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 100 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {/* 상단메뉴 */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>대화</Text>
@@ -98,9 +125,38 @@ function ChatListScreen() {
         {/* 스크랩한 캐릭터 */}
         <View style={styles.scrapSection}>
           <Text style={styles.scrapTitle}>스크랩한 캐릭터</Text>
-          <View style={styles.scrapBox}>
-            <Text style={styles.scrapText}>아직 스크랩한 캐릭터가 없어요</Text>
-          </View>
+          {scrapped.length === 0 ? (
+            <View style={styles.scrapBox}>
+              <Text style={styles.scrapText}>
+                아직 스크랩한 캐릭터가 없어요
+              </Text>
+            </View>
+          ) : (
+            <ScrollView horizontal style={{ marginHorizontal: 20 }}>
+              {scrapped.map((item) => (
+                <TouchableOpacity
+                  key={item.character_id}
+                  onPress={() =>
+                    navigation.navigate("CharacterDetail", {
+                      character_id: item.character_id,
+                    })
+                  }
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 5,
+                    marginHorizontal: 5,
+                  }}
+                >
+                  <Image
+                    source={{ uri: item.character_image }}
+                    style={{ width: 50, height: 50, borderRadius: 100 }}
+                  />
+                  <Text style={{ color: "white" }}>{item.title}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
         </View>
 
         {/* 대화 목록 */}
@@ -177,6 +233,12 @@ function ChatListScreen() {
             </ScrollView>
           )}
         </View>
+      </ScrollView>
+      {/* 하단메뉴 */}
+      <BottomTab
+        activeTab="ChatList"
+        onTabPress={(tabName) => navigation.navigate(tabName)}
+      />
 
         {/* 하단메뉴 */}
         <BottomTab
