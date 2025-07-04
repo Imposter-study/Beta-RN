@@ -5,12 +5,13 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  RefreshControl,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomTab from "../components/bottomTab";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { DOMAIN } from "../config";
 import roomAPI from "../apis/roomAPI";
 import characterAPI from "../apis/characterAPI";
@@ -19,6 +20,7 @@ function ChatListScreen() {
   const navigation = useNavigation();
   const [chatRooms, setChatRooms] = useState([]);
   const [scrapped, setIsScrapped] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getChatRooms = async () => {
     roomAPI
@@ -53,14 +55,24 @@ function ChatListScreen() {
       });
   };
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([getChatRooms(), getScrappedCharacter()]);
+    setRefreshing(false);
+  }, []);
+
   useEffect(() => {
-    getChatRooms();
-    getScrappedCharacter();
+    onRefresh(); // 처음 진입 시 로딩
   }, []);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
-      <View style={styles.container}>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 100 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {/* 상단메뉴 */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>대화</Text>
@@ -166,13 +178,12 @@ function ChatListScreen() {
             </ScrollView>
           )}
         </View>
-
-        {/* 하단메뉴 */}
-        <BottomTab
-          activeTab="ChatList"
-          onTabPress={(tabName) => navigation.navigate(tabName)}
-        />
-      </View>
+      </ScrollView>
+      {/* 하단메뉴 */}
+      <BottomTab
+        activeTab="ChatList"
+        onTabPress={(tabName) => navigation.navigate(tabName)}
+      />
     </SafeAreaView>
   );
 }
