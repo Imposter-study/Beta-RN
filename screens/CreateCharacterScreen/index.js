@@ -24,8 +24,7 @@ import Modal from "react-native-modal";
 import characterAPI from "../../apis/characterAPI";
 
 function CreateCharacter({ route }) {
-  const isEdit = route.params?.isEdit;
-  const characterID = route.params?.character_id;
+  const { character_id: characterID, isEdit, originalImage } = route?.params;
   const navigation = useNavigation();
   const [nowScreen, setNowScreen] = useState("content");
 
@@ -257,44 +256,36 @@ function CreateCharacter({ route }) {
       is_example_public,
     };
 
-    await characterAPI
-      .put(`${characterID}/`, data, {
+    try {
+      await characterAPI.put(`${characterID}/`, data, {
         headers: {
           "Content-Type": "application/json",
         },
-      })
-      .then((response) => {
-        console.log("캐릭터 수정 성공");
-      })
-      .catch((error) => {
-        console.log("캐릭터 수정 실패: ", error?.response);
       });
+      console.log("캐릭터 수정 성공");
 
-    if (character_image) {
-      const formData = new FormData();
-      const { name, type } = getFileInfoFromUri(character_image);
-      formData.append("character_image", {
-        uri: character_image,
-        name,
-        type,
-      });
+      if (originalImage !== character_image) {
+        const formData = new FormData();
+        const { name, type } = getFileInfoFromUri(character_image);
+        formData.append("character_image", {
+          uri: character_image,
+          name,
+          type,
+        });
 
-      await characterAPI
-        .put(`${characterID}/`, formData, {
+        await characterAPI.put(`${characterID}/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        })
-        .then((response) => {
-          console.log("이미지 수정 성공");
-        })
-        .catch((error) => {
-          console.log("이미지 수정 실패", error?.response);
         });
-    }
+        console.log("이미지 수정 성공");
+      }
 
-    resetCharacter();
-    navigation.navigate("Home");
+      resetCharacter();
+      navigation.navigate("Home");
+    } catch (error) {
+      console.log("캐릭터 수정 실패:", error?.response || error);
+    }
   };
 
   const handleOpenMenu = () => {

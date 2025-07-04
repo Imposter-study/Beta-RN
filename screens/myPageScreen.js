@@ -77,13 +77,14 @@ function MyPageScreen() {
         setImage(character_image);
         setPresentation(presentation);
         setCreatorComment(creator_comment);
-        editIntro(intro)
-        editExampleSituation(example_situation)
-        editHashtags(hashtags)
+        editIntro(intro);
+        editExampleSituation(example_situation);
+        editHashtags(hashtags);
 
         navigation.navigate("CreateCharacter", {
           character_id: character_id,
           isEdit: true,
+          originalImage: character_image,
         });
       })
       .catch((error) => {
