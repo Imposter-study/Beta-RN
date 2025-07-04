@@ -240,13 +240,6 @@ function ChatListScreen() {
         onTabPress={(tabName) => navigation.navigate(tabName)}
       />
 
-        {/* 하단메뉴 */}
-        <BottomTab
-          activeTab="ChatList"
-          onTabPress={(tabName) => navigation.navigate(tabName)}
-        />
-      </View>
-
       {/* 채팅방 고정 및 나가기 */}
       <Modal
         isVisible={modalVisible}

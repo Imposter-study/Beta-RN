@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
   Image,
   FlatList,
   Dimensions,
@@ -100,20 +99,26 @@ function ProfileScreen({ route }) {
           ListHeaderComponent={
             <>
               {/* 회원 정보 */}
-              <View style={styles.userInfoContainer}>
-                {user.profile_picture ? (
-                  <Image
-                    source={{ uri: `http://${DOMAIN}` + user.profile_picture }}
-                    style={{ width: 70, height: 70, borderRadius: 100 }}
-                  />
-                ) : (
-                  <FontAwesome name="user-circle-o" size={70} color="gray" />
-                )}
-                <View style={styles.userTextContainer}>
-                  <Text style={styles.nickname}>{user.nickname}</Text>
-                  <Text style={styles.userId}>@{user.username}</Text>
+              <View>
+                <View style={styles.userInfoContainer}>
+                  {user.profile_picture ? (
+                    <Image
+                      source={{
+                        uri: `http://${DOMAIN}` + user.profile_picture,
+                      }}
+                      style={{ width: 70, height: 70, borderRadius: 100 }}
+                    />
+                  ) : (
+                    <FontAwesome name="user-circle-o" size={70} color="gray" />
+                  )}
+                  <View style={styles.userTextContainer}>
+                    <Text style={styles.nickname}>{user.nickname}</Text>
+                    <Text style={styles.userId}>@{user.username}</Text>
+                  </View>
                 </View>
-                <Text style={{ color: "white" }}>{user.introduce}</Text>
+                <Text style={{ color: "white" }}>
+                  {user.introduce ? "" : user.introduce}
+                </Text>
               </View>
 
               {/* 팔로잉, 팔로워 */}
@@ -167,7 +172,6 @@ const styles = StyleSheet.create({
   userInfoContainer: {
     flexDirection: "row",
     gap: 10,
-
     marginVertical: 10,
   },
   userTextContainer: {
