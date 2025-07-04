@@ -60,6 +60,7 @@ function CharacterDetailScreen({ route }) {
       .then((response) => {
         console.log(response.data);
         setCharacter(response.data);
+        setIsScrapped(response.data.is_scrapped);
         setLoading(false);
       })
       .catch((error) => {
