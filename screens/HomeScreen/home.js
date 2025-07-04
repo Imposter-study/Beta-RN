@@ -65,10 +65,6 @@ function Home() {
     );
   };
 
-  useEffect(() => {
-    getCharacters();
-  }, []);
-
   return (
     <View style={styles.container}>
       {/* 캐릭터 리스트 */}

@@ -21,10 +21,11 @@ import useCharacterStore from "../../stores/useCharacterStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import Modal from "react-native-modal";
-import * as SecureStore from "expo-secure-store";
 import characterAPI from "../../apis/characterAPI";
 
-function CreateCharacter() {
+function CreateCharacter({ route }) {
+  const isEdit = route.params?.isEdit;
+  const characterID = route.params?.character_id;
   const navigation = useNavigation();
   const [nowScreen, setNowScreen] = useState("content");
 
@@ -172,19 +173,16 @@ function CreateCharacter() {
       is_example_public,
     };
 
-    const access = await SecureStore.getItemAsync("access");
-
     try {
       // 1. 캐릭터 생성
       const res = await characterAPI.post("", data, {
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${access}`,
         },
       });
 
       const characterId = res.data.character_id; // 추후에 character_id로 수정 예정
-      console.log("✅ 캐릭터 생성 성공:", characterId);
+      console.log("✅ 캐릭터 생성 성공:", res.data);
 
       // 2. 이미지가 있는 경우, PUT 요청으로 이미지 업데이트
       if (character_image && characterId) {
@@ -199,7 +197,6 @@ function CreateCharacter() {
         await characterAPI.put(`${characterId}/`, formData, {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${access}`,
           },
         });
 
@@ -225,6 +222,79 @@ function CreateCharacter() {
         visibilityTime: 3000,
       });
     }
+  };
+
+  const onEditCharacter = async () => {
+    // 현재 상태 가져오가
+    const {
+      title,
+      description,
+      character_image,
+      name,
+      character_info,
+      intro,
+      example_situation,
+      presentation,
+      hashtags,
+      creator_comment,
+      is_character_public,
+      is_description_public,
+      is_example_public,
+    } = useCharacterStore.getState();
+
+    const data = {
+      title,
+      description,
+      name,
+      character_info,
+      intro,
+      example_situation,
+      presentation,
+      hashtags,
+      creator_comment,
+      is_character_public,
+      is_description_public,
+      is_example_public,
+    };
+
+    await characterAPI
+      .put(`${characterID}/`, data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log("캐릭터 수정 성공");
+      })
+      .catch((error) => {
+        console.log("캐릭터 수정 실패: ", error?.response);
+      });
+
+    if (character_image) {
+      const formData = new FormData();
+      const { name, type } = getFileInfoFromUri(character_image);
+      formData.append("character_image", {
+        uri: character_image,
+        name,
+        type,
+      });
+
+      await characterAPI
+        .put(`${characterID}/`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((response) => {
+          console.log("이미지 수정 성공");
+        })
+        .catch((error) => {
+          console.log("이미지 수정 실패", error?.response);
+        });
+    }
+
+    resetCharacter();
+    navigation.navigate("Home");
   };
 
   const handleOpenMenu = () => {
@@ -288,7 +358,13 @@ function CreateCharacter() {
               </TouchableOpacity>
               <TouchableOpacity
                 disabled={!isCharacterValid}
-                onPress={onRegister}
+                onPress={() => {
+                  if (isEdit) {
+                    onEditCharacter();
+                  } else {
+                    onRegister();
+                  }
+                }}
                 style={styles.registerButton}
               >
                 <Text
