@@ -15,6 +15,7 @@ import Markdown from "react-native-markdown-display";
 import { useEffect, useState } from "react";
 import characterAPI from "../apis/characterAPI";
 import roomAPI from "../apis/roomAPI";
+import Toast from "react-native-toast-message";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.9;
@@ -99,6 +100,10 @@ function CharacterDetailScreen({ route }) {
         } else {
           setIsScrapped(false);
         }
+        Toast.show({
+          type: "info",
+          text1: response.data.detail,
+        });
       })
       .catch((error) => {
         console.log("캐릭터 스크랩 상태 변경 실패", error?.response);
