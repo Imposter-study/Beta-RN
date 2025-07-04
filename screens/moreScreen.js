@@ -35,12 +35,14 @@ function MoreScreen() {
         console.log(response.data);
         await SecureStore.deleteItemAsync("access");
         await SecureStore.deleteItemAsync("refresh");
+        await SecureStore.deleteItemAsync("nickname");
         navigation.navigate("Home");
       })
       .catch(async (error) => {
         console.log("로그아웃 실패", error.response);
         await SecureStore.deleteItemAsync("access");
         await SecureStore.deleteItemAsync("refresh");
+        await SecureStore.deleteItemAsync("nickname");
         navigation.navigate("Home");
       });
   };

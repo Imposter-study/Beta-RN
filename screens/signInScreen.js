@@ -36,9 +36,10 @@ function SignInScreen() {
       })
       .then(async (response) => {
         console.log("로그인 성공", response.data);
-        const { access, refresh } = response.data;
+        const { access, refresh, nickname } = response.data;
         await SecureStore.setItemAsync("access", access);
         await SecureStore.setItemAsync("refresh", refresh);
+        await SecureStore.setItemAsync("nickname", nickname);
         navigation.navigate("Home");
       })
       .catch((error) => {

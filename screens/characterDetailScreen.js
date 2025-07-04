@@ -244,13 +244,22 @@ function CharacterDetailScreen({ route }) {
             </View>
             <View style={styles.creatorBox}>
               <Text style={styles.sectionTitle}>크리에이터</Text>
-              <View style={styles.creatorInfo}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("Profile", {
+                    nickname: character.creator_nickname,
+                  })
+                }
+                style={styles.creatorInfo}
+              >
                 <FontAwesome name="user-circle-o" size={24} color="gray" />
                 <View>
-                  <Text style={styles.creatorName}>닉네임</Text>
-                  <Text style={styles.creatorId}>{character.creator}</Text>
+                  <Text style={styles.creatorName}>{character.creator_nickname}</Text>
+                  <Text style={styles.creatorId}>
+                    {character.creator_nickname}
+                  </Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             </View>
           </ScrollView>
           <View style={styles.bottomContainer}>

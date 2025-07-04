@@ -53,6 +53,7 @@ roomAPI.interceptors.response.use(
         console.error("토큰 재발급 실패", refreshError);
         await SecureStore.deleteItemAsync("access");
         await SecureStore.deleteItemAsync("refresh");
+        await SecureStore.deleteItemAsync("nickname");
         return Promise.reject(refreshError);
       }
     }

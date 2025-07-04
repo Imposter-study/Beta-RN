@@ -10,33 +10,71 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
-import { API_URL } from "../../config";
 import SocialEdit from "./socialProfileEdit";
 import ChatEdit from "./chatProfileEdit";
+import accountAPI from "../../apis/accountAPI";
 
-function EditProfileScreen() {
+function EditProfileScreen({ route }) {
   const navigation = useNavigation();
 
+  const user = route.params.user;
   const [editType, setEditType] = useState("social");
+  const [editUser, setEditUser] = useState();
 
-  // // 사용자 정보 가져오기
-  // const getProfile = () => {
-  //   axios
-  //     .get(API_URL + "accounts/testuser/")
-  //     .then((response) => {
-  //       console.log(response.data);
-  //     })
-  //     .catch((error) =>
-  //       console.log("사용자 정보를 가져오는데 실패하였습니다.", error)
-  //     );
-  // };
+  const getFileInfoFromUri = (uri) => {
+    const uriParts = uri.split("/");
+    const fileName = uriParts[uriParts.length - 1];
 
-  // useEffect(() => {
-  //   getProfile();
-  // }, []);
+    const extension = fileName.split(".").pop()?.toLowerCase();
+    let mimeType = "image/jpeg"; // 기본값
+
+    if (extension === "png") mimeType = "image/png";
+    else if (extension === "jpg" || extension === "jpeg")
+      mimeType = "image/jpeg";
+    else if (extension === "webp") mimeType = "image/webp";
+
+    return {
+      name: fileName,
+      type: mimeType,
+    };
+  };
+
+  const editProfile = () => {
+    const formData = new FormData();
+
+    formData.append("username", editUser.username);
+    formData.append("nickname", editUser.nickname);
+    formData.append("introduce", editUser.intro);
+
+    // 프로필 이미지
+    const profileImage = editUser.profileImage;
+    if (profileImage === null) {
+      formData.append("profile_picture", "");
+    } else if (profileImage !== user.profile_picture) {
+      const { name, type } = getFileInfoFromUri(profileImage);
+      formData.append("profile_picture", {
+        uri: profileImage,
+        name,
+        type,
+      });
+    }
+
+    accountAPI
+      .put(`${user.nickname}/`, formData, {
+        header: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log("프로필 수정 완료", response.data);
+        navigation.navigate("Mypage");
+      })
+      .catch((error) => {
+        console.log("프로필 수정 실패 :", error?.response);
+      });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -52,7 +90,7 @@ function EditProfileScreen() {
               <Ionicons name="chevron-back-sharp" size={24} color="white" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>프로필 편집</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={editProfile}>
               <Text style={styles.headerSave}>저장</Text>
             </TouchableOpacity>
           </View>
@@ -81,7 +119,18 @@ function EditProfileScreen() {
 
           {/* 본문 */}
           {/* 소셜 프로필 */}
-          {editType === "social" ? <SocialEdit /> : null}
+          {editType === "social" ? (
+            <SocialEdit
+              nickname={user.nickname}
+              username={user.username}
+              profile_picture={user.profile_picture}
+              introduce={user.introduce}
+              onChange={(updatedInfo) => {
+                console.log("수정된 프로필", updatedInfo);
+                setEditUser(updatedInfo);
+              }}
+            />
+          ) : null}
           {/* 대화 프로필 */}
           {editType === "chat" ? <ChatEdit /> : null}
         </SafeAreaView>
@@ -113,7 +162,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   headerSave: {
-    color: "rgba(124, 103, 255, 0.5)",
+    color: "rgb(124, 103, 255)",
     fontSize: 16,
   },
   editTypeContainer: {
