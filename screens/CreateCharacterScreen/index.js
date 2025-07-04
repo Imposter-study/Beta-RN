@@ -23,8 +23,12 @@ import Toast from "react-native-toast-message";
 import Modal from "react-native-modal";
 import characterAPI from "../../apis/characterAPI";
 
-function CreateCharacter({ route }) {
-  const { character_id: characterID, isEdit, originalImage } = route?.params;
+function CreateCharacter({ route = {} }) {
+  const {
+    character_id: characterID,
+    isEdit,
+    originalImage,
+  } = route.params || {};
   const navigation = useNavigation();
   const [nowScreen, setNowScreen] = useState("content");
 
@@ -304,6 +308,27 @@ function CreateCharacter({ route }) {
     }
   };
 
+  const deleteCharacter = () => {
+    Alert.alert("삭제 하시겠어요?", "삭제된 내용은 되돌릴 수 없어요", [
+      { text: "취소" },
+      {
+        text: "삭제",
+        onPress: async () => {
+          if (characterID) {
+            try {
+              await characterAPI.delete(`${characterID}/`);
+              console.log("캐릭터 삭제 완료");
+              resetCharacter();
+              navigation.goBack();
+            } catch (error) {
+              console.log("캐릭터 삭제 실패", error);
+            }
+          }
+        },
+      },
+    ]);
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.keyboardAvoidingView}
@@ -484,24 +509,7 @@ function CreateCharacter({ route }) {
             { top: menuPosition.y, left: menuPosition.x }, // 계산된 위치 적용
           ]}
         >
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => {
-              Alert.alert(
-                "삭제",
-                "정말로 삭제하시겠습니까?",
-                [
-                  { text: "취소", style: "cancel" },
-                  {
-                    text: "삭제",
-                    onPress: () => console.log("삭제 처리 로직"),
-                  },
-                ],
-                { cancelable: true }
-              );
-              setModalVisible(false); // 메뉴 닫기
-            }}
-          >
+          <TouchableOpacity style={styles.menuItem} onPress={deleteCharacter}>
             <Text style={styles.menuItemText}>삭제</Text>
           </TouchableOpacity>
           <View style={styles.menuDivider} />

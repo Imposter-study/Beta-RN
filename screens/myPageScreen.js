@@ -5,6 +5,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import BottomTab from "../components/bottomTab";
@@ -13,7 +14,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import SignInButton from "../components/signInButtons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import * as SecureStore from "expo-secure-store";
 import accountAPI from "../apis/accountAPI";
 import { DOMAIN } from "../config";
@@ -25,6 +26,7 @@ function MyPageScreen() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState({});
+  const [refreshing, setRefreshing] = useState(false);
 
   const getUserProfile = async () => {
     const nickname = await SecureStore.getItemAsync("nickname");
@@ -92,6 +94,12 @@ function MyPageScreen() {
       });
   };
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([getUserProfile()]);
+    setRefreshing(false);
+  }, []);
+
   useEffect(() => {
     const checkLogin = async () => {
       const token = await SecureStore.getItemAsync("access");
@@ -131,7 +139,11 @@ function MyPageScreen() {
           <Text>회원 정보를 가져오는 중입니다</Text>
         </View>
       ) : (
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           {/* 회원 정보 */}
           <View style={styles.userInfoContainer}>
             {user.profile_picture ? (
