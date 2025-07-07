@@ -37,6 +37,9 @@ function ChatScreen({ route }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [editMessage, setEditMessage] = useState("");
   const [editId, setEditId] = useState(null);
+  const [deleteMode, setDeletaMode] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
@@ -171,6 +174,20 @@ function ChatScreen({ route }) {
       });
   };
 
+  const deleteMessage = () => {
+    roomAPI
+      .delete(`${room_id}/messages/${deleteId}/`)
+      .then((response) => {
+        console.log("대화 삭제 성공 :", response.data);
+        getChat();
+        setDeletaMode(false);
+        setDeleteId(null);
+      })
+      .catch((error) => {
+        console.log("대화 삭제 실패", error?.response);
+      });
+  };
+
   useEffect(() => {
     getCharacterInfo();
   }, []);
@@ -195,24 +212,39 @@ function ChatScreen({ route }) {
           ) : (
             <>
               <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
+                <TouchableOpacity
+                  onPress={() => {
+                    if (!deleteId) {
+                      navigation.goBack();
+                    } else {
+                      setDeletaMode(false);
+                      setDeleteId(null);
+                    }
+                  }}
+                >
                   <Ionicons name="chevron-back-sharp" size={24} color="white" />
                 </TouchableOpacity>
                 <View style={styles.headerCenter}>
-                  <Text style={styles.headerTitle}>{character.title}</Text>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate("CharacterDetail", {
-                        character_id: character.character_id,
-                      })
-                    }
-                  >
-                    <Ionicons
-                      name="chevron-forward-sharp"
-                      size={18}
-                      color="#ffffff80"
-                    />
-                  </TouchableOpacity>
+                  {!deleteMode ? (
+                    <>
+                      <Text style={styles.headerTitle}>{character.title}</Text>
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate("CharacterDetail", {
+                            character_id: character.character_id,
+                          })
+                        }
+                      >
+                        <Ionicons
+                          name="chevron-forward-sharp"
+                          size={18}
+                          color="#ffffff80"
+                        />
+                      </TouchableOpacity>
+                    </>
+                  ) : (
+                    <Text style={styles.headerTitle}>대화 삭제</Text>
+                  )}
                 </View>
                 <Ionicons name="menu" size={24} color="white" />
               </View>
@@ -268,15 +300,67 @@ function ChatScreen({ route }) {
                 {/* 채팅 */}
                 {chats.map((chat, index) =>
                   chat.name !== character.name ? (
-                    <View key={index} style={styles.userChatContainer}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        if (deleteMode) {
+                          setDeleteId(chat.chat_id);
+                        }
+                      }}
+                      onLongPress={() => {
+                        setDeleteModalVisible(true);
+                        setDeleteId(chat.chat_id);
+                      }}
+                      // disabled={!deleteId}
+                      activeOpacity={1}
+                      key={index}
+                      style={{
+                        ...styles.userChatContainer,
+                        borderLeftWidth:
+                          chat.chat_id >= deleteId && deleteMode ? 1 : 0,
+                        borderRightWidth:
+                          chat.chat_id >= deleteId && deleteMode ? 1 : 0,
+                        borderTopWidth:
+                          chat.chat_id === deleteId && deleteMode ? 1 : 0,
+                        borderBottomWidth:
+                          index === chats.length - 1 && deleteMode ? 1 : 0,
+                        borderColor:
+                          chat.chat_id >= deleteId ? "rgb(103 40 255)" : "",
+                      }}
+                    >
                       <View style={styles.userChatBox}>
                         <Markdown rules={markdownRules}>
                           {chat.content}
                         </Markdown>
                       </View>
-                    </View>
+                    </TouchableOpacity>
                   ) : (
-                    <View key={index} style={styles.aiChatContainer}>
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => {
+                        if (deleteMode) {
+                          setDeleteId(chat.chat_id);
+                        }
+                      }}
+                      onLongPress={() => {
+                        setDeleteModalVisible(true);
+                        setDeleteId(chat.chat_id);
+                      }}
+                      // disabled={!deleteId}
+                      activeOpacity={1}
+                      style={{
+                        ...styles.aiChatContainer,
+                        borderLeftWidth:
+                          chat.chat_id >= deleteId && deleteMode ? 1 : 0,
+                        borderRightWidth:
+                          chat.chat_id >= deleteId && deleteMode ? 1 : 0,
+                        borderTopWidth:
+                          chat.chat_id === deleteId && deleteMode ? 1 : 0,
+                        borderBottomWidth:
+                          index === chats.length - 1 && deleteMode ? 1 : 0,
+                        borderColor:
+                          chat.chat_id >= deleteMode ? "rgb(103 40 255)" : "",
+                      }}
+                    >
                       <Image
                         source={{
                           uri: character.character_image,
@@ -317,67 +401,89 @@ function ChatScreen({ route }) {
                           </TouchableOpacity>
                         </View>
                       ) : null}
-                    </View>
+                    </TouchableOpacity>
                   )
                 )}
               </ScrollView>
 
-              <View style={styles.inputContainer}>
-                <View>
-                  <Ionicons
-                    name="flash"
-                    size={18}
-                    color="white"
-                    style={styles.flashButton}
-                  />
-                </View>
-                <TextInput
-                  placeholder="메시지 보내기"
-                  value={message}
-                  onChangeText={setMessage}
-                  multiline={true}
-                  selection={selection}
-                  onSelectionChange={({ nativeEvent: { selection } }) =>
-                    setSelection(selection)
-                  }
-                  onFocus={() =>
-                    scrollViewRef.current?.scrollToEnd({ animated: true })
-                  }
-                  style={styles.input}
-                  placeholderTextColor="#ffffff80"
-                />
+              {deleteMode ? (
                 <TouchableOpacity
-                  style={styles.asteriskButton}
-                  onPress={pressAsterisk}
+                  onPress={deleteMessage}
+                  style={{
+                    marginHorizontal: 20,
+                    backgroundColor: "rgb(82 32 204)",
+                    alignItems: "center",
+                    borderRadius: 8,
+                  }}
                 >
-                  <Ionicons
-                    name="medical-sharp"
-                    size={12}
-                    color="white"
-                    style={{ padding: 10 }}
-                  />
+                  <Text
+                    style={{
+                      color: "white",
+                      paddingVertical: 10,
+                      fontSize: 18,
+                    }}
+                  >
+                    대화 삭제
+                  </Text>
                 </TouchableOpacity>
-
-                <TouchableOpacity>
-                  {message === "" ? (
+              ) : (
+                <View style={styles.inputContainer}>
+                  <View>
                     <Ionicons
-                      name="play"
+                      name="flash"
                       size={18}
                       color="white"
-                      style={styles.sendButton}
+                      style={styles.flashButton}
                     />
-                  ) : (
-                    <TouchableOpacity onPress={sendChat}>
+                  </View>
+                  <TextInput
+                    placeholder="메시지 보내기"
+                    value={message}
+                    onChangeText={setMessage}
+                    multiline={true}
+                    selection={selection}
+                    onSelectionChange={({ nativeEvent: { selection } }) =>
+                      setSelection(selection)
+                    }
+                    onFocus={() =>
+                      scrollViewRef.current?.scrollToEnd({ animated: true })
+                    }
+                    style={styles.input}
+                    placeholderTextColor="#ffffff80"
+                  />
+                  <TouchableOpacity
+                    style={styles.asteriskButton}
+                    onPress={pressAsterisk}
+                  >
+                    <Ionicons
+                      name="medical-sharp"
+                      size={12}
+                      color="white"
+                      style={{ padding: 10 }}
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity>
+                    {message === "" ? (
                       <Ionicons
-                        name="arrow-up-sharp"
+                        name="play"
                         size={18}
                         color="white"
                         style={styles.sendButton}
                       />
-                    </TouchableOpacity>
-                  )}
-                </TouchableOpacity>
-              </View>
+                    ) : (
+                      <TouchableOpacity onPress={sendChat}>
+                        <Ionicons
+                          name="arrow-up-sharp"
+                          size={18}
+                          color="white"
+                          style={styles.sendButton}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              )}
             </>
           )}
           <Modal
@@ -469,6 +575,73 @@ function ChatScreen({ route }) {
               </View>
             </View>
           </Modal>
+
+          {/* 메세지 삭제 모달 */}
+          <Modal
+            isVisible={deleteModalVisible}
+            onBackdropPress={() => setDeleteModalVisible(false)}
+            style={{ justifyContent: "flex-end" }}
+            // avoidKeyboard={true}
+          >
+            <View
+              style={{
+                backgroundColor: "rgb(26 27 27)",
+                paddingHorizontal: 10,
+              }}
+            >
+              <View style={{ alignItems: "center" }}>
+                <View
+                  style={{
+                    borderWidth: 2,
+                    borderColor: "white",
+                    width: "10%",
+                    marginVertical: 20,
+                    borderRadius: 100,
+                  }}
+                />
+              </View>
+
+              <View
+                style={{
+                  borderTopLeftRadius: 12,
+                  borderTopRightRadius: 12,
+                  paddingBottom: 20,
+                  gap: 10,
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "rgb(51 51 51)",
+                    padding: 18,
+                    borderRadius: 8,
+                    gap: 7,
+                  }}
+                >
+                  <FontAwesome6 name="copy" size={16} color="white" />
+                  <Text style={{ color: "white", fontSize: 16 }}>복사</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDeletaMode(true);
+                    setDeleteModalVisible(false);
+                  }}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "rgb(51 51 51)",
+                    padding: 18,
+                    borderRadius: 8,
+                    gap: 7,
+                  }}
+                >
+                  <FontAwesome6 name="trash-can" size={16} color="red" />
+                  <Text style={{ color: "red", fontSize: 16 }}>삭제</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </SafeAreaView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -512,7 +685,8 @@ const styles = StyleSheet.create({
   },
   userChatContainer: {
     alignItems: "flex-end",
-    marginBottom: 10,
+    marginHorizontal: 10,
+    padding: 3,
   },
   userChatBox: {
     backgroundColor: "rgb(124, 103, 255)",
@@ -520,13 +694,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
     padding: 10,
     maxWidth: "70%",
-    marginHorizontal: 20,
+    marginHorizontal: 10,
   },
   aiChatContainer: {
     flexDirection: "row",
-    marginHorizontal: 20,
+    marginHorizontal: 10,
     gap: 5,
-    marginBottom: 10,
+    padding: 3,
   },
   aiImage: {
     width: 50,
