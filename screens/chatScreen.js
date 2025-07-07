@@ -188,6 +188,30 @@ function ChatScreen({ route }) {
       });
   };
 
+  const regenerateMessage = (id) => {
+    roomAPI
+      .post(`${room_id}/regenerate/`)
+      .then((response) => {
+        console.log(response.data);
+        const regenMsg = {
+          chat_id: id + 1,
+          content: response.data.regenerated_response,
+          name: response.data.character_name,
+          is_main: true,
+        };
+        let updateChats = [...chats];
+        updateChats[updateChats.length - 1] = {
+          ...updateChats[updateChats - 1],
+          is_main: false,
+        };
+        updateChats = [...updateChats, regenMsg];
+        setChats(updateChats);
+      })
+      .catch((error) => {
+        console.log("메세지 재생성 실패", error?.response);
+      });
+  };
+
   useEffect(() => {
     getCharacterInfo();
   }, []);
@@ -300,40 +324,42 @@ function ChatScreen({ route }) {
                 {/* 채팅 */}
                 {chats.map((chat, index) =>
                   chat.name !== character.name ? (
-                    <TouchableOpacity
-                      onPress={() => {
-                        if (deleteMode) {
+                    chat.is_main ? (
+                      <TouchableOpacity
+                        onPress={() => {
+                          if (deleteMode) {
+                            setDeleteId(chat.chat_id);
+                          }
+                        }}
+                        onLongPress={() => {
+                          setDeleteModalVisible(true);
                           setDeleteId(chat.chat_id);
-                        }
-                      }}
-                      onLongPress={() => {
-                        setDeleteModalVisible(true);
-                        setDeleteId(chat.chat_id);
-                      }}
-                      // disabled={!deleteId}
-                      activeOpacity={1}
-                      key={index}
-                      style={{
-                        ...styles.userChatContainer,
-                        borderLeftWidth:
-                          chat.chat_id >= deleteId && deleteMode ? 1 : 0,
-                        borderRightWidth:
-                          chat.chat_id >= deleteId && deleteMode ? 1 : 0,
-                        borderTopWidth:
-                          chat.chat_id === deleteId && deleteMode ? 1 : 0,
-                        borderBottomWidth:
-                          index === chats.length - 1 && deleteMode ? 1 : 0,
-                        borderColor:
-                          chat.chat_id >= deleteId ? "rgb(103 40 255)" : "",
-                      }}
-                    >
-                      <View style={styles.userChatBox}>
-                        <Markdown rules={markdownRules}>
-                          {chat.content}
-                        </Markdown>
-                      </View>
-                    </TouchableOpacity>
-                  ) : (
+                        }}
+                        // disabled={!deleteId}
+                        activeOpacity={1}
+                        key={index}
+                        style={{
+                          ...styles.userChatContainer,
+                          borderLeftWidth:
+                            chat.chat_id >= deleteId && deleteMode ? 1 : 0,
+                          borderRightWidth:
+                            chat.chat_id >= deleteId && deleteMode ? 1 : 0,
+                          borderTopWidth:
+                            chat.chat_id === deleteId && deleteMode ? 1 : 0,
+                          borderBottomWidth:
+                            index === chats.length - 1 && deleteMode ? 1 : 0,
+                          borderColor:
+                            chat.chat_id >= deleteId ? "rgb(103 40 255)" : "",
+                        }}
+                      >
+                        <View style={styles.userChatBox}>
+                          <Markdown rules={markdownRules}>
+                            {chat.content}
+                          </Markdown>
+                        </View>
+                      </TouchableOpacity>
+                    ) : null
+                  ) : chat.is_main ? (
                     <TouchableOpacity
                       key={index}
                       onPress={() => {
@@ -391,7 +417,9 @@ function ChatScreen({ route }) {
                               style={styles.editReloadButton}
                             />
                           </TouchableOpacity>
-                          <TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => regenerateMessage(chat.chat_id)}
+                          >
                             <Ionicons
                               name="refresh"
                               size={14}
@@ -402,7 +430,7 @@ function ChatScreen({ route }) {
                         </View>
                       ) : null}
                     </TouchableOpacity>
-                  )
+                  ) : null
                 )}
               </ScrollView>
 
