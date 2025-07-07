@@ -40,6 +40,7 @@ function ChatScreen({ route }) {
   const [deleteMode, setDeletaMode] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [genResponse, setGenResponse] = useState(false);
 
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
@@ -99,14 +100,19 @@ function ChatScreen({ route }) {
   const sendChat = async () => {
     if (message.trim() !== "") {
       const userMessage = message;
-
       const updatedChats = [
         ...chats,
-        { chat_id: chats.length, content: userMessage, name: "user" },
+        {
+          chat_id: chats.length,
+          content: userMessage,
+          name: "user",
+          is_main: true,
+        },
       ];
       setChats(updatedChats);
       setMessage("");
       scrollViewRef.current?.scrollToEnd({ animated: true });
+      setGenResponse(true);
 
       roomAPI
         .post(`${room_id}/messages/`, {
@@ -120,11 +126,14 @@ function ChatScreen({ route }) {
               chat_id: response.data.chat_id,
               content: response.data.ai_response,
               name: character.name,
+              is_main: true,
             },
           ]);
+          setGenResponse(false);
         })
         .catch((error) => {
           console.log("메세지 전송 실패", error.response);
+          setGenResponse(false);
         });
     }
   };
@@ -189,6 +198,8 @@ function ChatScreen({ route }) {
   };
 
   const regenerateMessage = (id) => {
+    setGenResponse(true);
+    setChats((prev) => prev.filter((item, index) => index !== prev.length - 1));
     roomAPI
       .post(`${room_id}/regenerate/`)
       .then((response) => {
@@ -199,17 +210,49 @@ function ChatScreen({ route }) {
           name: response.data.character_name,
           is_main: true,
         };
-        let updateChats = [...chats];
-        updateChats[updateChats.length - 1] = {
-          ...updateChats[updateChats - 1],
-          is_main: false,
-        };
-        updateChats = [...updateChats, regenMsg];
+        setChats((prev) => [...prev, regenMsg]);
         setChats(updateChats);
+        setGenResponse(false);
       })
       .catch((error) => {
         console.log("메세지 재생성 실패", error?.response);
+        setGenResponse(false);
       });
+  };
+
+  const DotsLoading = () => {
+    const [dots, setDots] = useState("•");
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setDots((prev) => {
+          if (prev.length > 3) return "•";
+          return prev + " •";
+        });
+      }, 500);
+      return () => clearInterval(interval);
+    }, []);
+
+    return (
+      <View
+        style={{
+          ...styles.aiChatContainer,
+        }}
+      >
+        <Image
+          source={{
+            uri: character.character_image,
+          }}
+          style={styles.aiImage}
+        />
+        <View style={styles.aiChatContent}>
+          <Text style={styles.aiName}>{character.name}</Text>
+          <View style={styles.aiChatBox}>
+            <Text style={{ color: "white" }}>{dots}</Text>
+          </View>
+        </View>
+      </View>
+    );
   };
 
   useEffect(() => {
@@ -432,6 +475,7 @@ function ChatScreen({ route }) {
                     </TouchableOpacity>
                   ) : null
                 )}
+                {genResponse ? <DotsLoading /> : null}
               </ScrollView>
 
               {deleteMode ? (
@@ -491,25 +535,25 @@ function ChatScreen({ route }) {
                     />
                   </TouchableOpacity>
 
-                  <TouchableOpacity>
-                    {message === "" ? (
+                  {message === "" ? (
+                    <TouchableOpacity>
                       <Ionicons
                         name="play"
                         size={18}
                         color="white"
                         style={styles.sendButton}
                       />
-                    ) : (
-                      <TouchableOpacity onPress={sendChat}>
-                        <Ionicons
-                          name="arrow-up-sharp"
-                          size={18}
-                          color="white"
-                          style={styles.sendButton}
-                        />
-                      </TouchableOpacity>
-                    )}
-                  </TouchableOpacity>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity onPress={sendChat} disabled={genResponse}>
+                      <Ionicons
+                        name="arrow-up-sharp"
+                        size={18}
+                        color="white"
+                        style={styles.sendButton}
+                      />
+                    </TouchableOpacity>
+                  )}
                 </View>
               )}
             </>
