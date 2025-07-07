@@ -19,6 +19,9 @@ import Markdown from "react-native-markdown-display";
 import * as SecureStore from "expo-secure-store";
 import characterAPI from "../apis/characterAPI";
 import roomAPI from "../apis/roomAPI";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import Modal from "react-native-modal";
+import Feather from "@expo/vector-icons/Feather";
 
 function ChatScreen({ route }) {
   const navigation = useNavigation();
@@ -30,6 +33,10 @@ function ChatScreen({ route }) {
   const [chats, setChats] = useState([]);
   const [message, setMessage] = useState("");
   const [selection, setSelection] = useState({ start: 0, end: 0 });
+  const [intros, setIntro] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editMessage, setEditMessage] = useState("");
+  const [editId, setEditId] = useState(null);
 
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
@@ -65,7 +72,7 @@ function ChatScreen({ route }) {
       .then((response) => {
         console.log("chat response :\n", response.data);
         setCharacter(response.data);
-        setChats(response.data.intro);
+        setIntro(response.data.intro);
         getChat();
       })
       .catch((error) => {
@@ -77,8 +84,8 @@ function ChatScreen({ route }) {
     roomAPI
       .get(`${room_id}/`)
       .then((response) => {
-        // console.log(response.data.chats);
-        setChats((prev) => [...prev, ...response.data.chats]);
+        console.log(response.data.chats);
+        setChats(response.data.chats);
         setLoading(false);
       })
       .catch((error) => {
@@ -87,14 +94,12 @@ function ChatScreen({ route }) {
   };
 
   const sendChat = async () => {
-    const access = await SecureStore.getItemAsync("access");
-
     if (message.trim() !== "") {
       const userMessage = message;
 
       const updatedChats = [
         ...chats,
-        { chat_id: chats.length, content: userMessage, role: "user" },
+        { chat_id: chats.length, content: userMessage, name: "user" },
       ];
       setChats(updatedChats);
       setMessage("");
@@ -109,9 +114,9 @@ function ChatScreen({ route }) {
           setChats((prev) => [
             ...prev,
             {
-              chat_id: prev.length,
+              chat_id: response.data.chat_id,
               content: response.data.ai_response,
-              role: character.name,
+              name: character.name,
             },
           ]);
         })
@@ -121,15 +126,49 @@ function ChatScreen({ route }) {
     }
   };
 
-  const pressAsterisk = () => {
-    const before = message.slice(0, selection.start);
-    const after = message.slice(selection.end);
-    const newMessage = before + "*" + after;
+  const pressAsterisk = (isEdit = false) => {
+    if (!isEdit) {
+      const before = message.slice(0, selection.start);
+      const after = message.slice(selection.end);
+      const newMessage = before + "*" + after;
 
-    setMessage(newMessage);
+      setMessage(newMessage);
+    } else {
+      const before = editMessage.slice(0, selection.start);
+      const after = editMessage.slice(selection.end);
+      const newMessage = before + "*" + after;
+
+      setEditMessage(newMessage);
+    }
 
     const newPosition = selection.start + 1;
     setSelection({ start: newPosition, end: newPosition });
+  };
+
+  const onEdit = (chat) => {
+    console.log(chat);
+    setEditMessage(chat.content);
+    setEditId(chat.chat_id);
+    setModalVisible(true);
+  };
+
+  const editResponseMessage = () => {
+    setChats((prev) =>
+      prev.map((item) =>
+        item.chat_id === editId ? { ...item, content: editMessage } : item
+      )
+    );
+    roomAPI
+      .put(`${room_id}/messages/${editId}/`, {
+        message: editMessage,
+      })
+      .then((response) => {
+        console.log(response);
+        setModalVisible(false);
+      })
+      .catch((error) => {
+        console.log("메세지 수정 실패", error?.response);
+      });
   };
 
   useEffect(() => {
@@ -196,12 +235,13 @@ function ChatScreen({ route }) {
                   </Text>
                 </View>
 
-                {chats.map((chat, index) =>
-                  (chat.name || chat.role) !== character.name ? (
+                {/* 인트로 */}
+                {intros.map((intro, index) =>
+                  intro.role === "user" ? (
                     <View key={index} style={styles.userChatContainer}>
                       <View style={styles.userChatBox}>
                         <Markdown rules={markdownRules}>
-                          {chat.content || chat.message}
+                          {intro.message}
                         </Markdown>
                       </View>
                     </View>
@@ -217,10 +257,66 @@ function ChatScreen({ route }) {
                         <Text style={styles.aiName}>{character.name}</Text>
                         <View style={styles.aiChatBox}>
                           <Markdown rules={markdownRules}>
-                            {chat.content || chat.message}
+                            {intro.message}
                           </Markdown>
                         </View>
                       </View>
+                    </View>
+                  )
+                )}
+
+                {/* 채팅 */}
+                {chats.map((chat, index) =>
+                  chat.name !== character.name ? (
+                    <View key={index} style={styles.userChatContainer}>
+                      <View style={styles.userChatBox}>
+                        <Markdown rules={markdownRules}>
+                          {chat.content}
+                        </Markdown>
+                      </View>
+                    </View>
+                  ) : (
+                    <View key={index} style={styles.aiChatContainer}>
+                      <Image
+                        source={{
+                          uri: character.character_image,
+                        }}
+                        style={styles.aiImage}
+                      />
+                      <View style={styles.aiChatContent}>
+                        <Text style={styles.aiName}>{character.name}</Text>
+                        <View style={styles.aiChatBox}>
+                          <Markdown rules={markdownRules}>
+                            {chat.content}
+                          </Markdown>
+                        </View>
+                      </View>
+                      {index === chats.length - 1 ? (
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "flex-end",
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <TouchableOpacity onPress={() => onEdit(chat)}>
+                            <FontAwesome6
+                              name="pen"
+                              size={14}
+                              color="#ffffff80"
+                              style={styles.editReloadButton}
+                            />
+                          </TouchableOpacity>
+                          <TouchableOpacity>
+                            <Ionicons
+                              name="refresh"
+                              size={14}
+                              color="#ffffff80"
+                              style={styles.editReloadButton}
+                            />
+                          </TouchableOpacity>
+                        </View>
+                      ) : null}
                     </View>
                   )
                 )}
@@ -284,6 +380,95 @@ function ChatScreen({ route }) {
               </View>
             </>
           )}
+          <Modal
+            isVisible={modalVisible}
+            onBackdropPress={() => setModalVisible(false)}
+            style={{ justifyContent: "flex-end" }}
+            avoidKeyboard={true}
+          >
+            <View
+              style={{
+                backgroundColor: "rgb(26 27 27)",
+                paddingHorizontal: 10,
+              }}
+            >
+              <View style={{ alignItems: "center" }}>
+                <View
+                  style={{
+                    borderWidth: 2,
+                    borderColor: "white",
+                    width: "10%",
+                    marginVertical: 20,
+                    borderRadius: 100,
+                  }}
+                />
+              </View>
+
+              <TextInput
+                value={editMessage}
+                onChangeText={setEditMessage}
+                multiline={true}
+                selection={selection}
+                onSelectionChange={({ nativeEvent: { selection } }) =>
+                  setSelection(selection)
+                }
+                style={{ color: "white", minHeight: 70, maxHeight: 70 }}
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginVertical: 5,
+                }}
+              >
+                {/* 닫기 */}
+                <TouchableOpacity onPress={null}>
+                  <Feather
+                    name="x"
+                    size={20}
+                    color="white"
+                    style={{
+                      backgroundColor: "rgb(62 62 65)",
+                      borderRadius: 100,
+                      padding: 5,
+                      margin: 3,
+                    }}
+                  />
+                </TouchableOpacity>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  {/* asterisk */}
+                  <TouchableOpacity onPress={() => pressAsterisk(true)}>
+                    <FontAwesome6
+                      name="asterisk"
+                      size={18}
+                      color="white"
+                      style={{
+                        backgroundColor: "rgb(62 62 65)",
+                        borderRadius: 100,
+                        paddingVertical: 5,
+                        paddingHorizontal: 8,
+                        margin: 3,
+                      }}
+                    />
+                  </TouchableOpacity>
+                  {/* check */}
+                  <TouchableOpacity onPress={editResponseMessage}>
+                    <Feather
+                      name="check"
+                      size={20}
+                      color="white"
+                      style={{
+                        backgroundColor: "rgb(103 40 255)",
+                        borderRadius: 100,
+                        padding: 5,
+                        margin: 3,
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
         </SafeAreaView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -361,7 +546,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderTopLeftRadius: 0,
     padding: 10,
-    maxWidth: "70%",
+    maxWidth: "80%",
   },
   inputContainer: {
     flexDirection: "row",
@@ -390,5 +575,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(82, 32, 204)",
     borderRadius: 100,
     padding: 10,
+  },
+  editReloadButton: {
+    padding: 10,
+    backgroundColor: "rgb(38 39 39)",
+    borderRadius: 100,
   },
 });
