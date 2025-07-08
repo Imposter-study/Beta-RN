@@ -17,9 +17,16 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import accountAPI from "../apis/accountAPI";
+import { useNavigation } from "@react-navigation/native";
 
 function CreateChatProfile() {
+  const navigation = useNavigation();
+
   const [profileImage, setProfileImage] = useState(null);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [isDefault, setIsDefult] = useState(false);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -31,6 +38,50 @@ function CreateChatProfile() {
     if (!result.canceled) {
       setProfileImage(result.assets[0].uri);
     }
+  };
+
+  const getFileInfoFromUri = (uri) => {
+    const uriParts = uri.split("/");
+    const fileName = uriParts[uriParts.length - 1];
+
+    const extension = fileName.split(".").pop()?.toLowerCase();
+    let mimeType = "image/jpeg"; // 기본값
+
+    if (extension === "png") mimeType = "image/png";
+    else if (extension === "jpg" || extension === "jpeg")
+      mimeType = "image/jpeg";
+    else if (extension === "webp") mimeType = "image/webp";
+
+    return {
+      name: fileName,
+      type: mimeType,
+    };
+  };
+
+  const createChatProfile = () => {
+    const formData = new FormData();
+    formData.append("chat_nickname", name);
+    formData.append("chat_description", description);
+    formData.append("is_default", isDefault);
+    if (profileImage) {
+      const { name, type } = getFileInfoFromUri(profileImage);
+      formData.append("chat_profile_picture", {
+        uri: profileImage,
+        name,
+        type,
+      });
+    }
+
+    accountAPI
+      .post(`chat_profiles/`, formData)
+      .then((response) => {
+        console.log("대화 프로필 생성 완료");
+        console.log(response.data);
+        navigation.goBack();
+      })
+      .catch((error) => {
+        console.log("대화프로필 생성 실패", error?.response);
+      });
   };
 
   return (
@@ -92,7 +143,9 @@ function CreateChatProfile() {
                   }}
                 />
               </TouchableOpacity>
-              <Text style={{ color: "white", fontSize: 24 }}>이름</Text>
+              <Text style={{ color: "white", fontSize: 24 }}>
+                {name || "이름"}
+              </Text>
             </View>
 
             {/* 이름 */}
@@ -106,9 +159,13 @@ function CreateChatProfile() {
                 </Text>
               </View>
               <TextInput
+                value={name}
+                onChangeText={setName}
                 placeholder="이름을 입력해주세요"
+                placeholderTextColor="rgba(255, 255, 255, 0.5)"
                 backgroundColor="rgba(255, 255, 255, 0.05)"
                 style={{
+                  color: "white",
                   borderRadius: 8,
                   borderWidth: 1,
                   borderColor: "rgba(255, 255, 255, 0.08)",
@@ -129,9 +186,12 @@ function CreateChatProfile() {
                 </Text>
               </View>
               <TextInput
+                value={description}
+                onChangeText={setDescription}
                 multiline={true}
                 backgroundColor="rgba(255, 255, 255, 0.05)"
                 style={{
+                  color: "white",
                   borderRadius: 8,
                   borderWidth: 1,
                   borderColor: "rgba(255, 255, 255, 0.08)",
@@ -169,8 +229,8 @@ function CreateChatProfile() {
                   </Text>
                 </View>
                 <Switch
-                  value={true}
-                  // onChange={setExamplePublic}
+                  value={isDefault}
+                  onChange={() => setIsDefult((prev) => !prev)}
                   trackColor={{
                     false: "rgb(89 91 99)",
                     true: "rgb(124, 103, 255)",
@@ -184,15 +244,17 @@ function CreateChatProfile() {
           {/* 버튼 */}
           <View style={{ paddingHorizontal: 20 }}>
             <TouchableOpacity
+              onPress={createChatProfile}
+              disabled={!name}
               style={{
                 alignItems: "center",
-                backgroundColor: "rgb(103 40 255)",
+                backgroundColor: !name ? "rgb(45 45 45)" : "rgb(103 40 255)",
                 borderRadius: 8,
               }}
             >
               <Text
                 style={{
-                  color: "white",
+                  color: !name ? "rgb(115 120 131)" : "white",
                   fontSize: 18,
                   padding: 15,
                 }}
