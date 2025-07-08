@@ -35,7 +35,7 @@ function CreateChatProfile({ route }) {
   );
   const [name, setName] = useState(chatProfile?.chat_nickname);
   const [description, setDescription] = useState(chatProfile?.chat_description);
-  const [isDefault, setIsDefult] = useState(chatProfile?.is_default);
+  const [isDefault, setIsDefult] = useState(chatProfile?.is_default || false);
   const [modalVisible, setModalVisible] = useState(false);
 
   const pickImage = async () => {
