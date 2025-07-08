@@ -59,7 +59,7 @@ function CharacterDetailScreen({ route }) {
     characterAPI
       .get(`${character_id}/`)
       .then((response) => {
-        console.log(response.data);
+        console.log("캐릭터 상세 : ", response.data);
         setCharacter(response.data);
         setIsScrapped(response.data.is_scrapped);
         setLoading(false);
@@ -270,7 +270,7 @@ function CharacterDetailScreen({ route }) {
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate("Profile", {
-                    nickname: character.creator_nickname,
+                    nickname: character.user.uuid,
                   })
                 }
                 style={styles.creatorInfo}
@@ -278,10 +278,10 @@ function CharacterDetailScreen({ route }) {
                 <FontAwesome name="user-circle-o" size={24} color="gray" />
                 <View>
                   <Text style={styles.creatorName}>
-                    {character.creator_nickname}
+                    {character.user.nickname}
                   </Text>
                   <Text style={styles.creatorId}>
-                    {character.creator_nickname}
+                    {character.user.username}
                   </Text>
                 </View>
               </TouchableOpacity>

@@ -29,9 +29,9 @@ function MyPageScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const getUserProfile = async () => {
-    const nickname = await SecureStore.getItemAsync("nickname");
+    const uuid = await SecureStore.getItemAsync("uuid");
     accountAPI
-      .get(`${nickname}/`)
+      .get(`${uuid}/`)
       .then((response) => {
         console.log(response.data);
         setUser(response.data);

@@ -120,10 +120,11 @@ function ChatScreen({ route }) {
         })
         .then((response) => {
           console.log("메세지 전송 완료");
+          console.log("캐릭터 답변 :",response.data)
           setChats((prev) => [
             ...prev,
             {
-              chat_id: response.data.chat_id,
+              chat_id: response.data.id,
               content: response.data.ai_response,
               name: character.name,
               is_main: true,

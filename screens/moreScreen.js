@@ -35,7 +35,7 @@ function MoreScreen() {
         console.log(response.data);
         await SecureStore.deleteItemAsync("access");
         await SecureStore.deleteItemAsync("refresh");
-        await SecureStore.deleteItemAsync("nickname");
+        await SecureStore.deleteItemAsync("uuid");
         navigation.navigate("Home");
       })
       .catch(async (error) => {
