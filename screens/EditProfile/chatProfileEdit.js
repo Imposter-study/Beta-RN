@@ -5,18 +5,20 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  RefreshControl,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import accountAPI from "../../apis/accountAPI";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { DOMAIN } from "../../config";
 
 function ChatEdit() {
   const navigation = useNavigation();
 
   const [chatProfiles, setChatProfiles] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getChatProfile = () => {
     accountAPI
@@ -29,6 +31,12 @@ function ChatEdit() {
         console.log("대화 프로필 조회 실패", error?.response);
       });
   };
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([getChatProfile()]);
+    setRefreshing(false);
+  }, []);
 
   useEffect(() => {
     getChatProfile();
@@ -44,7 +52,11 @@ function ChatEdit() {
         <Text style={styles.addProfileText}>대화 프로필 추가</Text>
       </TouchableOpacity>
 
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {chatProfiles.map((profile) => (
           <View key={profile.uuid} style={styles.profileItem}>
             <View style={styles.profileInfo}>
@@ -67,8 +79,20 @@ function ChatEdit() {
                 </Text>
               </View>
             </View>
-            <TouchableOpacity>
-              <FontAwesome name="pencil" size={18} color="#ffffff80" />
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("ChatProfile", {
+                  chatProfile: profile,
+                  isEdit: true,
+                })
+              }
+            >
+              <FontAwesome
+                name="pencil"
+                size={18}
+                color="#ffffff80"
+                style={{ padding: 5 }}
+              />
             </TouchableOpacity>
           </View>
         ))}

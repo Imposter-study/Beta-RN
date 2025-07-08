@@ -19,14 +19,20 @@ import * as ImagePicker from "expo-image-picker";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import accountAPI from "../apis/accountAPI";
 import { useNavigation } from "@react-navigation/native";
+import { DOMAIN } from "../config";
 
-function CreateChatProfile() {
+function CreateChatProfile({ route }) {
+  const { chatProfile = null, isEdit = false } = route.params || {};
   const navigation = useNavigation();
 
-  const [profileImage, setProfileImage] = useState(null);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [isDefault, setIsDefult] = useState(false);
+  const [profileImage, setProfileImage] = useState(
+    chatProfile?.chat_profile_picture
+      ? `http://${DOMAIN}` + chatProfile.chat_profile_picture
+      : null
+  );
+  const [name, setName] = useState(chatProfile?.chat_nickname);
+  const [description, setDescription] = useState(chatProfile?.chat_description);
+  const [isDefault, setIsDefult] = useState(chatProfile?.is_default);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -84,6 +90,32 @@ function CreateChatProfile() {
       });
   };
 
+  const editChatProfile = () => {
+    const formData = new FormData();
+    formData.append("chat_nickname", name);
+    formData.append("chat_description", description);
+    formData.append("is_default", isDefault);
+    if (profileImage !== chatProfile.chat_profile_picture) {
+      const { name, type } = getFileInfoFromUri(profileImage);
+      formData.append("chat_profile_picture", {
+        uri: profileImage,
+        name,
+        type,
+      });
+    }
+
+    accountAPI
+      .put(`chat_profiles/${chatProfile.uuid}/`, formData)
+      .then((response) => {
+        console.log("대화프로필 수정 성공");
+        console.log(response.data);
+        navigation.goBack();
+      })
+      .catch((error) => {
+        console.log("대화 프로필 수정 실패", error?.response);
+      });
+  };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -97,7 +129,9 @@ function CreateChatProfile() {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Ionicons name="chevron-back-sharp" size={24} color="white" />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>새 대화 프로필</Text>
+            <Text style={styles.headerTitle}>
+              {isEdit ? "대화 프로필 편집" : "새 대화 프로필"}
+            </Text>
             <View />
           </View>
 
@@ -244,7 +278,13 @@ function CreateChatProfile() {
           {/* 버튼 */}
           <View style={{ paddingHorizontal: 20 }}>
             <TouchableOpacity
-              onPress={createChatProfile}
+              onPress={() => {
+                if (isEdit) {
+                  editChatProfile();
+                } else {
+                  createChatProfile();
+                }
+              }}
               disabled={!name}
               style={{
                 alignItems: "center",
@@ -259,7 +299,7 @@ function CreateChatProfile() {
                   padding: 15,
                 }}
               >
-                추가하기
+                {isEdit ? "저장하기" : "추가하기"}
               </Text>
             </TouchableOpacity>
           </View>
