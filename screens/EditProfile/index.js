@@ -41,7 +41,7 @@ function EditProfileScreen({ route }) {
     };
   };
 
-  const editProfile = () => {
+  const editProfile = async () => {
     const formData = new FormData();
 
     formData.append("username", editUser.username);
@@ -62,7 +62,7 @@ function EditProfileScreen({ route }) {
     }
 
     accountAPI
-      .put(`${user.nickname}/`, formData, {
+      .put(`my_profile/`, formData, {
         header: {
           "Content-Type": "multipart/form-data",
         },
