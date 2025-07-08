@@ -90,7 +90,7 @@ function ChatScreen({ route }) {
     roomAPI
       .get(`${room_id}/`)
       .then((response) => {
-        // console.log(response.data.chats);
+        console.log(response.data.chats);
         setChats(response.data.chats);
         setLoading(false);
       })
@@ -396,12 +396,12 @@ function ChatScreen({ route }) {
                       <TouchableOpacity
                         onPress={() => {
                           if (deleteMode) {
-                            setDeleteId(chat.chat_id);
+                            setDeleteId(parseInt(chat.chat_id, 10));
                           }
                         }}
                         onLongPress={() => {
                           setDeleteModalVisible(true);
-                          setDeleteId(chat.chat_id);
+                          setDeleteId(parseInt(chat.chat_id, 10));
                         }}
                         // disabled={!deleteId}
                         activeOpacity={1}
@@ -409,15 +409,24 @@ function ChatScreen({ route }) {
                         style={{
                           ...styles.userChatContainer,
                           borderLeftWidth:
-                            chat.chat_id >= deleteId && deleteMode ? 1 : 0,
+                            parseInt(chat.chat_id, 10) >= deleteId && deleteMode
+                              ? 1
+                              : 0,
                           borderRightWidth:
-                            chat.chat_id >= deleteId && deleteMode ? 1 : 0,
+                            parseInt(chat.chat_id, 10) >= deleteId && deleteMode
+                              ? 1
+                              : 0,
                           borderTopWidth:
-                            chat.chat_id === deleteId && deleteMode ? 1 : 0,
+                            parseInt(chat.chat_id, 10) === deleteId &&
+                            deleteMode
+                              ? 1
+                              : 0,
                           borderBottomWidth:
                             index === chats.length - 1 && deleteMode ? 1 : 0,
                           borderColor:
-                            chat.chat_id >= deleteId ? "rgb(103 40 255)" : "",
+                            parseInt(chat.chat_id, 10) >= deleteId
+                              ? "rgb(103 40 255)"
+                              : "",
                         }}
                       >
                         <View style={styles.userChatBox}>
@@ -432,27 +441,35 @@ function ChatScreen({ route }) {
                       key={index}
                       onPress={() => {
                         if (deleteMode) {
-                          setDeleteId(chat.chat_id);
+                          setDeleteId(parseInt(chat.chat_id, 10));
                         }
                       }}
                       onLongPress={() => {
                         setDeleteModalVisible(true);
-                        setDeleteId(chat.chat_id);
+                        setDeleteId(parseInt(chat.chat_id, 10));
                       }}
                       // disabled={!deleteId}
                       activeOpacity={1}
                       style={{
                         ...styles.aiChatContainer,
                         borderLeftWidth:
-                          chat.chat_id >= deleteId && deleteMode ? 1 : 0,
+                          parseInt(chat.chat_id, 10) >= deleteId && deleteMode
+                            ? 1
+                            : 0,
                         borderRightWidth:
-                          chat.chat_id >= deleteId && deleteMode ? 1 : 0,
+                          parseInt(chat.chat_id, 10) >= deleteId && deleteMode
+                            ? 1
+                            : 0,
                         borderTopWidth:
-                          chat.chat_id === deleteId && deleteMode ? 1 : 0,
+                          parseInt(chat.chat_id, 10) === deleteId && deleteMode
+                            ? 1
+                            : 0,
                         borderBottomWidth:
                           index === chats.length - 1 && deleteMode ? 1 : 0,
                         borderColor:
-                          chat.chat_id >= deleteMode ? "rgb(103 40 255)" : "",
+                          parseInt(chat.chat_id, 10) >= deleteMode
+                            ? "rgb(103 40 255)"
+                            : "",
                       }}
                     >
                       <Image
