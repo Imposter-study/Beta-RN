@@ -4,7 +4,7 @@ import * as SecureStore from "expo-secure-store";
 
 const roomAPI = axios.create({
   baseURL: API_URL + "rooms/",
-  timeout: 10000,
+  timeout: 20000,
 });
 
 // 요청 인터셉터

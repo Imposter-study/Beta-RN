@@ -41,6 +41,8 @@ function ChatScreen({ route }) {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [genResponse, setGenResponse] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [genSuggestions, setGenSuggestions] = useState(false);
 
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
@@ -74,7 +76,7 @@ function ChatScreen({ route }) {
     characterAPI
       .get(`${character_id}/`)
       .then((response) => {
-        console.log("chat response :\n", response.data);
+        // console.log("chat response :\n", response.data);
         setCharacter(response.data);
         setIntro(response.data.intro);
         getChat();
@@ -88,7 +90,7 @@ function ChatScreen({ route }) {
     roomAPI
       .get(`${room_id}/`)
       .then((response) => {
-        console.log(response.data.chats);
+        // console.log(response.data.chats);
         setChats(response.data.chats);
         setLoading(false);
       })
@@ -120,7 +122,7 @@ function ChatScreen({ route }) {
         })
         .then((response) => {
           console.log("메세지 전송 완료");
-          console.log("캐릭터 답변 :",response.data)
+          console.log("캐릭터 답변 :", response.data);
           setChats((prev) => [
             ...prev,
             {
@@ -219,6 +221,28 @@ function ChatScreen({ route }) {
         console.log("메세지 재생성 실패", error?.response);
         setGenResponse(false);
       });
+  };
+
+  const suggestReply = () => {
+    // console.log(room_id);
+    setGenSuggestions(true);
+    roomAPI
+      .post(`${room_id}/suggestions/`)
+      .then((response) => {
+        console.log("추천 답변 생성 완료");
+        console.log(response.data.suggestions);
+        setSuggestions(response.data.suggestions);
+        setGenSuggestions(false);
+      })
+      .catch((error) => {
+        console.log("추천 답변 생성 실패", error?.response);
+        setGenSuggestions(false);
+      });
+  };
+
+  const sendSuggestionReply = (message) => {
+    setMessage(message);
+    setSuggestions([]);
   };
 
   const DotsLoading = () => {
@@ -479,6 +503,32 @@ function ChatScreen({ route }) {
                 {genResponse ? <DotsLoading /> : null}
               </ScrollView>
 
+              {genSuggestions ? (
+                <Text style={{ color: "white" }}>추천 답변 생성 중...</Text>
+              ) : null}
+
+              {/* 추천 답변 */}
+              {suggestions.length !== 0 ? (
+                <ScrollView horizontal style={{ height: 50, margin: 10 }}>
+                  {suggestions.map((item, index) =>
+                    item !== "" ? (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => sendSuggestionReply(item)}
+                        style={{
+                          padding: 10,
+                          marginHorizontal: 3,
+                          borderRadius: 16,
+                          backgroundColor: "#ffffff80",
+                        }}
+                      >
+                        <Markdown rules={markdownRules}>{item}</Markdown>
+                      </TouchableOpacity>
+                    ) : null
+                  )}
+                </ScrollView>
+              ) : null}
+
               {deleteMode ? (
                 <TouchableOpacity
                   onPress={deleteMessage}
@@ -501,14 +551,14 @@ function ChatScreen({ route }) {
                 </TouchableOpacity>
               ) : (
                 <View style={styles.inputContainer}>
-                  <View>
+                  <TouchableOpacity onPress={suggestReply}>
                     <Ionicons
                       name="flash"
                       size={18}
                       color="white"
                       style={styles.flashButton}
                     />
-                  </View>
+                  </TouchableOpacity>
                   <TextInput
                     placeholder="메시지 보내기"
                     value={message}
