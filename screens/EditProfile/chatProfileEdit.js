@@ -7,11 +7,17 @@ import {
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
 
 function ChatEdit() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.formContainer}>
-      <TouchableOpacity style={styles.addProfileButton}>
+      <TouchableOpacity
+        style={styles.addProfileButton}
+        onPress={() => navigation.navigate("ChatProfile")}
+      >
         <Ionicons name="add" size={30} color="white" style={styles.addIcon} />
         <Text style={styles.addProfileText}>대화 프로필 추가</Text>
       </TouchableOpacity>

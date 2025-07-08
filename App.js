@@ -18,6 +18,7 @@ import Toast from "react-native-toast-message";
 import KakaoLoginScreen from "./components/kakaoLoginScreen";
 import MoreScreen from "./screens/moreScreen";
 import ProfileScreen from "./screens/profileScreen";
+import CreateChatProfile from "./screens/createChatProfile";
 
 const Stack = createNativeStackNavigator();
 
@@ -58,6 +59,8 @@ export default function App() {
           <Stack.Screen name="Profile" component={ProfileScreen} />
           {/* 프로필 편집 스크린 */}
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+          {/* 대화 프로필  */}
+          <Stack.Screen name="ChatProfile" component={CreateChatProfile} />
           {/* 카카오 로그인 */}
           <Stack.Screen name="KakaoLogin" component={KakaoLoginScreen} />
         </Stack.Navigator>
