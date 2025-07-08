@@ -4,13 +4,35 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Image,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
+import accountAPI from "../../apis/accountAPI";
+import { useState, useEffect } from "react";
+import { DOMAIN } from "../../config";
 
 function ChatEdit() {
   const navigation = useNavigation();
+
+  const [chatProfiles, setChatProfiles] = useState([]);
+
+  const getChatProfile = () => {
+    accountAPI
+      .get(`chat_profiles/`)
+      .then((response) => {
+        console.log("대화 프로필 조회 성공:\n", response.data);
+        setChatProfiles(response.data);
+      })
+      .catch((error) => {
+        console.log("대화 프로필 조회 실패", error?.response);
+      });
+  };
+
+  useEffect(() => {
+    getChatProfile();
+  }, []);
 
   return (
     <View style={styles.formContainer}>
@@ -23,18 +45,33 @@ function ChatEdit() {
       </TouchableOpacity>
 
       <ScrollView>
-        <View style={styles.profileItem}>
-          <View style={styles.profileInfo}>
-            <FontAwesome name="user-circle-o" size={40} color="gray" />
-            <View style={styles.profileTextContainer}>
-              <Text style={styles.profileNickname}>채팅 닉네임</Text>
-              <Text style={styles.profileDescription}>설명없음</Text>
+        {chatProfiles.map((profile) => (
+          <View key={profile.uuid} style={styles.profileItem}>
+            <View style={styles.profileInfo}>
+              {profile.chat_profile_picture !== null ? (
+                <Image
+                  source={{
+                    uri: `http://${DOMAIN}` + profile.chat_profile_picture,
+                  }}
+                  style={{ width: 40, height: 40, borderRadius: 100 }}
+                />
+              ) : (
+                <FontAwesome name="user-circle-o" size={40} color="gray" />
+              )}
+              <View style={styles.profileTextContainer}>
+                <Text style={styles.profileNickname}>
+                  {profile.chat_nickname}
+                </Text>
+                <Text style={styles.profileDescription}>
+                  {profile.chat_description || "설명없음"}
+                </Text>
+              </View>
             </View>
+            <TouchableOpacity>
+              <FontAwesome name="pencil" size={18} color="#ffffff80" />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity>
-            <FontAwesome name="pencil" size={18} color="#ffffff80" />
-          </TouchableOpacity>
-        </View>
+        ))}
       </ScrollView>
     </View>
   );
