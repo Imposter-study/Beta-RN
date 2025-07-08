@@ -11,6 +11,7 @@ import {
   Image,
   Switch,
   ScrollView,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -20,6 +21,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import accountAPI from "../apis/accountAPI";
 import { useNavigation } from "@react-navigation/native";
 import { DOMAIN } from "../config";
+import Feather from "@expo/vector-icons/Feather";
 
 function CreateChatProfile({ route }) {
   const { chatProfile = null, isEdit = false } = route.params || {};
@@ -116,6 +118,26 @@ function CreateChatProfile({ route }) {
       });
   };
 
+  const deleteChatProfile = () => {
+    Alert.alert("정말 삭제하실 건가요?\n삭제한 프로필은 되롤릴 수 없어요", "", [
+      { text: "취소" },
+      {
+        text: "삭제",
+        onPress: () => {
+          accountAPI
+            .delete(`chat_profiles/${chatProfile.uuid}/`)
+            .then((response) => {
+              console.log("대화 프로필 삭제 성공");
+              navigation.goBack();
+            })
+            .catch((error) => {
+              console.log("대화 프로필 삭제 실패", error?.response);
+            });
+        },
+      },
+    ]);
+  };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -132,7 +154,13 @@ function CreateChatProfile({ route }) {
             <Text style={styles.headerTitle}>
               {isEdit ? "대화 프로필 편집" : "새 대화 프로필"}
             </Text>
-            <View />
+            {isEdit ? (
+              <TouchableOpacity onPress={deleteChatProfile}>
+                <Feather name="trash-2" size={18} color="white" />
+              </TouchableOpacity>
+            ) : (
+              <View />
+            )}
           </View>
 
           <ScrollView style={{ flex: 1 }}>
