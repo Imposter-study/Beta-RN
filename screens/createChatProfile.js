@@ -22,6 +22,7 @@ import accountAPI from "../apis/accountAPI";
 import { useNavigation } from "@react-navigation/native";
 import { DOMAIN } from "../config";
 import Feather from "@expo/vector-icons/Feather";
+import Modal from "react-native-modal";
 
 function CreateChatProfile({ route }) {
   const { chatProfile = null, isEdit = false } = route.params || {};
@@ -35,6 +36,7 @@ function CreateChatProfile({ route }) {
   const [name, setName] = useState(chatProfile?.chat_nickname);
   const [description, setDescription] = useState(chatProfile?.chat_description);
   const [isDefault, setIsDefult] = useState(chatProfile?.is_default);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -98,12 +100,16 @@ function CreateChatProfile({ route }) {
     formData.append("chat_description", description);
     formData.append("is_default", isDefault);
     if (profileImage !== chatProfile.chat_profile_picture) {
-      const { name, type } = getFileInfoFromUri(profileImage);
-      formData.append("chat_profile_picture", {
-        uri: profileImage,
-        name,
-        type,
-      });
+      if (profileImage === null) {
+        formData.append("profile_picture", null);
+      } else {
+        const { name, type } = getFileInfoFromUri(profileImage);
+        formData.append("chat_profile_picture", {
+          uri: profileImage,
+          name,
+          type,
+        });
+      }
     }
 
     accountAPI
@@ -177,7 +183,7 @@ function CreateChatProfile({ route }) {
               <TouchableOpacity
                 onPress={() => {
                   if (profileImage !== null) {
-                    //   setModalVisible(true);
+                    setModalVisible(true);
                   } else {
                     pickImage();
                   }
@@ -331,6 +337,69 @@ function CreateChatProfile({ route }) {
               </Text>
             </TouchableOpacity>
           </View>
+
+          {/* 이미지 업로드 및 삭제 모달 */}
+          <Modal
+            isVisible={modalVisible}
+            onBackdropPress={() => setModalVisible((prev) => !prev)}
+            animationIn="slideInUp"
+            animationOut="slideOutDown"
+            style={{ justifyContent: "flex-end" }}
+          >
+            <View
+              style={{
+                backgroundColor: "rgb(38,38,39)",
+                flex: 0.2,
+                borderTopLeftRadius: 12,
+                borderTopRightRadius: 12,
+                padding: 20,
+                gap: 10,
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => setModalVisible((prev) => !prev)}
+                style={{ alignItems: "flex-end" }}
+              >
+                <FontAwesome name="close" size={24} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={async () => {
+                  await pickImage();
+                  setModalVisible(false);
+                }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  backgroundColor: "rgb(51 51 51)",
+                  padding: 18,
+                  borderRadius: 8,
+                  gap: 7,
+                }}
+              >
+                <FontAwesome name="picture-o" size={14} color="white" />
+                <Text style={{ color: "white", fontSize: 16 }}>
+                  이미지 업로드
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setProfileImage(null);
+                  setModalVisible(false);
+                }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  backgroundColor: "rgb(51 51 51)",
+                  padding: 18,
+                  borderRadius: 8,
+                  gap: 7,
+                }}
+              >
+                <FontAwesome name="close" size={14} color="white" />
+                <Text style={{ color: "white", fontSize: 16 }}>삭제</Text>
+              </TouchableOpacity>
+            </View>
+          </Modal>
         </SafeAreaView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
