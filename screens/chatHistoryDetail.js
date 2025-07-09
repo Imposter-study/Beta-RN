@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -12,12 +13,17 @@ import roomAPI from "../apis/roomAPI";
 import { useEffect, useState } from "react";
 import Markdown from "react-native-markdown-display";
 import characterAPI from "../apis/characterAPI";
+import Modal from "react-native-modal";
+import { useNavigation } from "@react-navigation/native";
 
 function ChatHistoryDetail({ route }) {
   const { room_id, history } = route.params;
+  const navigation = useNavigation();
+
   const [chatHistory, setChatHistory] = useState([]);
   const [character, setCharacter] = useState({});
   const [intros, setIntro] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
@@ -47,6 +53,16 @@ function ChatHistoryDetail({ route }) {
     ),
   };
 
+  const getFormattedDate = () => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(now.getDate()).padStart(2, "0")} ${String(
+      now.getHours()
+    ).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  };
+
   const getCharacterInfo = (characterId) => {
     characterAPI
       .get(`${characterId}/`)
@@ -70,6 +86,32 @@ function ChatHistoryDetail({ route }) {
       })
       .catch((error) => {
         console.log("대화내역 상세조회 실패", error?.response);
+      });
+  };
+
+  const handleChatHistory = async (isSave = false) => {
+    if (isSave) {
+      try {
+        const saveHistory = await roomAPI.post(`${room_id}/histories/`, {
+          title: `${getFormattedDate()}에 저장된 대화`,
+        });
+        console.log("대화내역 저장 성공");
+      } catch (error) {
+        console.log("대화내역 저장 실패", error?.response);
+      }
+    }
+
+    roomAPI
+      .patch(`${room_id}/histories/${history.history_id}/`)
+      .then((response) => {
+        console.log("대화내역 불러오기 성공:\n", response.data);
+        setModalVisible(false);
+        navigation.navigate("Chat", {
+          character: { room_id, character_id: character.character_id },
+        });
+      })
+      .catch((error) => {
+        console.log("대화내역 불러오기 실패", error?.response);
       });
   };
 
@@ -149,6 +191,7 @@ function ChatHistoryDetail({ route }) {
       </ScrollView>
       <View style={{ paddingHorizontal: 20 }}>
         <TouchableOpacity
+          onPress={() => setModalVisible(true)}
           style={{
             alignItems: "center",
             backgroundColor: "rgb(82, 32, 204)",
@@ -160,6 +203,53 @@ function ChatHistoryDetail({ route }) {
           <Text style={{ color: "white", fontSize: 18 }}>대화 이어하기</Text>
         </TouchableOpacity>
       </View>
+
+      <Modal
+        isVisible={modalVisible}
+        style={{ alignItems: "center", justifyContent: "center" }}
+      >
+        <View
+          style={{
+            width: Dimensions.get("window").width * 0.8,
+            backgroundColor: "rgb(38 39 39)",
+            padding: 20,
+            borderRadius: 16,
+            gap: 10,
+          }}
+        >
+          <View style={{ alignItems: "center", marginVertical: 10 }}>
+            <Text style={{ color: "white", fontSize: 18 }}>
+              기존 대화 내역을 저장하고 이어할까요?
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <TouchableOpacity
+              onPress={handleChatHistory}
+              style={{
+                flex: 1,
+                backgroundColor: "rgba(62,62,65,.9)",
+                alignItems: "center",
+                borderRadius: 6,
+              }}
+            >
+              <Text style={{ color: "white", padding: 10 }}>저장 안함</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                handleChatHistory(true);
+              }}
+              style={{
+                flex: 1,
+                backgroundColor: "rgb(124 103 255)",
+                alignItems: "center",
+                borderRadius: 6,
+              }}
+            >
+              <Text style={{ color: "white", padding: 10 }}>저장</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
