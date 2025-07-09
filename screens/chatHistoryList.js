@@ -13,9 +13,12 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from "react";
 import roomAPI from "../apis/roomAPI";
 import Modal from "react-native-modal";
+import { useNavigation } from "@react-navigation/native";
 
 function ChatHistoryList({ route }) {
   const { room_id } = route.params;
+  const navigation = useNavigation();
+
   const [histories, setHistories] = useState([]);
   const [historyOption, setHistoryOption] = useState(null);
   const [historyOptionId, setHistoryOptionId] = useState(null);
@@ -109,7 +112,11 @@ function ChatHistoryList({ route }) {
 
         {histories.map((history) => (
           <View key={history.history_id} style={styles.historyItem}>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("ChatHistoryDetail", { room_id, history });
+              }}
+            >
               <Text style={{ color: "white" }}>{history.title}</Text>
               <View style={{ flexDirection: "row" }}>
                 <Text style={{ color: "#ffffff80" }}>

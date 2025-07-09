@@ -20,6 +20,7 @@ import MoreScreen from "./screens/moreScreen";
 import ProfileScreen from "./screens/profileScreen";
 import CreateChatProfile from "./screens/createChatProfile";
 import ChatHistoryList from "./screens/chatHistoryList";
+import ChatHistoryDetail from "./screens/chatHistoryDetail";
 
 const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,11 @@ export default function App() {
           <Stack.Screen name="Chat" component={ChatScreen} />
           {/* 대화 내역 목록 스크린 */}
           <Stack.Screen name="ChatHistoryList" component={ChatHistoryList} />
+          {/* 대화 내역 상세 스크린 */}
+          <Stack.Screen
+            name="ChatHistoryDetail"
+            component={ChatHistoryDetail}
+          />
           {/* 캐릭터 상세 스크린 */}
           <Stack.Screen
             name="CharacterDetail"
