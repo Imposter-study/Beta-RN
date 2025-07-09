@@ -23,6 +23,7 @@ import roomAPI from "../apis/roomAPI";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Modal from "react-native-modal";
 import Feather from "@expo/vector-icons/Feather";
+import Toast from "react-native-toast-message";
 
 function ChatScreen({ route }) {
   const navigation = useNavigation();
@@ -55,11 +56,10 @@ function ChatScreen({ route }) {
   const [suggestions, setSuggestions] = useState([]);
   const [genSuggestions, setGenSuggestions] = useState(false);
   const [sideModalVisible, setSideModalVisible] = useState(false);
-  const [historyTitle, setHistorytitle] = useState(`${getFormattedDate()}에 저장된 대화`);
+  const [historyTitle, setHistorytitle] = useState("");
   const [historyTitleModalVisible, setHistorytitleModalVisible] =
     useState(false);
   const [pendingModal, setPendingModal] = useState(null);
-
 
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
@@ -260,6 +260,23 @@ function ChatScreen({ route }) {
   const sendSuggestionReply = (message) => {
     setMessage(message);
     setSuggestions([]);
+  };
+
+  const saveChatHistory = () => {
+    roomAPI
+      .post(`${room_id}/histories/`, { title: historyTitle })
+      .then((response) => {
+        console.log("대화 내역 저장 성공: \n", response.data);
+        setHistorytitleModalVisible(false);
+        Toast.show({
+          type: "info",
+          text1: "대화 내역을 저장하였습니다",
+          visibilityTime: 1000,
+        });
+      })
+      .catch((error) => {
+        console.log("대화 내역 저장 실패", error?.response);
+      });
   };
 
   const DotsLoading = () => {
@@ -840,6 +857,7 @@ function ChatScreen({ route }) {
             </Text>
             <TouchableOpacity
               onPress={() => {
+                setHistorytitle(`${getFormattedDate()}에 저장된 대화`);
                 setSideModalVisible(false);
                 setPendingModal("historyTitle");
               }}
@@ -938,6 +956,7 @@ function ChatScreen({ route }) {
           />
           <View style={{ flexDirection: "row", gap: 10 }}>
             <TouchableOpacity
+              onPress={() => setHistorytitleModalVisible(false)}
               style={{
                 flex: 1,
                 backgroundColor: "rgba(62,62,65,.9)",
@@ -948,6 +967,7 @@ function ChatScreen({ route }) {
               <Text style={{ color: "white", padding: 10 }}>취소</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={saveChatHistory}
               style={{
                 flex: 1,
                 backgroundColor: "rgb(124 103 255)",
