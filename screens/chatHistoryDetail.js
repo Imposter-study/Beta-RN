@@ -122,7 +122,7 @@ function ChatHistoryDetail({ route }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back-sharp" size={24} color="white" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>

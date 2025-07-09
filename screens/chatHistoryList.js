@@ -7,10 +7,11 @@ import {
   Dimensions,
   TextInput,
   Alert,
+  RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import roomAPI from "../apis/roomAPI";
 import Modal from "react-native-modal";
 import { useNavigation } from "@react-navigation/native";
@@ -25,6 +26,7 @@ function ChatHistoryList({ route }) {
   const [historyTitle, setHistorytitle] = useState("");
   const [historyTitleModalVisible, setHistorytitleModalVisible] =
     useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getChatHistories = () => {
     roomAPI
@@ -81,6 +83,12 @@ function ChatHistoryList({ route }) {
     ]);
   };
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([getChatHistories()]);
+    setRefreshing(false);
+  }, []);
+
   useEffect(() => {
     getChatHistories();
   }, []);
@@ -89,7 +97,7 @@ function ChatHistoryList({ route }) {
     <SafeAreaView style={styles.container}>
       {/* 헤더 */}
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="chevron-back-sharp" size={24} color="white" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
@@ -100,6 +108,9 @@ function ChatHistoryList({ route }) {
 
       {/* 스크롤 영역 */}
       <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         onTouchEnd={() => {
           if (historyOption !== null) {
             setHistoryOption(null); // 옵션 메뉴 닫기
