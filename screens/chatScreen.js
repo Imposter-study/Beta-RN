@@ -10,6 +10,7 @@ import {
   Platform,
   Keyboard,
   Image,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -43,6 +44,7 @@ function ChatScreen({ route }) {
   const [genResponse, setGenResponse] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [genSuggestions, setGenSuggestions] = useState(false);
+  const [sideModalVisible, setSideModalVisible] = useState(false);
 
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
@@ -338,7 +340,9 @@ function ChatScreen({ route }) {
                     <Text style={styles.headerTitle}>대화 삭제</Text>
                   )}
                 </View>
-                <Ionicons name="menu" size={24} color="white" />
+                <TouchableOpacity onPress={() => setSideModalVisible(true)}>
+                  <Ionicons name="menu" size={24} color="white" />
+                </TouchableOpacity>
               </View>
 
               <ScrollView
@@ -778,6 +782,93 @@ function ChatScreen({ route }) {
                 >
                   <FontAwesome6 name="trash-can" size={16} color="red" />
                   <Text style={{ color: "red", fontSize: 16 }}>삭제</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+
+          {/* 사이드 모달 */}
+          <Modal
+            isVisible={sideModalVisible}
+            onBackdropPress={() => setSideModalVisible(false)}
+            animationIn="slideInRight"
+            animationOut="slideOutRight"
+            style={{
+              margin: 0,
+              justifyContent: "flex-end",
+              alignItems: "flex-end",
+            }}
+          >
+            <View
+              style={{
+                width: Dimensions.get("window").width * 0.7,
+                height: "100%",
+                backgroundColor: "rgb(38 39 39)",
+              }}
+            >
+              <View style={{ marginTop: 50, marginHorizontal: 10 }}>
+                <Text
+                  style={{
+                    color: "rgba(255, 255, 255, 0.5)",
+                    paddingVertical: 10,
+                  }}
+                >
+                  대화방 관리
+                </Text>
+                <TouchableOpacity>
+                  <Text
+                    style={{
+                      color: "rgb(209 213 219)",
+                      fontSize: 16,
+                      paddingVertical: 10,
+                    }}
+                  >
+                    대화 저장
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "rgb(209 213 219)",
+                      fontSize: 16,
+                      paddingVertical: 10,
+                    }}
+                  >
+                    저장힌 대화 불러오기
+                  </Text>
+                  <Ionicons
+                    name="chevron-forward-sharp"
+                    size={16}
+                    color="#ffffff80"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Text
+                    style={{
+                      color: "rgb(209 213 219)",
+                      fontSize: 16,
+                      paddingVertical: 10,
+                    }}
+                  >
+                    대화 삭제
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Text
+                    style={{
+                      color: "rgb(209 213 219)",
+                      fontSize: 16,
+                      paddingVertical: 10,
+                    }}
+                  >
+                    초기화
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
