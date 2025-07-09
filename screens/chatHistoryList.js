@@ -4,16 +4,23 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
+  TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from "react";
 import roomAPI from "../apis/roomAPI";
+import Modal from "react-native-modal";
 
 function ChatHistoryList({ route }) {
   const { room_id } = route.params;
   const [histories, setHistories] = useState([]);
   const [historyOption, setHistoryOption] = useState(null);
+  const [historyOptionId, setHistoryOptionId] = useState(null);
+  const [historyTitle, setHistorytitle] = useState("");
+  const [historyTitleModalVisible, setHistorytitleModalVisible] =
+    useState(false);
 
   const getChatHistories = () => {
     roomAPI
@@ -24,6 +31,25 @@ function ChatHistoryList({ route }) {
       })
       .catch((error) => {
         console.log("대화 내역 조회 실패", error?.response);
+      });
+  };
+
+  const editChatHistoryTitle = () => {
+    roomAPI
+      .put(`${room_id}/histories/${historyOptionId}/`, { title: historyTitle })
+      .then((response) => {
+        console.log("대화 내역 제목 수정 성공\n", response.data.title);
+        setHistories((prev) =>
+          prev.map((item) =>
+            item.history_id !== historyOptionId
+              ? item
+              : { ...item, title: response.data.title }
+          )
+        );
+        setHistorytitleModalVisible(false);
+      })
+      .catch((error) => {
+        console.log("대화내역 재목 수정 실패", error?.response);
       });
   };
 
@@ -71,7 +97,10 @@ function ChatHistoryList({ route }) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => setHistoryOption(history.history_id)}
+              onPress={() => {
+                setHistoryOption(history.history_id);
+                setHistoryOptionId(history.history_id);
+              }}
             >
               <Ionicons
                 name="ellipsis-vertical-sharp"
@@ -86,6 +115,8 @@ function ChatHistoryList({ route }) {
                 <TouchableOpacity
                   onPress={() => {
                     console.log("제목 수정");
+                    setHistorytitle(history.title);
+                    setHistorytitleModalVisible(true);
                   }}
                   style={{ padding: 15 }}
                 >
@@ -109,6 +140,67 @@ function ChatHistoryList({ route }) {
           </View>
         ))}
       </ScrollView>
+
+      {/* 대화 내역 제목 입력 모달 */}
+      <Modal
+        isVisible={historyTitleModalVisible}
+        avoidKeyboard={true}
+        style={{ alignItems: "center", justifyContent: "center" }}
+      >
+        <View
+          style={{
+            width: Dimensions.get("window").width * 0.8,
+            backgroundColor: "rgb(38 39 39)",
+            padding: 20,
+            borderRadius: 16,
+            gap: 10,
+          }}
+        >
+          <View style={{ alignItems: "center", marginTop: 10 }}>
+            <Text style={{ color: "white", fontSize: 18 }}>
+              대화 제목을 입력해주세요
+            </Text>
+          </View>
+          <TextInput
+            value={historyTitle}
+            onChangeText={setHistorytitle}
+            style={{
+              backgroundColor: "rgb(45,45,45)",
+              padding: 10,
+              marginVertical: 10,
+              borderRadius: 6,
+              borderWidth: 0.3,
+              borderColor: "rgba(225, 225,225, 0.3)",
+              fontSize: 16,
+              color: "white",
+            }}
+          />
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <TouchableOpacity
+              onPress={() => setHistorytitleModalVisible(false)}
+              style={{
+                flex: 1,
+                backgroundColor: "rgba(62,62,65,.9)",
+                alignItems: "center",
+                borderRadius: 6,
+              }}
+            >
+              <Text style={{ color: "white", padding: 10 }}>취소</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => editChatHistoryTitle()}
+              style={{
+                flex: 1,
+                backgroundColor: "rgb(124 103 255)",
+                alignItems: "center",
+                borderRadius: 6,
+              }}
+            >
+              <Text style={{ color: "white", padding: 10 }}>저장</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
