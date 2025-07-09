@@ -6,6 +6,7 @@ import {
   ScrollView,
   Dimensions,
   TextInput,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -51,6 +52,30 @@ function ChatHistoryList({ route }) {
       .catch((error) => {
         console.log("대화내역 재목 수정 실패", error?.response);
       });
+  };
+
+  const deleteChatHistory = () => {
+    const title = "저장된 대화를 삭제하시겠어요?";
+    const message = "대화를 삭제하면 다시 복구할 수 없어요";
+    Alert.alert(title, message, [
+      { text: "취소" },
+      {
+        text: "삭제",
+        onPress: () => {
+          roomAPI
+            .delete(`${room_id}/histories/${historyOptionId}/`)
+            .then((response) => {
+              console.log("대화 내역 삭제 성공");
+              setHistories((prev) =>
+                prev.filter((item) => item.history_id !== historyOptionId)
+              );
+            })
+            .catch((error) => {
+              console.log("대화내역 삭제 실패", error?.response);
+            });
+        },
+      },
+    ]);
   };
 
   useEffect(() => {
@@ -127,7 +152,7 @@ function ChatHistoryList({ route }) {
                 <View style={{ backgroundColor: "#ffffff14", height: 1 }} />
                 <TouchableOpacity
                   onPress={() => {
-                    console.log("대화 삭제");
+                    deleteChatHistory();
                   }}
                   style={{ padding: 15 }}
                 >
