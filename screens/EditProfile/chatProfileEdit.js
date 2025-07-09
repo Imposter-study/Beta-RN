@@ -4,31 +4,98 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Image,
+  RefreshControl,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
+import accountAPI from "../../apis/accountAPI";
+import { useState, useEffect, useCallback } from "react";
+import { DOMAIN } from "../../config";
 
 function ChatEdit() {
+  const navigation = useNavigation();
+
+  const [chatProfiles, setChatProfiles] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const getChatProfile = () => {
+    accountAPI
+      .get(`chat_profiles/`)
+      .then((response) => {
+        console.log("대화 프로필 조회 성공:\n", response.data);
+        setChatProfiles(response.data);
+      })
+      .catch((error) => {
+        console.log("대화 프로필 조회 실패", error?.response);
+      });
+  };
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([getChatProfile()]);
+    setRefreshing(false);
+  }, []);
+
+  useEffect(() => {
+    getChatProfile();
+  }, []);
+
   return (
     <View style={styles.formContainer}>
-      <TouchableOpacity style={styles.addProfileButton}>
+      <TouchableOpacity
+        style={styles.addProfileButton}
+        onPress={() => navigation.navigate("ChatProfile")}
+      >
         <Ionicons name="add" size={30} color="white" style={styles.addIcon} />
         <Text style={styles.addProfileText}>대화 프로필 추가</Text>
       </TouchableOpacity>
 
-      <ScrollView>
-        <View style={styles.profileItem}>
-          <View style={styles.profileInfo}>
-            <FontAwesome name="user-circle-o" size={40} color="gray" />
-            <View style={styles.profileTextContainer}>
-              <Text style={styles.profileNickname}>채팅 닉네임</Text>
-              <Text style={styles.profileDescription}>설명없음</Text>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {chatProfiles.map((profile) => (
+          <View key={profile.uuid} style={styles.profileItem}>
+            <View style={styles.profileInfo}>
+              {profile.chat_profile_picture !== null ? (
+                <Image
+                  source={{
+                    uri: `http://${DOMAIN}` + profile.chat_profile_picture,
+                  }}
+                  style={{ width: 40, height: 40, borderRadius: 100 }}
+                />
+              ) : (
+                <FontAwesome name="user-circle-o" size={40} color="gray" />
+              )}
+              <View style={styles.profileTextContainer}>
+                <Text style={styles.profileNickname}>
+                  {profile.chat_nickname}
+                </Text>
+                <Text style={styles.profileDescription}>
+                  {profile.chat_description || "설명없음"}
+                </Text>
+              </View>
             </View>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("ChatProfile", {
+                  chatProfile: profile,
+                  isEdit: true,
+                })
+              }
+            >
+              <FontAwesome
+                name="pencil"
+                size={18}
+                color="#ffffff80"
+                style={{ padding: 5 }}
+              />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity>
-            <FontAwesome name="pencil" size={18} color="#ffffff80" />
-          </TouchableOpacity>
-        </View>
+        ))}
       </ScrollView>
     </View>
   );
