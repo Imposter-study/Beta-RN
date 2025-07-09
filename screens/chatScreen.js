@@ -15,7 +15,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState, useRef, use } from "react";
+import { useEffect, useState, useRef } from "react";
 import Markdown from "react-native-markdown-display";
 import * as SecureStore from "expo-secure-store";
 import characterAPI from "../apis/characterAPI";
@@ -875,7 +875,7 @@ function ChatScreen({ route }) {
             <TouchableOpacity
               onPress={() => {
                 setSideModalVisible(false);
-                navigation.navigate("ChatHistoryList");
+                navigation.navigate("ChatHistoryList", { room_id });
               }}
               style={{
                 flexDirection: "row",
