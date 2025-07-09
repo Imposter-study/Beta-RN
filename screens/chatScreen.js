@@ -873,6 +873,10 @@ function ChatScreen({ route }) {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() => {
+                setSideModalVisible(false);
+                navigation.navigate("ChatHistoryList");
+              }}
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
@@ -886,7 +890,7 @@ function ChatScreen({ route }) {
                   paddingVertical: 10,
                 }}
               >
-                저장힌 대화 불러오기
+                저장된 대화 불러오기
               </Text>
               <Ionicons
                 name="chevron-forward-sharp"
