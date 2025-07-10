@@ -161,14 +161,30 @@ function MyPageScreen() {
 
           {/* 팔로잉, 팔로워 */}
           <View style={styles.followContainer}>
-            <View style={styles.followItem}>
-              <Text style={styles.followNumber}>0</Text>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Follow", {
+                  user,
+                  type: "following",
+                })
+              }
+              style={styles.followItem}
+            >
+              <Text style={styles.followNumber}>{user.following_count}</Text>
               <Text style={styles.followLabel}>팔로잉</Text>
-            </View>
-            <View style={styles.followItem}>
-              <Text style={styles.followNumber}>0</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Follow", {
+                  user,
+                  type: "follower",
+                })
+              }
+              style={styles.followItem}
+            >
+              <Text style={styles.followNumber}>{user.followers_count}</Text>
               <Text style={styles.followLabel}>팔로워</Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
           {/* 프로필 공유 및 수정 버튼 */}
