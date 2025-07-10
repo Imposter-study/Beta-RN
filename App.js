@@ -21,7 +21,7 @@ import ProfileScreen from "./screens/profileScreen";
 import CreateChatProfile from "./screens/createChatProfile";
 import ChatHistoryList from "./screens/chatHistoryList";
 import ChatHistoryDetail from "./screens/chatHistoryDetail";
-import FollowScreen from "./screens/FollowScreen";
+import FollowScreen from "./screens/followScreen";
 
 const Stack = createNativeStackNavigator();
 
