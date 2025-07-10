@@ -10,6 +10,7 @@ import {
   Platform,
   Keyboard,
   Image,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -22,11 +23,22 @@ import roomAPI from "../apis/roomAPI";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Modal from "react-native-modal";
 import Feather from "@expo/vector-icons/Feather";
+import Toast from "react-native-toast-message";
 
 function ChatScreen({ route }) {
   const navigation = useNavigation();
   const scrollViewRef = useRef();
   const { room_id, character_id } = route.params.character;
+
+  const getFormattedDate = () => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}-${String(now.getDate()).padStart(2, "0")} ${String(
+      now.getHours()
+    ).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  };
 
   const [loading, setLoading] = useState(true);
   const [character, setCharacter] = useState({});
@@ -43,6 +55,11 @@ function ChatScreen({ route }) {
   const [genResponse, setGenResponse] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [genSuggestions, setGenSuggestions] = useState(false);
+  const [sideModalVisible, setSideModalVisible] = useState(false);
+  const [historyTitle, setHistorytitle] = useState("");
+  const [historyTitleModalVisible, setHistorytitleModalVisible] =
+    useState(false);
+  const [pendingModal, setPendingModal] = useState(null);
 
   const markdownRules = {
     paragraph: (node, children, parent, styles) => {
@@ -245,6 +262,23 @@ function ChatScreen({ route }) {
     setSuggestions([]);
   };
 
+  const saveChatHistory = () => {
+    roomAPI
+      .post(`${room_id}/histories/`, { title: historyTitle })
+      .then((response) => {
+        console.log("대화 내역 저장 성공: \n", response.data);
+        setHistorytitleModalVisible(false);
+        Toast.show({
+          type: "info",
+          text1: "대화 내역을 저장하였습니다",
+          visibilityTime: 1000,
+        });
+      })
+      .catch((error) => {
+        console.log("대화 내역 저장 실패", error?.response);
+      });
+  };
+
   const DotsLoading = () => {
     const [dots, setDots] = useState("•");
 
@@ -338,7 +372,9 @@ function ChatScreen({ route }) {
                     <Text style={styles.headerTitle}>대화 삭제</Text>
                   )}
                 </View>
-                <Ionicons name="menu" size={24} color="white" />
+                <TouchableOpacity onPress={() => setSideModalVisible(true)}>
+                  <Ionicons name="menu" size={24} color="white" />
+                </TouchableOpacity>
               </View>
 
               <ScrollView
@@ -784,6 +820,170 @@ function ChatScreen({ route }) {
           </Modal>
         </SafeAreaView>
       </TouchableWithoutFeedback>
+
+      {/* 사이드 모달 */}
+      <Modal
+        isVisible={sideModalVisible}
+        onBackdropPress={() => setSideModalVisible(false)}
+        animationIn="slideInRight"
+        animationOut="slideOutRight"
+        onModalHide={() => {
+          if (pendingModal === "historyTitle") {
+            setHistorytitleModalVisible(true);
+            setPendingModal(null);
+          }
+        }}
+        style={{
+          margin: 0,
+          justifyContent: "flex-end",
+          alignItems: "flex-end",
+        }}
+      >
+        <View
+          style={{
+            width: Dimensions.get("window").width * 0.7,
+            height: "100%",
+            backgroundColor: "rgb(38 39 39)",
+          }}
+        >
+          <View style={{ marginTop: 50, marginHorizontal: 10 }}>
+            <Text
+              style={{
+                color: "rgba(255, 255, 255, 0.5)",
+                paddingVertical: 10,
+              }}
+            >
+              대화방 관리
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                setHistorytitle(`${getFormattedDate()}에 저장된 대화`);
+                setSideModalVisible(false);
+                setPendingModal("historyTitle");
+              }}
+            >
+              <Text
+                style={{
+                  color: "rgb(209 213 219)",
+                  fontSize: 16,
+                  paddingVertical: 10,
+                }}
+              >
+                대화 저장
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setSideModalVisible(false);
+                navigation.navigate("ChatHistoryList", { room_id });
+              }}
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{
+                  color: "rgb(209 213 219)",
+                  fontSize: 16,
+                  paddingVertical: 10,
+                }}
+              >
+                저장된 대화 불러오기
+              </Text>
+              <Ionicons
+                name="chevron-forward-sharp"
+                size={16}
+                color="#ffffff80"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text
+                style={{
+                  color: "rgb(209 213 219)",
+                  fontSize: 16,
+                  paddingVertical: 10,
+                }}
+              >
+                대화 삭제
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text
+                style={{
+                  color: "rgb(209 213 219)",
+                  fontSize: 16,
+                  paddingVertical: 10,
+                }}
+              >
+                초기화
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 대화 내역 제목 입력 모달 */}
+      <Modal
+        isVisible={historyTitleModalVisible}
+        avoidKeyboard={true}
+        style={{ alignItems: "center", justifyContent: "center" }}
+      >
+        <View
+          style={{
+            width: Dimensions.get("window").width * 0.8,
+            backgroundColor: "rgb(38 39 39)",
+            padding: 20,
+            borderRadius: 16,
+            gap: 10,
+          }}
+        >
+          <View style={{ alignItems: "center", marginTop: 10 }}>
+            <Text style={{ color: "white", fontSize: 18 }}>
+              대화 제목을 입력해주세요
+            </Text>
+          </View>
+          <TextInput
+            value={historyTitle}
+            onChangeText={setHistorytitle}
+            style={{
+              backgroundColor: "rgb(45,45,45)",
+              padding: 10,
+              marginVertical: 10,
+              borderRadius: 6,
+              borderWidth: 0.3,
+              borderColor: "rgba(225, 225,225, 0.3)",
+              fontSize: 16,
+              color: "white",
+            }}
+          />
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <TouchableOpacity
+              onPress={() => setHistorytitleModalVisible(false)}
+              style={{
+                flex: 1,
+                backgroundColor: "rgba(62,62,65,.9)",
+                alignItems: "center",
+                borderRadius: 6,
+              }}
+            >
+              <Text style={{ color: "white", padding: 10 }}>취소</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={saveChatHistory}
+              style={{
+                flex: 1,
+                backgroundColor: "rgb(124 103 255)",
+                alignItems: "center",
+                borderRadius: 6,
+              }}
+            >
+              <Text style={{ color: "white", padding: 10 }}>저장</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </KeyboardAvoidingView>
   );
 }
