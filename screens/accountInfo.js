@@ -9,12 +9,15 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Alert,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from "react";
 import accountAPI from "../apis/accountAPI";
 import Toast from "react-native-toast-message";
+import * as SecureStore from "expo-secure-store";
 
 function AccountInfo() {
   const navigation = useNavigation();
@@ -22,6 +25,8 @@ function AccountInfo() {
   const [birthday, setBirthday] = useState({ year: "", month: "", date: "" });
   const [gender, setGender] = useState(null);
   const [focused, setFocused] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [password, setPassword] = useState("");
 
   const getUserProfile = async () => {
     accountAPI
@@ -61,6 +66,39 @@ function AccountInfo() {
       });
   };
 
+  const deleteAccount = () => {
+    Alert.alert(
+      "정말로 탈퇴하시겠습니까?",
+      "계정은 90일 후 완전히 삭제됩니다.",
+      [
+        { text: "취소" },
+        {
+          text: "탈퇴",
+          onPress: () => {
+            accountAPI
+              .post(`delete/`, { password })
+              .then(async (response) => {
+                await SecureStore.deleteItemAsync("access");
+                await SecureStore.deleteItemAsync("refresh");
+                await SecureStore.deleteItemAsync("uuid");
+
+                navigation.navigate("Home");
+
+                Toast.show({ type: "success", text1: "탈퇴가 완료되었습니다" });
+              })
+              .catch((error) => {
+                console.log("탈퇴 실패", error.response.data);
+                Toast.show({
+                  type: "error",
+                  text1: error?.response?.data?.password,
+                });
+              });
+          },
+        },
+      ]
+    );
+  };
+
   useEffect(() => {
     getUserProfile();
   }, []);
@@ -84,17 +122,17 @@ function AccountInfo() {
             </TouchableOpacity>
           </View>
 
-          <View style={{ margin: 20 }}>
-            <Text style={{ color: "rgba(255, 255, 255/.5)" }}>
-              계정 정보를 바탕으로 더 재밌는 캐릭터를 추천해 드릴게요!
-            </Text>
-            <Text style={{ color: "rgba(255, 255, 255/.5)" }}>
-              캐릭터와의 대화에는 영향을 끼치지 않으며, 다른 유저는 이 정보를 볼
-              수 없어요
-            </Text>
-          </View>
+          <ScrollView style={{ flex: 1, marginHorizontal: 20 }}>
+            <View style={{ marginVertical: 20 }}>
+              <Text style={{ color: "rgba(255, 255, 255/.5)" }}>
+                계정 정보를 바탕으로 더 재밌는 캐릭터를 추천해 드릴게요!
+              </Text>
+              <Text style={{ color: "rgba(255, 255, 255/.5)" }}>
+                캐릭터와의 대화에는 영향을 끼치지 않으며, 다른 유저는 이 정보를
+                볼 수 없어요
+              </Text>
+            </View>
 
-          <View style={{ flex: 1, marginHorizontal: 20 }}>
             {/* 생년월일 입력 */}
             <View style={styles.section}>
               <Text style={styles.label}>생년월일</Text>
@@ -159,13 +197,50 @@ function AccountInfo() {
                 ))}
               </View>
             </View>
-          </View>
+
+            {/* 패스워드 입력 */}
+            {isVisible ? (
+              <View style={styles.section}>
+                <Text style={styles.label}>패스워드</Text>
+                <View style={[styles.inputRow, { alignItems: "center" }]}>
+                  <TextInput
+                    placeholder="패스워드"
+                    placeholderTextColor="rgba(225, 225,225, 0.5)"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={true}
+                    onFocus={() => setFocused("password")}
+                    onBlur={() => setFocused("")}
+                    style={[
+                      styles.input,
+                      focused === "password" && styles.inputFocused,
+                      { flex: 1 },
+                    ]}
+                  />
+                  <TouchableOpacity onPress={deleteAccount}>
+                    <Text
+                      style={{
+                        color: "white",
+                        padding: 10,
+                        backgroundColor: "rgb(103, 40, 225)",
+                        borderRadius: 6,
+                      }}
+                    >
+                      완료
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : null}
+          </ScrollView>
           <View style={{ alignItems: "center" }}>
             <Text
+              onPress={() => setIsVisible(true)}
               style={{
                 color: "rgba(255, 255, 255/.5)",
                 textDecorationLine: "underline",
                 fontSize: 16,
+                padding: 10,
               }}
             >
               탈퇴하기
