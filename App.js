@@ -21,6 +21,7 @@ import ProfileScreen from "./screens/profileScreen";
 import CreateChatProfile from "./screens/createChatProfile";
 import ChatHistoryList from "./screens/chatHistoryList";
 import ChatHistoryDetail from "./screens/chatHistoryDetail";
+import FollowScreen from "./screens/FollowScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -70,6 +71,8 @@ export default function App() {
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           {/* 대화 프로필  */}
           <Stack.Screen name="ChatProfile" component={CreateChatProfile} />
+          {/* 팔로우 스크린 */}
+          <Stack.Screen name="Follow" component={FollowScreen} />
           {/* 카카오 로그인 */}
           <Stack.Screen name="KakaoLogin" component={KakaoLoginScreen} />
         </Stack.Navigator>
