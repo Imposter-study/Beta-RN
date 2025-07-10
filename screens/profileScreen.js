@@ -39,6 +39,18 @@ function ProfileScreen({ route }) {
       });
   };
 
+  const handleFollow = () => {
+    accountAPI
+      .post(`follow/`, { uuid: user.uuid })
+      .then((response) => {
+        console.log(response.data);
+        getUserProfile();
+      })
+      .catch((error) => {
+        console.log("팔로우/언팔로우 실패", error.response);
+      });
+  };
+
   useEffect(() => {
     getUserProfile();
   }, []);
@@ -124,11 +136,15 @@ function ProfileScreen({ route }) {
               {/* 팔로잉, 팔로워 */}
               <View style={styles.followContainer}>
                 <View style={styles.followItem}>
-                  <Text style={styles.followNumber}>0</Text>
+                  <Text style={styles.followNumber}>
+                    {user.following_count}
+                  </Text>
                   <Text style={styles.followLabel}>팔로잉</Text>
                 </View>
                 <View style={styles.followItem}>
-                  <Text style={styles.followNumber}>0</Text>
+                  <Text style={styles.followNumber}>
+                    {user.followers_count}
+                  </Text>
                   <Text style={styles.followLabel}>팔로워</Text>
                 </View>
               </View>
@@ -138,8 +154,17 @@ function ProfileScreen({ route }) {
                 <TouchableOpacity style={styles.profileButton}>
                   <Text style={styles.profileButtonText}>프로필 공유</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.followButton} onPress={null}>
-                  <Text style={styles.profileButtonText}>팔로우</Text>
+                <TouchableOpacity
+                  style={
+                    user.is_following
+                      ? styles.profileButton
+                      : styles.followButton
+                  }
+                  onPress={handleFollow}
+                >
+                  <Text style={styles.profileButtonText}>
+                    {user.is_following ? "팔로잉" : "팔로우"}
+                  </Text>
                 </TouchableOpacity>
               </View>
 
