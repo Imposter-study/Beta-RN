@@ -8,8 +8,6 @@ import {
   TouchableWithoutFeedback,
   Platform,
   Keyboard,
-  Image,
-  Dimensions,
   FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,9 +15,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import characterAPI from "../../../apis/characterAPI";
-
-const screenWidth = Dimensions.get("window").width;
-const imageWidth = screenWidth * 0.43;
+import { CharacterCard } from "../../../components/CharacterCard";
 
 function CharacterSearch() {
   const navigation = useNavigation();
@@ -40,50 +36,6 @@ function CharacterSearch() {
         console.log("캐릭터 검색 실패", error?.response);
         setCharacters([]);
       });
-  };
-
-  const renderItem = ({ index }) => {
-    return (
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() =>
-          navigation.navigate("CharacterDetail", {
-            character_id: characters[index].character_id,
-          })
-        }
-      >
-        <Image
-          source={{
-            uri: characters[index].character_image,
-          }}
-          style={styles.image}
-        />
-        <View>
-          <Text style={styles.name}>{characters[index].title}</Text>
-          <Text style={styles.intro}>{characters[index].presentation}</Text>
-          <View style={{ flexDirection: "row", gap: 5, flexWrap: "wrap" }}>
-            {characters[index].hashtags.map((item, index) => (
-              <Text key={index} style={styles.tag}>
-                #{item.tag_name}
-              </Text>
-            ))}
-          </View>
-          <Text
-            style={{
-              color: "#ffffff80",
-              borderRadius: 6,
-              backgroundColor: "black",
-              alignSelf: "flex-start",
-              paddingHorizontal: 4,
-              paddingVertical: 2,
-              marginTop: 4,
-            }}
-          >
-            @{characters[index].user.username}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
   };
 
   return (
@@ -107,7 +59,7 @@ function CharacterSearch() {
               style={[styles.textInput, focused && styles.textInputFocused]}
             />
           </View>
-          <View style={{ marginHorizontal: 20 }}>
+          <View style={{ marginHorizontal: 15 }}>
             <Text style={{ color: "white", fontSize: 20, fontWeight: "bold" }}>
               검색 결과
             </Text>
@@ -124,7 +76,7 @@ function CharacterSearch() {
           <FlatList
             data={characters}
             keyExtractor={(_, index) => index.toString()}
-            renderItem={renderItem}
+            renderItem={({ item }) => <CharacterCard item={item} />}
             numColumns={2}
             contentContainerStyle={styles.flatListContent}
             columnWrapperStyle={styles.columnWrapper}
@@ -145,7 +97,6 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    paddingHorizontal: 10,
     paddingVertical: 12,
     alignItems: "center",
     marginHorizontal: 10,
@@ -168,32 +119,12 @@ const styles = StyleSheet.create({
     borderColor: "rgb(103, 40, 225)",
   },
   flatListContent: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 12,
     paddingBottom: 24,
     marginTop: 20,
   },
   columnWrapper: {
     justifyContent: "space-between",
     marginBottom: 12,
-  },
-  card: {
-    marginBottom: 6,
-    gap: 4,
-    width: imageWidth,
-  },
-  image: {
-    width: "100%",
-    height: imageWidth,
-    borderRadius: 12,
-  },
-  name: {
-    color: "white",
-    fontWeight: "bold",
-  },
-  intro: {
-    color: "#ffffff80",
-  },
-  tag: {
-    color: "#ffffffb3",
   },
 });

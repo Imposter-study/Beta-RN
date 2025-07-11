@@ -2,10 +2,8 @@ import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import useCharacterStore from "../stores/useCharacterStore";
 import { useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
-import Markdown from "react-native-markdown-display";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNavigation } from "@react-navigation/native";
-import { markdownRules } from "../utils/markdownRules";
 import { SimpleAiMessage, UserMessage } from "./MessageBubble";
 
 function SituationCard({ situation, index }) {

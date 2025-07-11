@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import accountAPI from "../../../apis/accountAPI";
 import { DOMAIN } from "../../../config";
+import { CharacterCard } from "../../../components/CharacterCard";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.45;
@@ -55,37 +56,6 @@ function Profile({ route }) {
     getUserProfile();
   }, []);
 
-  const renderItem = ({ index }) => {
-    return (
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() =>
-          navigation.navigate("CharacterDetail", {
-            character_id: characters[index].character_id,
-          })
-        }
-      >
-        <Image
-          source={{
-            uri: `http://${DOMAIN}` + characters[index].character_image,
-          }}
-          style={styles.image}
-        />
-        <View>
-          <Text style={styles.name}>{characters[index].title}</Text>
-          <Text style={styles.intro}>{characters[index].presentation}</Text>
-          <View style={{ flexDirection: "row", gap: 5 }}>
-            {characters[index].hashtags.map((item, index) => (
-              <Text key={index} style={styles.tag}>
-                #{item.tag_name}
-              </Text>
-            ))}
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -104,7 +74,7 @@ function Profile({ route }) {
         <FlatList
           data={characters}
           keyExtractor={(_, index) => index.toString()}
-          renderItem={renderItem}
+          renderItem={({ item }) => <CharacterCard item={item} />}
           numColumns={2}
           contentContainerStyle={styles.flatListContent}
           columnWrapperStyle={styles.columnWrapper}
@@ -116,7 +86,7 @@ function Profile({ route }) {
                   {user.profile_picture ? (
                     <Image
                       source={{
-                        uri: `http://${DOMAIN}` + user.profile_picture,
+                        uri: user.profile_picture,
                       }}
                       style={{ width: 70, height: 70, borderRadius: 100 }}
                     />
