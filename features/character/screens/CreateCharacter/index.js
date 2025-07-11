@@ -21,6 +21,7 @@ import Toast from "react-native-toast-message";
 import Modal from "react-native-modal";
 import useCharacterStore from "../../../../stores/useCharacterStore";
 import characterAPI from "../../../../apis/characterAPI";
+import { getFileInfoFromUri } from "../../../../utils/imageUtils";
 
 function CreateCharacter({ route = {} }) {
   const {
@@ -45,24 +46,6 @@ function CreateCharacter({ route = {} }) {
     intro.length > 0 &&
     character_image
   );
-
-  const getFileInfoFromUri = (uri) => {
-    const uriParts = uri.split("/");
-    const fileName = uriParts[uriParts.length - 1];
-
-    const extension = fileName.split(".").pop()?.toLowerCase();
-    let mimeType = "image/jpeg"; // 기본값
-
-    if (extension === "png") mimeType = "image/png";
-    else if (extension === "jpg" || extension === "jpeg")
-      mimeType = "image/jpeg";
-    else if (extension === "webp") mimeType = "image/webp";
-
-    return {
-      name: fileName,
-      type: mimeType,
-    };
-  };
 
   const onClose = () => {
     const title = "지금 나가면 수정한 내용이 삭제돼요";

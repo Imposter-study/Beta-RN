@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import SocialEdit from "./socialProfileEdit";
 import ChatEdit from "./chatProfileEdit";
 import accountAPI from "../../../../apis/accountAPI";
+import { getFileInfoFromUri } from "../../../../utils/imageUtils";
 
 function EditProfile({ route }) {
   const navigation = useNavigation();
@@ -22,24 +23,6 @@ function EditProfile({ route }) {
   const user = route.params.user;
   const [editType, setEditType] = useState("social");
   const [editUser, setEditUser] = useState();
-
-  const getFileInfoFromUri = (uri) => {
-    const uriParts = uri.split("/");
-    const fileName = uriParts[uriParts.length - 1];
-
-    const extension = fileName.split(".").pop()?.toLowerCase();
-    let mimeType = "image/jpeg"; // 기본값
-
-    if (extension === "png") mimeType = "image/png";
-    else if (extension === "jpg" || extension === "jpeg")
-      mimeType = "image/jpeg";
-    else if (extension === "webp") mimeType = "image/webp";
-
-    return {
-      name: fileName,
-      type: mimeType,
-    };
-  };
 
   const editProfile = async () => {
     const formData = new FormData();

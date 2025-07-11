@@ -7,8 +7,8 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import useCharacterStore from "../../../../stores/useCharacterStore";
+import { pickImage } from "../../../../utils/imageUtils";
 
 function Content() {
   const {
@@ -26,18 +26,6 @@ function Content() {
 
   const MAX_LENGTH = 1200;
   const inputLength = name.length + description.length + character_info.length;
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
-  };
 
   return (
     <>

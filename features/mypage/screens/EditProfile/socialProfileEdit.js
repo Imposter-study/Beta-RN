@@ -9,9 +9,9 @@ import {
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useEffect, useState } from "react";
-import * as ImagePicker from "expo-image-picker";
 import Modal from "react-native-modal";
 import { DOMAIN } from "../../../../config";
+import { pickImage } from "../../../../utils/imageUtils";
 
 function SocialEdit({
   nickname: originalNiokname,
@@ -28,18 +28,6 @@ function SocialEdit({
     profile_picture !== null ? `http://${DOMAIN}` + profile_picture : null
   );
   const [focused, setFocused] = useState("");
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
-    }
-  };
 
   useEffect(() => {
     if (onChange) {

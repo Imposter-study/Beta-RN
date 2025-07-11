@@ -16,13 +16,13 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
-import * as ImagePicker from "expo-image-picker";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import Feather from "@expo/vector-icons/Feather";
 import Modal from "react-native-modal";
 import accountAPI from "../../../apis/accountAPI";
 import { DOMAIN } from "../../../config";
+import { pickImage, getFileInfoFromUri } from "../../../utils/imageUtils";
 
 function CreateChatProfile({ route }) {
   const { chatProfile = null, isEdit = false } = route.params || {};
@@ -37,36 +37,6 @@ function CreateChatProfile({ route }) {
   const [description, setDescription] = useState(chatProfile?.chat_description);
   const [isDefault, setIsDefult] = useState(chatProfile?.is_default || false);
   const [modalVisible, setModalVisible] = useState(false);
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
-    }
-  };
-
-  const getFileInfoFromUri = (uri) => {
-    const uriParts = uri.split("/");
-    const fileName = uriParts[uriParts.length - 1];
-
-    const extension = fileName.split(".").pop()?.toLowerCase();
-    let mimeType = "image/jpeg"; // 기본값
-
-    if (extension === "png") mimeType = "image/png";
-    else if (extension === "jpg" || extension === "jpeg")
-      mimeType = "image/jpeg";
-    else if (extension === "webp") mimeType = "image/webp";
-
-    return {
-      name: fileName,
-      type: mimeType,
-    };
-  };
 
   const createChatProfile = () => {
     const formData = new FormData();
