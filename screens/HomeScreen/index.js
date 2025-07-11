@@ -64,7 +64,9 @@ function HomeScreen() {
             </TouchableOpacity>
           </View>
           <View style={styles.navRight}>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("CharacterSearch")}
+            >
               <Feather name="search" size={24} color="white" />
             </TouchableOpacity>
             {isLoggedIn ? null : (

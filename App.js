@@ -23,6 +23,7 @@ import ChatHistoryList from "./screens/chatHistoryList";
 import ChatHistoryDetail from "./screens/chatHistoryDetail";
 import FollowScreen from "./screens/followScreen";
 import AccountInfo from "./screens/accountInfo";
+import CharacterSearch from "./screens/CharacterSearch";
 
 const Stack = createNativeStackNavigator();
 
@@ -51,6 +52,8 @@ export default function App() {
             name="ChatHistoryDetail"
             component={ChatHistoryDetail}
           />
+          {/* 캐릭터 검색 스크린 */}
+          <Stack.Screen name="CharacterSearch" component={CharacterSearch} />
           {/* 캐릭터 상세 스크린 */}
           <Stack.Screen
             name="CharacterDetail"
