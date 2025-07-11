@@ -5,39 +5,12 @@ import Feather from "@expo/vector-icons/Feather";
 import Markdown from "react-native-markdown-display";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNavigation } from "@react-navigation/native";
+import { markdownRules } from "../utils/markdownRules";
 
 function SituationCard({ situation, index }) {
   const navigation = useNavigation();
   const { character_image, deleteExampleSituation } = useCharacterStore();
   const [isOpen, setIsOpen] = useState(false);
-
-  const markdownRules = {
-    paragraph: (node, children, parent, styles) => {
-      const siblings = parent[0].children;
-      const isLast = node.index === siblings[siblings.length - 1].index;
-
-      return (
-        <Text
-          key={node.key}
-          style={{ color: "white", marginBottom: isLast ? 0 : 16 }}
-        >
-          {children}
-        </Text>
-      );
-    },
-
-    em: (node, children, parent, styles) => (
-      <Text key={node.key} style={{ fontStyle: "italic", color: "#ffffff80" }}>
-        {children}
-      </Text>
-    ),
-
-    bold: (node, children, parent, styles) => (
-      <Text key={node.key} style={{ fontWeight: "bold", color: "white" }}>
-        {children}
-      </Text>
-    ),
-  };
 
   return (
     <View style={styles.cardContainer}>

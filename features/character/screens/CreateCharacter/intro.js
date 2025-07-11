@@ -13,6 +13,7 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useState } from "react";
 import Markdown from "react-native-markdown-display";
 import Toast from "react-native-toast-message";
+import { markdownRules } from "../../../../utils/markdownRules";
 
 function Intro() {
   const { name, intro, setIntro, deleteIntro, editIntro, character_image } =
@@ -30,34 +31,6 @@ function Intro() {
     intro.reduce((sum, item) => sum + item.message.length, 0) -
     message.length +
     editMessage.length;
-
-  const markdownRules = {
-    paragraph: (node, children, parent, styles) => {
-      const siblings = parent[0].children;
-      const isLast = node.index === siblings[siblings.length - 1].index;
-
-      return (
-        <Text
-          key={node.key}
-          style={{ color: "white", marginBottom: isLast ? 0 : 16 }}
-        >
-          {children}
-        </Text>
-      );
-    },
-
-    em: (node, children, parent, styles) => (
-      <Text key={node.key} style={{ fontStyle: "italic", color: "#ffffff80" }}>
-        {children}
-      </Text>
-    ),
-
-    bold: (node, children, parent, styles) => (
-      <Text key={node.key} style={{ fontWeight: "bold", color: "white" }}>
-        {children}
-      </Text>
-    ),
-  };
 
   const addIntro = () => {
     const introMessage = { id: Date.now(), message, role: sender };

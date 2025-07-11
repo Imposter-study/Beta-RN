@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import characterAPI from "../../../apis/characterAPI";
 import roomAPI from "../../../apis/roomAPI";
+import { markdownRules } from "../../../utils/markdownRules";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.9;
@@ -26,34 +27,6 @@ function CharacterDetail({ route }) {
   const [loading, setLoading] = useState(true);
   const [character, setCharacter] = useState();
   const [isScrapped, setIsScrapped] = useState(false);
-
-  const markdownRules = {
-    paragraph: (node, children, parent, styles) => {
-      const siblings = parent[0].children;
-      const isLast = node.index === siblings[siblings.length - 1].index;
-
-      return (
-        <Text
-          key={node.key}
-          style={{ color: "white", marginBottom: isLast ? 0 : 16 }}
-        >
-          {children}
-        </Text>
-      );
-    },
-
-    em: (node, children, parent, styles) => (
-      <Text key={node.key} style={{ fontStyle: "italic", color: "#ffffff80" }}>
-        {children}
-      </Text>
-    ),
-
-    bold: (node, children, parent, styles) => (
-      <Text key={node.key} style={{ fontWeight: "bold", color: "white" }}>
-        {children}
-      </Text>
-    ),
-  };
 
   const getCharacterDetail = () => {
     characterAPI

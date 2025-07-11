@@ -19,6 +19,7 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Markdown from "react-native-markdown-display";
 import { useNavigation } from "@react-navigation/native";
 import useCharacterStore from "../../../../stores/useCharacterStore";
+import { markdownRules } from "../../../../utils/markdownRules";
 
 function AddSituation({ route }) {
   const index = route?.params?.index;
@@ -48,34 +49,6 @@ function AddSituation({ route }) {
     situation.reduce((sum, item) => sum + item.message.length, 0);
   const totalLength = baseLength + message.length; // message 길이 합산
   const onEditingLength = baseLength - message.length + editMessage.length;
-
-  const markdownRules = {
-    paragraph: (node, children, parent, styles) => {
-      const siblings = parent[0].children;
-      const isLast = node.index === siblings[siblings.length - 1].index;
-
-      return (
-        <Text
-          key={node.key}
-          style={{ color: "white", marginBottom: isLast ? 0 : 16 }}
-        >
-          {children}
-        </Text>
-      );
-    },
-
-    em: (node, children, parent, styles) => (
-      <Text key={node.key} style={{ fontStyle: "italic", color: "#ffffff80" }}>
-        {children}
-      </Text>
-    ),
-
-    bold: (node, children, parent, styles) => (
-      <Text key={node.key} style={{ fontWeight: "bold", color: "white" }}>
-        {children}
-      </Text>
-    ),
-  };
 
   const insertTextAtCursor = (text, isEdit = false) => {
     if (!isEdit) {
