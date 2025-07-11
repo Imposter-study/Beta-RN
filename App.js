@@ -21,6 +21,8 @@ import ProfileScreen from "./screens/profileScreen";
 import CreateChatProfile from "./screens/createChatProfile";
 import ChatHistoryList from "./screens/chatHistoryList";
 import ChatHistoryDetail from "./screens/chatHistoryDetail";
+import FollowScreen from "./screens/followScreen";
+import AccountInfo from "./screens/accountInfo";
 import CharacterSearch from "./screens/CharacterSearch";
 
 const Stack = createNativeStackNavigator();
@@ -67,12 +69,16 @@ export default function App() {
           <Stack.Screen name="Mypage" component={MyPageScreen} />
           {/* 더보기 스크린 */}
           <Stack.Screen name="More" component={MoreScreen} />
+          {/* 계정정보 스크린 */}
+          <Stack.Screen name="AccountInfo" component={AccountInfo} />
           {/* 프로필 스크린 */}
           <Stack.Screen name="Profile" component={ProfileScreen} />
           {/* 프로필 편집 스크린 */}
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           {/* 대화 프로필  */}
           <Stack.Screen name="ChatProfile" component={CreateChatProfile} />
+          {/* 팔로우 스크린 */}
+          <Stack.Screen name="Follow" component={FollowScreen} />
           {/* 카카오 로그인 */}
           <Stack.Screen name="KakaoLogin" component={KakaoLoginScreen} />
         </Stack.Navigator>

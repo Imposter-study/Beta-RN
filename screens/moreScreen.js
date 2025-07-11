@@ -150,6 +150,7 @@ function MoreScreen() {
                 계정 정보
               </Text>
               <TouchableOpacity
+                onPress={() => navigation.navigate("AccountInfo")}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
