@@ -4,18 +4,16 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  Image,
   Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from "react";
-import Markdown from "react-native-markdown-display";
 import Modal from "react-native-modal";
 import { useNavigation } from "@react-navigation/native";
 import characterAPI from "../../../apis/characterAPI";
 import roomAPI from "../../../apis/roomAPI";
-import { markdownRules } from "../../../utils/markdownRules";
+import { AiMessage, UserMessage } from "../../../components/MessageBubble";
 
 function ChatHistoryDetail({ route }) {
   const { room_id, history } = route.params;
@@ -115,24 +113,15 @@ function ChatHistoryDetail({ route }) {
         {intros.map((intro, index) =>
           intro.role === "user" ? (
             <View key={index} style={styles.userChatContainer}>
-              <View style={styles.userChatBox}>
-                <Markdown rules={markdownRules}>{intro.message}</Markdown>
-              </View>
+              <UserMessage content={intro.message} />
             </View>
           ) : (
             <View key={index} style={styles.aiChatContainer}>
-              <Image
-                source={{
-                  uri: character.character_image,
-                }}
-                style={styles.aiImage}
+              <AiMessage
+                image={character.character_image}
+                name={character.name}
+                content={intro.message}
               />
-              <View style={styles.aiChatContent}>
-                <Text style={styles.aiName}>{character.name}</Text>
-                <View style={styles.aiChatBox}>
-                  <Markdown rules={markdownRules}>{intro.message}</Markdown>
-                </View>
-              </View>
             </View>
           )
         )}
@@ -140,24 +129,15 @@ function ChatHistoryDetail({ route }) {
         {chatHistory.map((chat, index) =>
           chat.role === "user" ? (
             <View key={index} style={styles.userChatContainer}>
-              <View style={styles.userChatBox}>
-                <Markdown rules={markdownRules}>{chat.content}</Markdown>
-              </View>
+              <UserMessage content={chat.content} />
             </View>
           ) : chat.is_main ? (
             <View key={index} style={styles.aiChatContainer}>
-              <Image
-                source={{
-                  uri: character.character_image,
-                }}
-                style={styles.aiImage}
+              <AiMessage
+                image={character.character_image}
+                name={character.name}
+                content={chat.content}
               />
-              <View style={styles.aiChatContent}>
-                <Text style={styles.aiName}>{character.name}</Text>
-                <View style={styles.aiChatBox}>
-                  <Markdown rules={markdownRules}>{chat.content}</Markdown>
-                </View>
-              </View>
             </View>
           ) : null
         )}

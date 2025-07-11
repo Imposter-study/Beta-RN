@@ -24,6 +24,7 @@ import Toast from "react-native-toast-message";
 import characterAPI from "../../../apis/characterAPI";
 import roomAPI from "../../../apis/roomAPI";
 import { markdownRules } from "../../../utils/markdownRules";
+import { AiMessage, UserMessage } from "../../../components/MessageBubble";
 
 function Chat({ route }) {
   const navigation = useNavigation();
@@ -371,28 +372,15 @@ function Chat({ route }) {
                 {intros.map((intro, index) =>
                   intro.role === "user" ? (
                     <View key={index} style={styles.userChatContainer}>
-                      <View style={styles.userChatBox}>
-                        <Markdown rules={markdownRules}>
-                          {intro.message}
-                        </Markdown>
-                      </View>
+                      <UserMessage content={intro.message} />
                     </View>
                   ) : (
                     <View key={index} style={styles.aiChatContainer}>
-                      <Image
-                        source={{
-                          uri: character.character_image,
-                        }}
-                        style={styles.aiImage}
+                      <AiMessage
+                        image={character.character_image}
+                        name={character.name}
+                        content={intro.message}
                       />
-                      <View style={styles.aiChatContent}>
-                        <Text style={styles.aiName}>{character.name}</Text>
-                        <View style={styles.aiChatBox}>
-                          <Markdown rules={markdownRules}>
-                            {intro.message}
-                          </Markdown>
-                        </View>
-                      </View>
                     </View>
                   )
                 )}
@@ -437,11 +425,7 @@ function Chat({ route }) {
                               : "",
                         }}
                       >
-                        <View style={styles.userChatBox}>
-                          <Markdown rules={markdownRules}>
-                            {chat.content}
-                          </Markdown>
-                        </View>
+                        <UserMessage content={chat.content} />
                       </TouchableOpacity>
                     ) : null
                   ) : chat.is_main ? (
@@ -480,20 +464,11 @@ function Chat({ route }) {
                             : "",
                       }}
                     >
-                      <Image
-                        source={{
-                          uri: character.character_image,
-                        }}
-                        style={styles.aiImage}
+                      <AiMessage
+                        image={character.character_image}
+                        name={character.name}
+                        content={chat.content}
                       />
-                      <View style={styles.aiChatContent}>
-                        <Text style={styles.aiName}>{character.name}</Text>
-                        <View style={styles.aiChatBox}>
-                          <Markdown rules={markdownRules}>
-                            {chat.content}
-                          </Markdown>
-                        </View>
-                      </View>
                       {index === chats.length - 1 ? (
                         <View
                           style={{

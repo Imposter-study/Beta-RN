@@ -11,12 +11,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Markdown from "react-native-markdown-display";
 import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 import characterAPI from "../../../apis/characterAPI";
 import roomAPI from "../../../apis/roomAPI";
-import { markdownRules } from "../../../utils/markdownRules";
+import {
+  SimpleAiMessage,
+  UserMessage,
+} from "../../../components/MessageBubble";
 
 const screenWidth = Dimensions.get("window").width;
 const imageWidth = screenWidth * 0.9;
@@ -126,36 +128,16 @@ function CharacterDetail({ route }) {
                         justifyContent: "flex-end",
                       }}
                     >
-                      <View
-                        style={{
-                          maxWidth: "60%",
-                          padding: 10,
-                          borderRadius: 12,
-                          marginVertical: 4,
-                          backgroundColor: "rgb(124, 103, 255)",
-                          borderTopRightRadius: 0,
-                        }}
-                      >
-                        <Markdown rules={markdownRules}>
-                          {item.message}
-                        </Markdown>
-                      </View>
+                      <UserMessage content={item.message} />
                     </View>
                   );
                 } else {
                   return (
                     <View key={item.id} style={styles.messageContainer}>
-                      <Image
-                        source={{
-                          uri: character.character_image || "대체이미지",
-                        }}
-                        style={styles.messageImage}
+                      <SimpleAiMessage
+                        image={character.character_image}
+                        content={item.message}
                       />
-                      <View style={styles.messageBubble}>
-                        <Markdown rules={markdownRules}>
-                          {item.message}
-                        </Markdown>
-                      </View>
                     </View>
                   );
                 }
@@ -184,36 +166,16 @@ function CharacterDetail({ route }) {
                             justifyContent: "flex-end",
                           }}
                         >
-                          <View
-                            style={{
-                              maxWidth: "75%",
-                              padding: 10,
-                              borderRadius: 12,
-                              marginVertical: 4,
-                              backgroundColor: "rgb(124, 103, 255)",
-                              borderTopRightRadius: 0,
-                            }}
-                          >
-                            <Markdown rules={markdownRules}>
-                              {item.message}
-                            </Markdown>
-                          </View>
+                          <UserMessage content={item.message} />
                         </View>
                       );
                     } else {
                       return (
                         <View key={item.id} style={styles.messageContainer}>
-                          <Image
-                            source={{
-                              uri: character.character_image || "대체이미지",
-                            }}
-                            style={styles.messageImage}
+                          <SimpleAiMessage
+                            image={character.character_image}
+                            content={item.message}
                           />
-                          <View style={styles.messageBubble}>
-                            <Markdown rules={markdownRules}>
-                              {item.message}
-                            </Markdown>
-                          </View>
                         </View>
                       );
                     }
@@ -334,7 +296,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
-  messageBubble: {
+  aiMessageBubble: {
     maxWidth: "75%",
     padding: 10,
     borderRadius: 12,

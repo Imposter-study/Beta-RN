@@ -6,6 +6,7 @@ import Markdown from "react-native-markdown-display";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNavigation } from "@react-navigation/native";
 import { markdownRules } from "../utils/markdownRules";
+import { SimpleAiMessage, UserMessage } from "./MessageBubble";
 
 function SituationCard({ situation, index }) {
   const navigation = useNavigation();
@@ -42,30 +43,14 @@ function SituationCard({ situation, index }) {
         ? situation.map((item) =>
             item.role === "user" ? (
               <View key={item.id} style={styles.userMessageWrapper}>
-                <View style={styles.userMessageBubble}>
-                  <Markdown rules={markdownRules}>{item.message}</Markdown>
-                </View>
+                <UserMessage content={item.message} />
               </View>
             ) : (
               <View key={item.id} style={styles.aiMessageContainer}>
-                <View>
-                  {character_image ? (
-                    <Image
-                      source={{ uri: character_image }}
-                      style={styles.characterImage}
-                    />
-                  ) : (
-                    <Feather
-                      name="zap"
-                      size={24}
-                      color="#fff3"
-                      style={styles.placeholderIcon}
-                    />
-                  )}
-                </View>
-                <View style={styles.aiMessageBubble}>
-                  <Markdown rules={markdownRules}>{item.message}</Markdown>
-                </View>
+                <SimpleAiMessage
+                  image={character_image}
+                  content={item.message}
+                />
               </View>
             )
           )
