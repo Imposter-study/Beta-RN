@@ -2,42 +2,14 @@ import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import useCharacterStore from "../stores/useCharacterStore";
 import { useState } from "react";
 import Feather from "@expo/vector-icons/Feather";
-import Markdown from "react-native-markdown-display";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNavigation } from "@react-navigation/native";
+import { SimpleAiMessage, UserMessage } from "./MessageBubble";
 
 function SituationCard({ situation, index }) {
   const navigation = useNavigation();
   const { character_image, deleteExampleSituation } = useCharacterStore();
   const [isOpen, setIsOpen] = useState(false);
-
-  const markdownRules = {
-    paragraph: (node, children, parent, styles) => {
-      const siblings = parent[0].children;
-      const isLast = node.index === siblings[siblings.length - 1].index;
-
-      return (
-        <Text
-          key={node.key}
-          style={{ color: "white", marginBottom: isLast ? 0 : 16 }}
-        >
-          {children}
-        </Text>
-      );
-    },
-
-    em: (node, children, parent, styles) => (
-      <Text key={node.key} style={{ fontStyle: "italic", color: "#ffffff80" }}>
-        {children}
-      </Text>
-    ),
-
-    bold: (node, children, parent, styles) => (
-      <Text key={node.key} style={{ fontWeight: "bold", color: "white" }}>
-        {children}
-      </Text>
-    ),
-  };
 
   return (
     <View style={styles.cardContainer}>
@@ -69,30 +41,14 @@ function SituationCard({ situation, index }) {
         ? situation.map((item) =>
             item.role === "user" ? (
               <View key={item.id} style={styles.userMessageWrapper}>
-                <View style={styles.userMessageBubble}>
-                  <Markdown rules={markdownRules}>{item.message}</Markdown>
-                </View>
+                <UserMessage content={item.message} />
               </View>
             ) : (
               <View key={item.id} style={styles.aiMessageContainer}>
-                <View>
-                  {character_image ? (
-                    <Image
-                      source={{ uri: character_image }}
-                      style={styles.characterImage}
-                    />
-                  ) : (
-                    <Feather
-                      name="zap"
-                      size={24}
-                      color="#fff3"
-                      style={styles.placeholderIcon}
-                    />
-                  )}
-                </View>
-                <View style={styles.aiMessageBubble}>
-                  <Markdown rules={markdownRules}>{item.message}</Markdown>
-                </View>
+                <SimpleAiMessage
+                  image={character_image}
+                  content={item.message}
+                />
               </View>
             )
           )
