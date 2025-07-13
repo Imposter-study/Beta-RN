@@ -13,7 +13,6 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import accountAPI from "../../../apis/accountAPI";
-import { DOMAIN } from "../../../config";
 import { CharacterCard } from "../../../components/CharacterCard";
 
 const screenWidth = Dimensions.get("window").width;
